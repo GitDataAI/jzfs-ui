@@ -3,6 +3,7 @@ import {Row,Col,Button,Alert,Form} from "react-bootstrap";
 import {LinearProgress} from "@mui/material";
 import React, {useState} from "react";
 import {MetadataFields} from "../../../lib/components/repository/changes";
+import { ExecuteImportButtonProps, IStartImport, ImportDoneProps, ImportFormProps, ImportProgressPros } from "../interface/servs_interface";
 
 const ImportPhase = {
     NotStarted: 0,
@@ -11,12 +12,12 @@ const ImportPhase = {
     Failed: 3,
 }
 
-const startImport = async (setImportID, prependPath, commitMsg, sourceRef, repoId, refId, metadata = {}) => {
+const startImport: IStartImport = async (setImportID, prependPath, commitMsg, sourceRef, repoId, refId, metadata = {}) => {
     const response = await imports.create(repoId, refId, sourceRef, prependPath, commitMsg, metadata);
     setImportID(response.id);
 }
 
-const ImportProgress = ({numObjects}) => {
+const ImportProgress: React.FC<ImportProgressPros> = ({numObjects}) => {
     return (<Row>
         <Col>
             <div className='import-text'>
@@ -34,7 +35,7 @@ const ImportProgress = ({numObjects}) => {
     </Row>);
 }
 
-const ImportDone = ({numObjects, branch = ''}) => {
+const ImportDone: React.FC<ImportDoneProps>  = ({numObjects, branch = ''}) => {
     return (<Row>
         <Col>
             <div className={"mt-10 mb-2 me-2 row mt-4 import-success"}>
@@ -51,7 +52,7 @@ const ImportDone = ({numObjects, branch = ''}) => {
         </Col>
     </Row>);
 }
-const ExecuteImportButton = ({isEnabled, importPhase, importFunc, doneFunc}) => {
+const ExecuteImportButton: React.FC<ExecuteImportButtonProps>  = ({isEnabled, importPhase, importFunc, doneFunc}) => {
     switch (importPhase) {
         case ImportPhase.Completed:
             return <Button
@@ -77,7 +78,7 @@ const ExecuteImportButton = ({isEnabled, importPhase, importFunc, doneFunc}) => 
     }
 }
 
-const ImportForm = ({
+const ImportForm: React.FC<ImportFormProps> = ({
                         config,
                         pathStyle,
                         sourceRef,
@@ -96,14 +97,16 @@ const ImportForm = ({
     const importValidityRegexStr = config.import_validity_regex;
     const storageNamespaceValidityRegex = RegExp(importValidityRegexStr);
     const updateSourceURLValidity = () => {
-        if (!sourceRef.current.value) {
+        if (sourceRef.current) {
+            const isValid = storageNamespaceValidityRegex.test(sourceRef.current.value);
+            updateSrcValidity(isValid);
+            setIsSourceValid(isValid);
+        }else{
             updateSrcValidity(true);
             setIsSourceValid(true);
             return
         }
-        const isValid = storageNamespaceValidityRegex.test(sourceRef.current.value);
-        updateSrcValidity(isValid);
-        setIsSourceValid(isValid);
+        
     };
     const sourceURIExample = config ? config.blockstore_namespace_example : "s3://my-bucket/path/";
     return (<>
