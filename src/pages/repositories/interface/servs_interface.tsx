@@ -1,7 +1,8 @@
 import { Dispatch, RefObject, SetStateAction } from "react";
+import { StorageConfigContextType } from "./repo_interface";
 
 export interface IStartImport {
-    (setImportID: (id: string) => void, prependPath: string, commitMsg: string, sourceRef: string, repoId: string, refId: string, metadata?: object): Promise<void>;
+    (setImportID: (id: string) => void, prependPath: string | undefined, commitMsg: string | undefined, sourceRef: string | undefined, repoId: string, refId: string, metadata?: object): Promise<void>;
 }
 export interface ImportProgressPros{
     numObjects: number;
@@ -14,7 +15,8 @@ enum ImportPhase {
     Completed,
     Failed,
     NotStarted,
-    InProgress
+    InProgress,
+    Merging
 }
 export interface ExecuteImportButtonProps {
     isEnabled: boolean;
@@ -22,16 +24,8 @@ export interface ExecuteImportButtonProps {
     importFunc: () => void;
     doneFunc: () => void;
 }
-
-interface Config {
-    import_validity_regex: string;
-    blockstore_namespace_example: string;
-    blockstore_type: string;
-}
-
-
 export interface ImportFormProps {
-    config: Config;
+    config: StorageConfigContextType;
     pathStyle: object;
     sourceRef: RefObject<HTMLInputElement>;
     destRef: RefObject<HTMLInputElement>;
