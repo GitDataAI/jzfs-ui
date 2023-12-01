@@ -290,7 +290,7 @@ const CompareContainer = () => {
     if (loading) return <Loading/>;
     if (error) return <RepoError error={error}/>;
 
-    const route = query => router.push({pathname: `/repositories/:repoId/compare`, params: {repoId: repo.id}, query: {
+    const route = (query:Record<string, string>) => router.push({pathname: `/repositories/:repoId/compare`, params: {repoId: repo.id}, query: {
         ...query,
     }});
 

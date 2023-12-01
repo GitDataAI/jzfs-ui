@@ -30,7 +30,6 @@ const RepositoryInDeletionContainer = (repoId:string) => {
     );
 };
 
-
 export const RepoError = (error:RepositoryDeletionError| null) => {
     if (error instanceof RepositoryDeletionError) {
         return <RepositoryInDeletionContainer repoId={error.repoId}/>;
