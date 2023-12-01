@@ -7,6 +7,7 @@ export default ({ command }) => {
     test: {
       environment: 'happy-dom',
     },
+    
     plugins: [
       replace({
           preventAssignment: true,

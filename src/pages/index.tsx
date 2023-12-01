@@ -8,6 +8,7 @@ import {WithLoginConfigContext} from "../lib/hooks/conf";
 import Repositories from './repositories';
 import Auth from './auth';
 import Setup from './setup';
+import React from 'react';
 
 export const IndexPage = () => {
     return (
