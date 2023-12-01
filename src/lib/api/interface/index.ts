@@ -55,3 +55,11 @@ export interface StatsEvent {
 export interface PostStatsEventsParams {
     statsEvents: StatsEvent[];
 }
+export interface RepositoryParams {
+    repoId: string;
+    name: string;
+    StorageNamespace: string;
+    Description: string;
+    Head: string;
+    CreateID: string;
+}
