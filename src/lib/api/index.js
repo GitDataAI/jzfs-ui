@@ -586,7 +586,7 @@ class Tags {
 
 // uploadWithProgress uses good ol' XMLHttpRequest because progress indication in fetch() is
 //  still not well supported across browsers (see https://stackoverflow.com/questions/35711724/upload-progress-indicators-for-fetch).
-export const uploadWithProgress = (url, file, method = 'POST', onProgress = null, additionalHeaders = null) => {
+export const uploadWithProgress = (url, file, method = 'POST', onProgres, additionalHeaders = null) => {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('progress', event => {

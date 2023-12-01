@@ -110,3 +110,24 @@ export type StorageConfigContextType = {
   export interface NoGCRulesWarningProps{
     repoId: string; 
   }
+  export interface CompareListProps {
+      repo: Repo; // 
+      reference: Reference; // 
+      compareReference: Reference; // 
+      prefix: string;
+      onSelectRef: (ref: any) => void; // 
+      onSelectCompare: (compare: any) => void; // 
+      onNavigate: (path: string) => void;
+  }
+  export interface IRefObject {
+    id: string;
+    type: string; 
+  }
+  export interface MergeButtonProps {
+    repo: Repo;
+    onDone: () => void;
+    source: string | number | boolean;
+    dest: string | number | boolean;
+    disabled?: boolean;
+    isTableMerge: boolean;
+}
