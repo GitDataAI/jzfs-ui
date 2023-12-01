@@ -20,8 +20,9 @@ import {RepoError} from "../error/error";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import {ComingSoonModal} from "../../../../../lib/components/modals";
+import { CompareListProps, IRefObject, MergeButtonProps } from "../../../interface/repo_interface";
 
-const CompareList = ({ repo, reference, compareReference, prefix, onSelectRef, onSelectCompare, onNavigate }) => {
+const CompareList: React.FC<CompareListProps> = ({ repo, reference, compareReference, prefix, onSelectRef, onSelectCompare, onNavigate }) => {
     const [internalRefresh, setInternalRefresh] = useState(true);
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
     const [resultsState, setResultsState] = useState({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
@@ -29,7 +30,7 @@ const CompareList = ({ repo, reference, compareReference, prefix, onSelectRef, o
 
     const router = useRouter();
     const handleSwitchRefs = useCallback(
-        (e) => {
+        (e:React.MouseEvent) => {
             e.preventDefault();
             router.push({pathname: `/repositories/:repoId/compare`, params: {repoId: repo.id},
                 query: {ref: compareReference.id, compare: reference.id}});
@@ -55,7 +56,7 @@ const CompareList = ({ repo, reference, compareReference, prefix, onSelectRef, o
     let results = resultsState.results
     let content;
 
-    const relativeTitle = (from, to) => {
+    const relativeTitle = (from:IRefObject, to:IRefObject):string =>{
         let fromId = from.id;
         let toId = to.id;
         if (from.type === RefTypeCommit) {
@@ -68,25 +69,27 @@ const CompareList = ({ repo, reference, compareReference, prefix, onSelectRef, o
         return `${fromId}...${toId}`
     }
     const uriNavigator = <URINavigator
-            path={prefix}
-            reference={reference}
-            relativeTo={relativeTitle(reference, compareReference)}
-            repo={repo}
-            pathURLBuilder={(params, query) => {
-                const q = {
-                    delimiter: "/",
-                    prefix: query.path,
-                };
-                if (compareReference)
-                    q.compare = compareReference.id;
-                if (reference)
-                    q.ref = reference.id;
-                return {
-                    pathname: '/repositories/:repoId/compare',
-                    params: {repoId: repo.id},
-                    query: q
-                };
-            }}/>
+        path={prefix}
+        reference={reference}
+        relativeTo={relativeTitle(reference, compareReference)}
+        repo={repo}
+        pathURLBuilder={(_params, query) => {
+            const q = {
+                delimiter: "/",
+                prefix: query.path,
+                compare: "",
+                ref:"",
+            };
+            if (compareReference)
+                q.compare = compareReference.id;
+            if (reference)
+                q.ref = reference.id;
+            return {
+                pathname: '/repositories/:repoId/compare',
+                params: { repoId: repo.id },
+                query: q
+            };
+        } } downloadUrl={undefined}/>
 
     const changesTreeMessage = <p>Showing changes between <strong>{reference.id}</strong> and <strong>{compareReference.id}</strong></p>
     let leftCommittedRef = reference.id;
@@ -131,7 +134,7 @@ const CompareList = ({ repo, reference, compareReference, prefix, onSelectRef, o
                         selected={(reference) ? reference : null}
                         withCommits={true}
                         withWorkspace={false}
-                        selectRef={onSelectRef}/>
+                        selectRef={onSelectRef} onCancel={undefined}/>
 
                     <ArrowLeftIcon className="me-2 mt-2" size="small" verticalAlign="middle"/>
 
@@ -142,7 +145,7 @@ const CompareList = ({ repo, reference, compareReference, prefix, onSelectRef, o
                         selected={(compareReference) ? compareReference : null}
                         withCommits={true}
                         withWorkspace={false}
-                        selectRef={onSelectCompare}/>
+                        selectRef={onSelectCompare} onCancel={undefined}/>
 
                     <OverlayTrigger placement="bottom" overlay={
                         <Tooltip>Switch directions</Tooltip>
@@ -177,7 +180,7 @@ const CompareList = ({ repo, reference, compareReference, prefix, onSelectRef, o
     );
 };
 
-const MergeButton = ({repo, onDone, source, dest, disabled = false, isTableMerge}) => {
+const MergeButton: React.FC<MergeButtonProps> = ({repo, onDone, source, dest, disabled = false, isTableMerge}) => {
     const initialMerge = {
         merging: false,
         show: false,
@@ -198,16 +201,16 @@ const MergeButton = ({repo, onDone, source, dest, disabled = false, isTableMerge
         await statistics.postStatsEvents(deltaMergeStatEvents);
     }
 
-    const onClickMerge = useCallback((isTableMerge) => {
+    const onClickMerge = useCallback((isTableMerge: boolean) => {
         if (isTableMerge) {
             sendDeltaMergeStats()
             setShowDeltaMergeComingSoonModal(!showDeltaMergeComingSoonModal)
         } else {
             setMergeState({merging: mergeState.merging, err: mergeState.err, show: true, strategy: mergeState.strategy})}
         }
-    );
+    ,[]);
 
-    const onStrategyChange = (event) => {
+    const onStrategyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMergeState({merging: mergeState.merging, err: mergeState.err, show: mergeState.show, strategy: event.target.value});
     }
     const hide = () => {
@@ -226,7 +229,7 @@ const MergeButton = ({repo, onDone, source, dest, disabled = false, isTableMerge
             setMergeState({merging: mergeState.merging, show: mergeState.show, err: null, strategy: mergeState.strategy})
             onDone();
             hide();
-        } catch (err) {
+        } catch (err:any | Error) {
             setMergeState({merging: mergeState.merging, show: mergeState.show, err: err, strategy: mergeState.strategy})
         }
     }
@@ -287,7 +290,7 @@ const CompareContainer = () => {
     if (loading) return <Loading/>;
     if (error) return <RepoError error={error}/>;
 
-    const route = query => router.push({pathname: `/repositories/:repoId/compare`, params: {repoId: repo.id}, query: {
+    const route = (query:Record<string, string>) => router.push({pathname: `/repositories/:repoId/compare`, params: {repoId: repo.id}, query: {
         ...query,
     }});
 

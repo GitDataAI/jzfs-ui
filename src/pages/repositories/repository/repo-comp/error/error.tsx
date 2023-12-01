@@ -6,7 +6,7 @@ import {TrashIcon} from "@primer/octicons-react";
 import React from "react";
 import {AlertError} from "../../../../../lib/components/controls";
 
-const RepositoryInDeletionContainer = ({repoId}) => {
+const RepositoryInDeletionContainer = (repoId:string) => {
     const router = useRouter();
     return (
         <Alert variant="warning">
@@ -30,7 +30,7 @@ const RepositoryInDeletionContainer = ({repoId}) => {
     );
 };
 
-export const RepoError = ({error}) => {
+export const RepoError = (error:RepositoryDeletionError| null) => {
     if (error instanceof RepositoryDeletionError) {
         return <RepositoryInDeletionContainer repoId={error.repoId}/>;
     }
