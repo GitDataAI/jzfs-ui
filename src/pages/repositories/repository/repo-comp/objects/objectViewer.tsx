@@ -37,7 +37,7 @@ interface FileContentsProps {
   error: Error | null;
   contentType?: string | null;
   fileExtension: string;
-  sizeBytes: number;
+  sizeBytes?: number;
   showFullNavigator?: boolean;
   presign?: boolean;
 }

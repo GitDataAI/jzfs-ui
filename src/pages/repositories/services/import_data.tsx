@@ -3,20 +3,22 @@ import {Row,Col,Button,Alert,Form} from "react-bootstrap";
 import {LinearProgress} from "@mui/material";
 import React, {useState} from "react";
 import {MetadataFields} from "../../../lib/components/repository/changes";
+import { ExecuteImportButtonProps, IStartImport, ImportDoneProps, ImportFormProps, ImportProgressPros } from "../interface/servs_interface";
 
 const ImportPhase = {
     NotStarted: 0,
     InProgress: 1,
     Completed: 2,
     Failed: 3,
+    Merging: 4
 }
 
-const startImport = async (setImportID, prependPath, commitMsg, sourceRef, repoId, refId, metadata = {}) => {
+const startImport: IStartImport = async (setImportID, prependPath, commitMsg, sourceRef, repoId, refId, metadata = {}) => {
     const response = await imports.create(repoId, refId, sourceRef, prependPath, commitMsg, metadata);
     setImportID(response.id);
 }
 
-const ImportProgress = ({numObjects}) => {
+const ImportProgress: React.FC<ImportProgressPros> = ({numObjects}) => {
     return (<Row>
         <Col>
             <div className='import-text'>
@@ -34,7 +36,7 @@ const ImportProgress = ({numObjects}) => {
     </Row>);
 }
 
-const ImportDone = ({numObjects, branch = ''}) => {
+const ImportDone: React.FC<ImportDoneProps>  = ({numObjects, branch = ''}) => {
     return (<Row>
         <Col>
             <div className={"mt-10 mb-2 me-2 row mt-4 import-success"}>
@@ -51,7 +53,7 @@ const ImportDone = ({numObjects, branch = ''}) => {
         </Col>
     </Row>);
 }
-const ExecuteImportButton = ({isEnabled, importPhase, importFunc, doneFunc}) => {
+const ExecuteImportButton: React.FC<ExecuteImportButtonProps>  = ({isEnabled, importPhase, importFunc, doneFunc}) => {
     switch (importPhase) {
         case ImportPhase.Completed:
             return <Button
@@ -77,7 +79,7 @@ const ExecuteImportButton = ({isEnabled, importPhase, importFunc, doneFunc}) => 
     }
 }
 
-const ImportForm = ({
+const ImportForm: React.FC<ImportFormProps> = ({
                         config,
                         pathStyle,
                         sourceRef,
@@ -94,18 +96,26 @@ const ImportForm = ({
                     }) => {
     const [isSourceValid, setIsSourceValid] = useState(true);
     const importValidityRegexStr = config.import_validity_regex;
-    const storageNamespaceValidityRegex = RegExp(importValidityRegexStr);
+    let storageNamespaceValidityRegex:RegExp
+    if(importValidityRegexStr){
+        storageNamespaceValidityRegex = RegExp(importValidityRegexStr);
+    }else{
+        throw new Error("err ! type of importValidityRegexStr")
+    }
+    
     const updateSourceURLValidity = () => {
-        if (!sourceRef.current.value) {
+        if (sourceRef.current) {
+            const isValid = storageNamespaceValidityRegex.test(sourceRef.current.value);
+            updateSrcValidity(isValid);
+            setIsSourceValid(isValid);
+        }else{
             updateSrcValidity(true);
             setIsSourceValid(true);
             return
         }
-        const isValid = storageNamespaceValidityRegex.test(sourceRef.current.value);
-        updateSrcValidity(isValid);
-        setIsSourceValid(isValid);
+        
     };
-    const sourceURIExample = config ? config.blockstore_namespace_example : "s3://my-bucket/path/";
+    const sourceURIExample= config ? config.blockstore_namespace_example : "s3://my-bucket/path/";
     return (<>
         <Alert variant="info">
             Import doesn&apos;t copy objects. It only creates links to the objects in the JiaoziFS metadata layer.
@@ -133,14 +143,14 @@ const ImportForm = ({
                 <Form.Group className='form-group'>
                     <Form.Label><strong>Destination:</strong></Form.Label>
                         <Form.Control type="text" autoFocus name="destination" ref={destRef} defaultValue={path}/>
-                    <Form.Text style={{color: 'grey'}} md={{offset: 2, span: 10000}}>
+                    <Form.Text style={{color: 'grey'}}>
                         Leave empty to import to the repository&apos;s root.
                     </Form.Text>
                 </Form.Group>
             }
             <Form.Group className='form-group'>
                 <Form.Label><strong>Commit Message:</strong></Form.Label>
-                <Form.Control sm={8} type="text" ref={commitMsgRef} name="commit-message" autoFocus defaultValue={`Imported data from ${config.blockstore_type}`}/>
+                <Form.Control  type="text" ref={commitMsgRef} name="commit-message" autoFocus defaultValue={`Imported data from ${config.blockstore_type}`}/>
             </Form.Group>
             <MetadataFields metadataFields={metadataFields} setMetadataFields={setMetadataFields}/>
             {err &&

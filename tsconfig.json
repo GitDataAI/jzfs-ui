@@ -11,7 +11,7 @@
     "isolatedModules": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "noEmit": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -19,7 +19,6 @@
 
 
     /* Bundler mode */
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
 
     /* Linting */
