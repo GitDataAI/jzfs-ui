@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1701423533101" clover="3.2.0">
-  <project timestamp="1701423533102" name="All files">
+<coverage generated="1701684520314" clover="3.2.0">
+  <project timestamp="1701684520316" name="All files">
     <metrics statements="51" coveredstatements="51" conditionals="10" coveredconditionals="10" methods="3" coveredmethods="3" elements="64" coveredelements="64" complexity="0" loc="51" ncloc="51" packages="1" files="1" classes="1"/>
     <file name="imageUriReplacer.ts" path="D:\JiaoziFS-UI\JiaoziFS-ui-remake\jiaozifs-ui\src\lib\remark-plugins\imageUriReplacer.ts">
       <metrics statements="51" coveredstatements="51" conditionals="10" coveredconditionals="10" methods="3" coveredmethods="3"/>
