@@ -1,5 +1,6 @@
 import queryString from "query-string"
 import {DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs} from "../index"
+import { params } from "../interface";
 
 export class Commits {
     async log(repoId:string, refId:string, after = "", amount = DEFAULT_LISTING_AMOUNT) {
@@ -11,8 +12,8 @@ export class Commits {
         return response.json();
     }
 
-    async blame(repoId:string, refId:string, path, type) {
-        const params = {amount: 1};
+    async blame(repoId:string, refId:string, path:string, type:string) {
+        const params:params = {amount: 1,objects:'',prefixes:''};
         if (type === 'object') {
             params.objects = path
         } else {
@@ -29,7 +30,7 @@ export class Commits {
         return null // no commit modified this
     }
 
-    async get(repoId, commitId) {
+    async get(repoId:string, commitId:string) {
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/commits/${encodeURIComponent(commitId)}`);
         if (response.status === 404) {
             throw new NotFoundError(`could not find commit ${commitId}`);
@@ -39,7 +40,7 @@ export class Commits {
         return response.json();
     }
 
-    async commit(repoId, branchId, message, metadata = {}, source_metarange = "") {
+    async commit(repoId:string, branchId:string, message:string, metadata = {}, source_metarange = "") {
         const requestURL = queryString.stringifyUrl({
             url: `/repositories/${repoId}/branches/${branchId}/commits`,
             query: {source_metarange: source_metarange}

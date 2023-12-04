@@ -1,10 +1,11 @@
 import {API_ENDPOINT, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs, uploadWithProgress} from "../index"
+import { Upload, apiResponse } from "../interface";
 
 export class Objects {
 
-    async list(repoId, ref, tree, after = "", presign = false, amount = DEFAULT_LISTING_AMOUNT, delimiter = "/") {
+    async list(repoId:string, ref:any, tree:string, after = "", presign = false, amount = DEFAULT_LISTING_AMOUNT, delimiter = "/") {
         const query = qs({prefix: tree, amount, after, delimiter, presign});
-        const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/refs/${encodeURIComponent(ref)}/objects/ls?` + query);
+        const response:apiResponse = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/refs/${encodeURIComponent(ref)}/objects/ls?` + query);
 
         if (response.status === 404) {
             throw new NotFoundError(response.message ?? "ref not found");
@@ -16,7 +17,7 @@ export class Objects {
         return await response.json();
     }
 
-    async uploadPreflight(repoId, branchId, path) {
+    async uploadPreflight(repoId:string, branchId:string, path:string) {
         const query = qs({path});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/objects/stage_allowed?` + query);
 
@@ -31,7 +32,7 @@ export class Objects {
         throw new Error(await extractError(response));
     }
 
-    async upload(repoId, branchId, path, fileObject, onProgressFn = null) {
+     upload:Upload = async (repoId, branchId, path, fileObject, onProgressFn = null) =>{
         const query = qs({path});
         const uploadUrl = `${API_ENDPOINT}/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/objects?` + query;
         const {status, body, contentType} = await uploadWithProgress(uploadUrl, fileObject, 'POST', onProgressFn)
@@ -44,7 +45,7 @@ export class Objects {
         }
     }
 
-    async delete(repoId, branchId, path) {
+    async delete(repoId:string, branchId:string, path:string) {
         const query = qs({path});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/objects?` + query, {
             method: 'DELETE',
@@ -54,7 +55,7 @@ export class Objects {
         }
     }
 
-    async get(repoId, ref, path, presign = false) {
+    async get(repoId:string, ref:any, path:string, presign = false) {
         const query = qs({path, presign});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/refs/${encodeURIComponent(ref)}/objects?` + query, {
             method: 'GET',
@@ -66,7 +67,7 @@ export class Objects {
         return response.text()
     }
 
-    async head(repoId, ref, path) {
+    async head(repoId:string, ref:any, path:string) {
         const query = qs({path});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/refs/${encodeURIComponent(ref)}/objects?` + query, {
             method: 'HEAD',
@@ -81,7 +82,7 @@ export class Objects {
         }
     }
 
-    async getStat(repoId, ref, path, presign = false) {
+    async getStat(repoId:string, ref:any, path:string, presign = false) {
         const query = qs({path, presign});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/refs/${encodeURIComponent(ref)}/objects/stat?` + query);
         if (response.status !== 200) {

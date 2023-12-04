@@ -1,7 +1,7 @@
 import {apiRequest, extractError, qs} from "../index"
 
 export class Staging {
-    async get(repoId, branchId, path, presign = false) {
+    async get(repoId:string, branchId:string, path:string, presign = false) {
         const query = qs({path, presign});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/staging/backing?` + query, {
             method: 'GET'
@@ -12,7 +12,7 @@ export class Staging {
         return response.json();
     }
 
-    async link(repoId, branchId, path, staging, checksum, sizeBytes, contentType = 'application/octet-stream') {
+    async link(repoId:string, branchId:string, path:string, staging:any, checksum:string, sizeBytes:number, contentType = 'application/octet-stream') {
         const query = qs({path});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/staging/backing?` + query, {
             method: 'PUT',
