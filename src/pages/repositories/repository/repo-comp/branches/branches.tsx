@@ -32,11 +32,12 @@ import Alert from "react-bootstrap/Alert";
 import {Link} from "../../../../../lib/components/nav";
 import {useRouter} from "../../../../../lib/hooks/router";
 import {RepoError} from "../error/error";
+import { BranchWidgetParms } from "../../../interface/repo_interface";
 
 const ImportBranchName = 'import-from-inventory';
 
 
-const BranchWidget = ({ repo, branch, onDelete }) => {
+const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
 
     const buttonVariant = "outline-dark";
     const isDefault = repo.default_branch === branch.id;
@@ -70,7 +71,7 @@ const BranchWidget = ({ repo, branch, onDelete }) => {
                         {isDefault &&
                         <>
                             {' '}
-                            <Badge variant="info">Default</Badge>
+                            <Badge>Default</Badge>
                         </>}
                     </h6>
                 </div>
@@ -80,16 +81,17 @@ const BranchWidget = ({ repo, branch, onDelete }) => {
                     {!isDefault &&
                     <ButtonGroup className="commit-actions">
                         <ConfirmationButton
-                            variant="outline-danger"
-                            disabled={isDefault}
-                            msg={deleteMsg}
-                            tooltip="delete branch"
-                            onConfirm={() => {
-                                branches.delete(repo.id, branch.id)
-                                    .catch(err => alert(err))
-                                    .then(() => onDelete(branch.id))
-                            }}
-                        >
+                                variant="outline-danger"
+                                disabled={isDefault}
+                                msg={deleteMsg}
+                                tooltip="delete branch"
+                                onConfirm={() => {
+                                    branches.delete(repo.id, branch.id)
+                                        .catch(err => alert(err))
+                                        .then(() => onDelete(branch.id));
+                                } } 
+                                modalVariant={""} 
+                                size={"sm"}                        >
                             <TrashIcon/>
                         </ConfirmationButton>
                     </ButtonGroup>
@@ -105,9 +107,9 @@ const BranchWidget = ({ repo, branch, onDelete }) => {
                             tooltip="View referenced commit">
                             {branch.commit_id.substr(0, 12)}
                         </LinkButton>
-                        <ClipboardButton variant={buttonVariant} text={branch.id} tooltip="Copy ID to clipboard"/>
-                        <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.id}/${branch.id}`} tooltip="Copy URI to clipboard" icon={<LinkIcon/>}/>
-                        <ClipboardButton variant={buttonVariant} text={`s3://${repo.id}/${branch.id}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon/>}/>
+                        <ClipboardButton variant={buttonVariant} text={branch.id} tooltip="Copy ID to clipboard" onSuccess={undefined} onError={undefined}/>
+                        <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.id}/${branch.id}`} tooltip="Copy URI to clipboard" icon={<LinkIcon />} onSuccess={undefined} onError={undefined}/>
+                        <ClipboardButton variant={buttonVariant} text={`s3://${repo.id}/${branch.id}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon />} onSuccess={undefined} onError={undefined}/>
                     </ButtonGroup>
                 </div>
             </div>
@@ -176,9 +178,9 @@ const CreateBranchButton = ({ repo, variant = "success", onCreate = null, childr
                                 selected={selectedBranch}
                                 selectRef={(refId) => {
                                     setSelectedBranch(refId);
-                                }}
+                                } }
                                 withCommits={true}
-                                withWorkspace={false}/>
+                                withWorkspace={false} onCancel={undefined}/>
                         </Form.Group>
                     </Form>
 

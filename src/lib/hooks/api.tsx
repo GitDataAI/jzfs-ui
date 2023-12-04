@@ -1,6 +1,7 @@
-import {useEffect, useState} from 'react';
+import {DependencyList, useEffect, useState} from 'react';
 import {AuthenticationError} from "../api";
 import {useRouter} from "./router";
+import { APIState, PromiseFunction } from '../components/interface/comp_interface';
 
 const initialPaginationState = {
     loading: true,
@@ -9,7 +10,7 @@ const initialPaginationState = {
     results: []
 };
 
-export const useAPIWithPagination = (promise, deps = []) => {
+export const useAPIWithPagination = (promise: ()=> Promise<any>, deps: DependencyList = []) => {
     const [pagination, setPagination] = useState(initialPaginationState);
 
     // do the actual API request
@@ -21,14 +22,16 @@ export const useAPIWithPagination = (promise, deps = []) => {
 
     useEffect(() => {
         if (loading) {
-            setPagination({results: [], loading: true});
+            setPagination({results: [], loading: true, nextPage: null,error: null
+            });
             return;
         }
-
-        if (!!error || !response) {
-            setPagination({error, loading: false});
-            return;
-        }
+            if (!!error || !response) {
+                setPagination({error, loading: false});
+                return;
+            }
+        
+        
 
         // calculate current state on API response
         setPagination({
@@ -42,14 +45,14 @@ export const useAPIWithPagination = (promise, deps = []) => {
     return pagination;
 }
 
-const initialAPIState = {
+const initialAPIState:APIState = {
     loading: true,
     error: null,
     response: null,
     responseHeaders: null,
 };
 
-export const useAPI = (promise, deps = []) => {
+export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
     const router = useRouter();
     const [request, setRequest] = useState(initialAPIState);
     const [login, setLogin] = useState(false);
@@ -62,7 +65,8 @@ export const useAPI = (promise, deps = []) => {
             }
             router.push({
                 pathname: loginPathname,
-                query: {next: router.route, redirected: true},
+                query: {next: router.route, redirected: '' + true},
+                params:{}
             });
             setLogin(false);
         }
@@ -78,23 +82,27 @@ export const useAPI = (promise, deps = []) => {
                     loading: false,
                     error: null,
                     response,
+                    responseHeaders:null,
                 });
-            } catch (error) {
+            } catch (error: unknown | Error | null) {
                 if (error instanceof AuthenticationError) {
                     if (isMounted) {
                         setLogin(true);
                     }
                     return;
                 }
-                setRequest({
-                    loading: false,
-                    error,
-                    response: null,
-                });
+                if(error instanceof Error || error === null) {
+                    setRequest({
+                        loading: false,
+                        error,
+                        response: null,
+                        responseHeaders: null,
+                    });
+                }
             }
         };
         execute();
-        return () => isMounted = false;
+        return () => {isMounted = false;}
     }, deps);
     return {...request};
 }

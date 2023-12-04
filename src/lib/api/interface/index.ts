@@ -1,3 +1,5 @@
+import { Branches } from "../Branches";
+
 export interface LinkToPathParams {
     repoId: string;
     branchId: string;
@@ -15,7 +17,10 @@ export interface _Response extends Response{
 export interface RequestData {
     [key: string]: any;
 }
-
+export interface Branch extends Branches {
+    commit_id: any;
+    id:string
+}
 export interface _Headers {
     [key: string]: string;
 }

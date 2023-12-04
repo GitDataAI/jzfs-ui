@@ -8,6 +8,7 @@ import { ButtonVariant } from "react-bootstrap/esm/types";
 import { GetUserEmailByIdContext } from "../../pages/auth/users";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { SimpleModalProps } from "./interface/comp_interface";
 
 interface ConfirmationModalProps {
     show: boolean;
@@ -24,7 +25,7 @@ interface ConfirmationButtonProps {
     modalVariant: ButtonVariant;
     size: 'sm' | 'lg';
     disabled?: boolean;
-    tooltip: ReactNode;
+    tooltip?: ReactNode;
     children: ReactNode;
 }
 
@@ -112,7 +113,7 @@ export const ConfirmationButton: FC<ConfirmationButtonProps> = ({ msg, onConfirm
     );
 };
 
-const SimpleModal =  ({children, show = false, heading, onCancel, footer=null}) => {
+const SimpleModal:React.FC<SimpleModalProps> =  ({children, show = false, heading, onCancel, footer=null}) => {
     return (
         <Modal show={show} onHide={onCancel}
                size="lg"

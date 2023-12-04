@@ -1,3 +1,5 @@
+import { RepositoryDeletionError } from "../../../lib/api";
+import { Branch, RepositoryParams } from "../../../lib/api/interface";
 
 export type StorageConfigContextType = {
     warnings?: any[] | undefined;
@@ -40,7 +42,7 @@ export type StorageConfigContextType = {
   }
   export interface ObjectsBrowserProps{
     config: StorageConfigContextType;
-    configError: Error | null;
+    configError:  Error | null;
   }
   export interface _File extends File {
     id:string;
@@ -48,23 +50,24 @@ export type StorageConfigContextType = {
     path: string;
     type: string;
   }
+  export interface RepositoryInDeletionContainerProps {
+    repoId: string;
+  }
   export type Reference = {
     id: string;
     type: string;
   }
-  export type Repo = {
-    id: string
-}
+ 
   export type State = {
     status: string; 
     percent: number;
   }
   export type OpFn = (progress: any) => void 
   export interface UploadFileProps {
-    (config: StorageConfigContextType, repo: Repo , reference: Reference , path:string | undefined, file: _File, onProgress: OpFn | null | undefined): Promise<void>;
+    (config: StorageConfigContextType, repo: RepositoryParams , reference: Reference , path:string | undefined, file: _File, onProgress: ((progress: any) => void) | null | undefined): Promise<void>;
   }
   export interface UploadCandidateProps {
-    repo: Repo;
+    repo: RepositoryParams;
     reference: Reference;
     path: string | undefined;
     file: _File;
@@ -73,7 +76,7 @@ export type StorageConfigContextType = {
   }
   export interface UploadButtonProps {
     config: StorageConfigContextType;
-    repo: Repo;
+    repo: RepositoryParams;
     reference: Reference;
     path: string | undefined;
     onDone: () => void;
@@ -89,7 +92,7 @@ export type StorageConfigContextType = {
   }
   export interface TreeContainerProps {
     config: StorageConfigContextType;
-    repo: Repo;
+    repo: RepositoryParams;
     reference: Reference;
     path: string;
     after: string;
@@ -102,7 +105,7 @@ export type StorageConfigContextType = {
   }
   export interface ReadmeContainerProps {
     config:StorageConfigContextType;
-    repo:Repo;
+    repo:RepositoryParams;
     reference:Reference;
     path?:string;
     refreshDep?:string | boolean;
@@ -111,7 +114,7 @@ export type StorageConfigContextType = {
     repoId: string; 
   }
   export interface CompareListProps {
-      repo: Repo; // 
+      repo: RepositoryParams; // 
       reference: Reference; // 
       compareReference: Reference; // 
       prefix: string;
@@ -124,10 +127,15 @@ export type StorageConfigContextType = {
     type: string; 
   }
   export interface MergeButtonProps {
-    repo: Repo;
+    repo: RepositoryParams;
     onDone: () => void;
     source: string | number | boolean;
     dest: string | number | boolean;
     disabled?: boolean;
     isTableMerge: boolean;
+}
+export type BranchWidgetParms = {
+   repo: RepositoryParams;
+   branch: Branch;
+   onDelete: (id:string) => void
 }

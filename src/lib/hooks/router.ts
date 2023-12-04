@@ -17,7 +17,7 @@ export const useQuery = <T>(): Partial<T> => {
 interface URLDetails {
   pathname: string;
   params: Record<string, string>;
-  query: Record<string, string>;
+  query: string | Record<string, string> | string[][] | URLSearchParams | undefined ;
 }
 
 type URLBuilderInput = URLDetails | string;
