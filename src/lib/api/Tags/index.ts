@@ -1,7 +1,7 @@
 import {API_ENDPOINT, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs} from "../index"
 
 export class Tags {
-    async get(repoId, tagId) {
+    async get(repoId:string, tagId:string) {
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/tags/${encodeURIComponent(tagId)}`);
         if (response.status === 404) {
             throw new NotFoundError(`could not find tag ${tagId}`);
@@ -11,7 +11,7 @@ export class Tags {
         return response.json();
     }
 
-    async list(repoId, prefix = "", after = "", amount = DEFAULT_LISTING_AMOUNT) {
+    async list(repoId:string, prefix = "", after = "", amount = DEFAULT_LISTING_AMOUNT) {
         const query = qs({prefix, after, amount});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/tags?` + query);
         if (response.status !== 200) {
@@ -20,7 +20,7 @@ export class Tags {
         return response.json();
     }
 
-    async create(repoId, id, ref) {
+    async create(repoId:string, id:string, ref:any) {
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/tags`, {
             method: 'POST',
             body: JSON.stringify({id, ref}),
@@ -31,7 +31,7 @@ export class Tags {
         return response.json();
     }
 
-    async delete(repoId, name) {
+    async delete(repoId:string, name:string) {
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/tags/${encodeURIComponent(name)}`, {
             method: 'DELETE',
         });
@@ -44,7 +44,7 @@ export class Tags {
 
 // uploadWithProgress uses good ol' XMLHttpRequest because progress indication in fetch() is
 //  still not well supported across browsers (see https://stackoverflow.com/questions/35711724/upload-progress-indicators-for-fetch).
-export const uploadWithProgress = (url, file, method = 'POST', onProgres, additionalHeaders = null) => {
+export const uploadWithProgress = (url:string, file:File, method = 'POST', onProgress:(percentage: number) => void, additionalHeaders = null) => {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('progress', event => {

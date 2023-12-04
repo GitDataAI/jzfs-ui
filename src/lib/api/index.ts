@@ -14,7 +14,7 @@ import { Statistics } from "./Statistics";
 import { Staging } from "./Staging";
 import { OTFDiffs } from "./OTFDiffs";
 import { Import } from "./Import";
-import { AdditionalHeaders, LinkToPathParams, QueryParts, RequestData, _Headers, _Response } from "./interface";
+import { AdditionalHeaders, LinkToPathParams, QueryParts, RequestData, UploadWithProgress, _Headers, _Response } from "./interface";
 
 export const API_ENDPOINT = '/api/v1';
 export const DEFAULT_LISTING_AMOUNT = 100;
@@ -147,7 +147,7 @@ export class RepositoryDeletionError extends Error {
 
 // uploadWithProgress uses good ol' XMLHttpRequest because progress indication in fetch() is
 //  still not well supported across browsers (see https://stackoverflow.com/questions/35711724/upload-progress-indicators-for-fetch).
-export const uploadWithProgress = (url:string, file:File, method = 'POST', onProgress: (percentage: number)=> void, additionalHeaders: AdditionalHeaders = {}) => {
+export const uploadWithProgress:UploadWithProgress = (url, file, method = 'POST', onProgress, additionalHeaders: AdditionalHeaders = {}) => {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('progress', event => {

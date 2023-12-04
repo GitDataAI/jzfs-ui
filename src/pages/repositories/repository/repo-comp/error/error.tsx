@@ -5,8 +5,9 @@ import {repositories, RepositoryDeletionError} from "../../../../../lib/api";
 import {TrashIcon} from "@primer/octicons-react";
 import React from "react";
 import {AlertError} from "../../../../../lib/components/controls";
+import { RepositoryInDeletionContainerProps } from "../../../interface/repo_interface";
 
-const RepositoryInDeletionContainer = (repoId:string) => {
+const RepositoryInDeletionContainer: (props: RepositoryInDeletionContainerProps) => React.JSX.Element = ({ repoId }) => {
     const router = useRouter();
     return (
         <Alert variant="warning">

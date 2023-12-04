@@ -1,8 +1,8 @@
-import {apiRequest, extractError, qs} from "../index"
+import {NotFoundError, apiRequest, extractError, qs} from "../index"
 
 export class Import {
 
-    async get(repoId, branchId, importId) {
+    async get(repoId:string, branchId:string, importId:string) {
         const query = qs({id: importId});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/import?` + query);
         if (response.status === 404) {
@@ -13,7 +13,7 @@ export class Import {
         return response.json();
     }
 
-    async create(repoId, branchId, source, prepend, commitMessage, commitMetadata = {}) {
+    async create(repoId:string, branchId:string, source:string, prepend:string, commitMessage:string, commitMetadata = {}) {
         const body = {
             "paths": [
                 {
@@ -22,7 +22,8 @@ export class Import {
                     "type": "common_prefix",
             }],
             "commit": {
-                "message": commitMessage
+                "message": commitMessage,
+                "metadata": {}
             },
         };
         if (Object.keys(commitMetadata).length > 0) {
@@ -39,7 +40,7 @@ export class Import {
         return response.json();
     }
 
-    async delete(repoId, branchId, importId) {
+    async delete(repoId:string, branchId:string, importId:string) {
         const query = qs({id: importId});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/import?` + query, {
             method: 'DELETE',

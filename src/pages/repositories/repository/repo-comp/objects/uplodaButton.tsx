@@ -105,7 +105,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
     const [currentPath, setCurrentPath] = useState(path);
     const [uploadState, setUploadState] = useState(initialState);
     const [files, setFiles] = useState<_File[]>([]);
-    const [fileStates, setFileStates] = useState({});
+    const [fileStates, setFileStates] = useState<{[key: string]: any}>({});
     const [abortController, setAbortController] = useState<AbortController | null>(null)
     const onDrop = useCallback((acceptedFiles:_File[]) => {
       setFiles([...acceptedFiles])
@@ -178,7 +178,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
   
     };
   
-    const changeCurrentPath = useCallback((e) => {
+    const changeCurrentPath = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
       setCurrentPath(e.target.value)
     }, [setCurrentPath])
   

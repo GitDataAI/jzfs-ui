@@ -1,4 +1,5 @@
 import {API_ENDPOINT, AuthenticationError, DEFAULT_LISTING_AMOUNT, apiRequest, cache, defaultAPIHeaders, extractError, qs} from "../index"
+import { QueryParams } from "../interface";
 export class Auth {
     async getAuthCapabilities() {
         const response = await apiRequest('/auth/capabilities', {
@@ -201,7 +202,7 @@ export class Auth {
         return response.json();
     }
 
-    async listCredentials(userId:string, after:string, amount = DEFAULT_LISTING_AMOUNT) {
+    async listCredentials(userId:string, after:QueryParams, amount = DEFAULT_LISTING_AMOUNT) {
         const query = qs({after, amount});
         const response = await apiRequest(`/auth/users/${encodeURIComponent(userId)}/credentials?` + query);
         if (response.status !== 200) {

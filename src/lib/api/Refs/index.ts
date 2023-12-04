@@ -1,8 +1,9 @@
 import {DEFAULT_LISTING_AMOUNT, MergeError, apiRequest, extractError, qs} from "../index"
+import { QueryParams } from "../interface";
 
 export class Refs {
 
-    async changes(repoId, branchId, after, prefix, delimiter, amount = DEFAULT_LISTING_AMOUNT) {
+    async changes(repoId:string, branchId:string, after:QueryParams, prefix:QueryParams, delimiter:QueryParams, amount = DEFAULT_LISTING_AMOUNT) {
         const query = qs({after, prefix, delimiter, amount});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/branches/${encodeURIComponent(branchId)}/diff?` + query);
         if (response.status !== 200) {
@@ -11,7 +12,7 @@ export class Refs {
         return response.json();
     }
 
-    async diff(repoId, leftRef, rightRef, after, prefix = "", delimiter = "", amount = DEFAULT_LISTING_AMOUNT) {
+    async diff(repoId:string, leftRef:QueryParams, rightRef:QueryParams, after:QueryParams, prefix = "", delimiter = "", amount = DEFAULT_LISTING_AMOUNT) {
         const query = qs({after, amount, delimiter, prefix});
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/refs/${encodeURIComponent(leftRef)}/diff/${encodeURIComponent(rightRef)}?` + query);
         if (response.status !== 200) {
@@ -20,7 +21,7 @@ export class Refs {
         return response.json();
     }
 
-    async merge(repoId, sourceBranch, destinationBranch, strategy = "") {
+    async merge(repoId:string, sourceBranch:QueryParams, destinationBranch:QueryParams, strategy = "") {
         const response = await apiRequest(`/repositories/${encodeURIComponent(repoId)}/refs/${encodeURIComponent(sourceBranch)}/merge/${encodeURIComponent(destinationBranch)}`, {
             method: 'POST',
             body: JSON.stringify({strategy})
