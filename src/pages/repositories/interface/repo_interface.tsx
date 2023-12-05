@@ -139,3 +139,102 @@ export type BranchWidgetParms = {
    branch: Branch;
    onDelete: (id:string) => void
 }
+export interface CreateBranchButtonProps {
+  repo: RepositoryParams;
+  variant?: string;
+  onCreate?: () => void;
+  children?: React.ReactNode;
+}
+export interface BranchListProps {
+  repo: RepositoryParams;
+  prefix: string;
+  after: string;
+  onPaginate: (after:any) => void | (() => void);
+}
+export interface UseRefsReturn {
+  repo: RepositoryParams; 
+  loading: boolean;
+  error: Error | null;
+}
+export interface MetadataField {
+  key: string;
+  value: string;
+}
+export interface CommitButtonProps {
+  repo: RepositoryParams;
+  onCommit: (commit: { message: string; metadata: Record<string, string>; }, callback: () => void) => void;
+  enabled?: boolean;
+}
+export interface RevertButtonProps {
+  onRevert: () => void;
+  enabled?: boolean;
+}
+export interface ResultsState {
+  prefix: string;
+  results: { path: string }[]; 
+  pagination: any; 
+}
+export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+
+export type GetMore = () => Promise<{ results: { path: string }[]; pagination: any; }>;
+export interface ChangesBrowserProps {
+  repo: RepositoryParams;
+  reference: Reference;
+  prefix: string;
+  onSelectRef:(ref: any) => void |( () => void);
+}
+export type GetMoreUncommittedChanges = (
+  afterUpdated: string,
+  path: string,
+  useDelimiter?: boolean,
+  amount?: number
+) => Promise<any>;
+export interface ChangesTreeContainerProps {
+  results: { path: string }[];
+  delimiter: string;
+  uriNavigator: React.JSX.Element;
+  leftDiffRefID: string;
+  rightDiffRefID: string;
+  repo: RepositoryParams;
+  reference: Reference;
+  internalRefresh: boolean;
+  prefix: string;
+  getMore: GetMoreUncommittedChanges;
+  loading: boolean;
+  nextPage: any | null;
+  setAfterUpdated: React.Dispatch<React.SetStateAction<string>> | ((afterUpdated: string) => void);
+  onNavigate: (entry: any) => void; // 你需要根据实际情况定义 entry 的类型
+  onRevert: (entry: {    path_type: string;    path: string;}) => Promise<void> | (() => void);
+  setIsTableMerge: (isTableMerge: boolean) => void;
+  changesTreeMessage?: string | React.JSX.Element;
+}
+export interface StatEvent {
+  class: string;
+  name: string;
+  count: number;
+}
+export interface Tag {
+  id: string;
+  commit_id: string;
+  // 其他属性...
+}
+export interface TagWidgetProps {
+  repo: RepositoryParams;
+  tag: Tag;
+  onDelete: (id: string) => void;
+}
+export interface CreateTagButtonProps {
+  repo: RepositoryParams;
+  variant?: string;
+  onCreate?: (response: any) => void;
+  children?: React.ReactNode;
+}
+export interface TagListProps {
+  repo: RepositoryParams;
+  after: string; 
+  prefix: string; 
+  onPaginate: (page: any) => void; 
+}
+export interface RepoErrorProps {
+  error: RepositoryDeletionError | null;
+}
