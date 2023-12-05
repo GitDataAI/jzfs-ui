@@ -31,9 +31,10 @@ import { useRouter } from "../../../../../lib/hooks/router";
 import {ConfirmationButton} from "../../../../../lib/components/modals";
 import Alert from "react-bootstrap/Alert";
 import {RepoError} from "../error/error";
+import { CreateTagButtonProps, Tag, TagListProps, TagWidgetProps } from "../../../interface/repo_interface";
 
 
-const TagWidget = ({ repo, tag, onDelete }) => {
+const TagWidget:React.FC<TagWidgetProps> = ({ repo, tag, onDelete }) => {
 
     const buttonVariant = "outline-dark";
 
@@ -61,9 +62,10 @@ const TagWidget = ({ repo, tag, onDelete }) => {
                             onConfirm={() => {
                                 tags.delete(repo.id, tag.id)
                                     .catch(err => alert(err))
-                                    .then(() => onDelete(tag.id))
-                            }}
-                        >
+                                    .then(() => onDelete(tag.id));
+                            } } 
+                            modalVariant={""} 
+                            size={"sm"}                       >
                             <TrashIcon/>
                         </ConfirmationButton>
                     </ButtonGroup>
@@ -88,11 +90,11 @@ const TagWidget = ({ repo, tag, onDelete }) => {
 };
 
 
-const CreateTagButton = ({ repo, variant = "success", onCreate = null, children }) => {
+const CreateTagButton:React.FC<CreateTagButtonProps> = ({ repo, variant = "success", onCreate = null, children }) => {
     const [show, setShow] = useState(false);
     const [disabled, setDisabled] = useState(true);
     const [error, setError] = useState(null);
-    const textRef = useRef(null);
+    const textRef = useRef<HTMLInputElement>(null);
     const defaultRef = useMemo(
         () => ({ id: repo.default_branch, type: "branch" }),
         [repo.default_branch]);
@@ -111,7 +113,7 @@ const CreateTagButton = ({ repo, variant = "success", onCreate = null, children 
     const onSubmit = () => {
         setDisabled(true);
         setError(null);
-        const tagId = textRef.current.value;
+        const tagId = textRef.current ?  textRef.current.value : '';
         const sourceRef = selectedRef.id;
         tags.create(repo.id, tagId, sourceRef)
             .then(response => {
@@ -147,11 +149,12 @@ const CreateTagButton = ({ repo, variant = "success", onCreate = null, children 
                                 prefix={'From '}
                                 emptyText={'Select Source'}
                                 selected={selectedRef}
-                                selectRef={(refId) => {
+                                selectRef={(refId:{ id: string; type: string; }) => {
                                     setSelectedRef(refId);
-                                }}
+                                } }
                                 withCommits={true}
-                                withWorkspace={false} />
+                                withWorkspace={false} 
+                                onCancel={undefined} />
                         </Form.Group>
                     </Form>
 
@@ -173,7 +176,7 @@ const CreateTagButton = ({ repo, variant = "success", onCreate = null, children 
 };
 
 
-const TagList = ({ repo, after, prefix, onPaginate }) => {
+const TagList: React.FC<TagListProps> = ({ repo, after, prefix, onPaginate }) => {
     const router = useRouter()
     const [refresh, setRefresh] = useState(true);
     const { results, error, loading, nextPage } = useAPIWithPagination(async () => {
@@ -190,7 +193,7 @@ const TagList = ({ repo, after, prefix, onPaginate }) => {
         <>
             <Card>
                 <ListGroup variant="flush">
-                    {results.map(tag => (
+                    {results.map((tag:Tag) => (
                         <TagWidget key={tag.id} repo={repo} tag={tag} onDelete={doRefresh} />
                     ))}
                 </ListGroup>
@@ -233,12 +236,11 @@ const TagList = ({ repo, after, prefix, onPaginate }) => {
 
 const TagsContainer = () => {
     const router = useRouter()
-    const { repo, loading, error } = useRefs();
+    const { repo, loading, error }= useRefs();
     const { after } = router.query;
     const routerPfx = (router.query.prefix) ? router.query.prefix : "";
-
     if (loading) return <Loading />;
-    if (error) return <RepoError error={error} />;
+    if (error) return <RepoError error={error} />
 
     return (
         <TagList
@@ -246,7 +248,7 @@ const TagsContainer = () => {
             after={(after) ? after : ""}
             prefix={routerPfx}
             onPaginate={after => {
-                const query = { after };
+                const query = { after,prefix:'' };
                 if (router.query.prefix) query.prefix = router.query.prefix;
                 router.push({ pathname: '/repositories/:repoId/tags', params: { repoId: repo.id }, query });
             }} />
