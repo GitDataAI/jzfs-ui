@@ -5,7 +5,7 @@ import {repositories, RepositoryDeletionError} from "../../../../../lib/api";
 import {TrashIcon} from "@primer/octicons-react";
 import React from "react";
 import {AlertError} from "../../../../../lib/components/controls";
-import { RepositoryInDeletionContainerProps } from "../../../interface/repo_interface";
+import { RepoErrorProps, RepositoryInDeletionContainerProps } from "../../../interface/repo_interface";
 
 const RepositoryInDeletionContainer: (props: RepositoryInDeletionContainerProps) => React.JSX.Element = ({ repoId }) => {
     const router = useRouter();
@@ -31,7 +31,7 @@ const RepositoryInDeletionContainer: (props: RepositoryInDeletionContainerProps)
     );
 };
 
-export const RepoError = (error:RepositoryDeletionError| null) => {
+export const RepoError: React.FC<RepoErrorProps> = ({error}) => {
     if (error instanceof RepositoryDeletionError) {
         return <RepositoryInDeletionContainer repoId={error.repoId}/>;
     }

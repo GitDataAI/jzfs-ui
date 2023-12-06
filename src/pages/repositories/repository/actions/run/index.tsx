@@ -20,10 +20,12 @@ import {ActionStatusIcon} from "../../../../../lib/components/repository/actions
 import Table from "react-bootstrap/Table";
 import {Link} from "../../../../../lib/components/nav";
 import {useRouter} from "../../../../../lib/hooks/router";
+import { ActionBrowserProps, ExecutionsExplorerProps, HookLogProps, RunContainerProps, RunSummaryProps } from "../../../interface/repo_interface";
+import { RepositoryParams } from "../../../../../lib/api/interface";
 
 dayjs.extend(duration)
 
-const RunSummary = ({ repo, run }) => {
+const RunSummary:React.FC<RunSummaryProps> = ({ repo, run }) => {
     return (
         <Table size="lg">
             <tbody>
@@ -79,13 +81,13 @@ const RunSummary = ({ repo, run }) => {
 };
 
 
-const HookLog = ({ repo, run, execution }) => {
+const HookLog:React.FC<HookLogProps> = ({ repo, run, execution }) => {
     const [expanded, setExpanded] = useState(false);
     const {response, loading, error} = useAPI(() => {
-        if (!expanded) return '';
-        return actions.getRunHookOutput(repo.id, run.run_id, execution.hook_run_id);
+        if (!expanded) return Promise.resolve('');
+        return actions.getRunHookOutput({repoId: repo.id, runId: run.run_id, hookRunId:execution.hook_run_id});
     }, [repo.id, execution.hook_id, execution.hook_run_id, expanded]);
-
+    
     let content = <></>;
     if (expanded) {
         if (loading) {
@@ -96,6 +98,7 @@ const HookLog = ({ repo, run, execution }) => {
             content = <pre>{response}</pre>;
         }
     }
+    
 
     let duration = '(running)';
     if (execution.status === 'completed' || execution.status === 'failed') {
@@ -115,7 +118,7 @@ const HookLog = ({ repo, run, execution }) => {
                         {(expanded) ?  <ChevronDownIcon size="small"/> : <ChevronRightIcon size="small"/>}
                     </Button>
                     {' '}
-                    <ActionStatusIcon status={execution.status}/>
+                    <ActionStatusIcon status={execution.status} className={undefined}/>
                     {' '}
                     {execution.hook_id}
 
@@ -131,7 +134,7 @@ const HookLog = ({ repo, run, execution }) => {
     );
 }
 
-const ExecutionsExplorer = ({ repo, run, executions }) => {
+const ExecutionsExplorer: React.FC<ExecutionsExplorerProps> = ({ repo, run, executions }) => {
     return (
         <div className="hook-logs">
             {executions.map(exec => (
@@ -141,18 +144,16 @@ const ExecutionsExplorer = ({ repo, run, executions }) => {
     );
 };
 
-const ActionBrowser = ({ repo, run, hooks, onSelectAction, selectedAction = null }) => {
+const ActionBrowser: React.FC<ActionBrowserProps> = ({ repo, run, hooks, onSelectAction, selectedAction = null }) => {
 
     const hookRuns = hooks.results;
 
-    // group by action
-    const actionNames = {};
-    hookRuns.forEach(hookRun => { actionNames[hookRun.action] = true });
+    const actionNames: { [key: string]: boolean } = {};
+    hookRuns.forEach(hookRun => { actionNames[hookRun.action.actionName] = true });
     const actions = Object.getOwnPropertyNames(actionNames).sort();
 
     let content = <RunSummary repo={repo} run={run}/>
     if (selectedAction !== null) {
-        // we're looking at a specific action, let's filter
         const actionRuns = hookRuns
             .filter(hook => hook.action === selectedAction)
             .sort((a, b) => {
@@ -196,11 +197,11 @@ const ActionBrowser = ({ repo, run, hooks, onSelectAction, selectedAction = null
 };
 
 
-const RunContainer = ({ repo, runId, onSelectAction, selectedAction }) => {
+const RunContainer:React.FC<RunContainerProps> = ({ repo, runId, onSelectAction, selectedAction }) => {
     const {response, error, loading} = useAPI(async () => {
         const [ run, hooks ] = await Promise.all([
-            actions.getRun(repo.id, runId),
-            actions.listRunHooks(repo.id, runId)
+            actions.getRun({ repoId:repo.id, runId}),
+            actions.listRunHooks({repoId:repo.id, runId})
         ]);
         return {run, hooks};
     }, [repo.id, runId]);
@@ -218,25 +219,23 @@ const RunContainer = ({ repo, runId, onSelectAction, selectedAction }) => {
         />
     )
 }
-
 const ActionContainer = () => {
     const router = useRouter();
     const { action } = router.query;
     const { runId } = router.params;
-    const {loading, error, repo} = useRefs();
+    const {loading, error, repo}:{loading:boolean,error:Error | null,repo:RepositoryParams} = useRefs();
 
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
 
-    const params = {repoId: repo.id, runId};
-
+    const params = {repoId: repo.id, runId: runId ? runId : ''};
+    if(runId)
     return <RunContainer
         repo={repo}
         runId={runId}
         selectedAction={(action) ? action : null}
-        onSelectAction={action => {
-            const query = {};
-            if (action) query.action = action;
+        onSelectAction={(action) => {
+            const query = {action: action ? action.toString() : ''};
             router.push({
                 pathname: '/repositories/:repoId/actions/:runId', query, params
             });
@@ -244,9 +243,10 @@ const ActionContainer = () => {
     />
 }
 
+
 const RepositoryActionPage = () => {
     return (
-            <RepositoryPageLayout activePage={'actions'} fluid>
+            <RepositoryPageLayout activePage={'actions'} fluid = {"fluid"}>
                 <ActionContainer/>
             </RepositoryPageLayout>
     );

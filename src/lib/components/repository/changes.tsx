@@ -17,6 +17,7 @@ import {DeltaLakeDiff} from "./TableDiff";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { ChangesTreeContainerProps } from "../../../pages/repositories/interface/repo_interface";
 
 /**
  * Tree item is a node in the tree view. It can be expanded to multiple TreeEntryRow:
@@ -169,7 +170,8 @@ async function useTreeItemType(entry, repo, leftDiffRefID, rightDiffRefID, isDel
  * @param onNavigate to be called when navigating to a prefix
  * @param onRevert to be called when an object/prefix is requested to be reverted
  */
-export const ChangesTreeContainer = ({results, delimiter, uriNavigator,
+
+export const ChangesTreeContainer:React.FC<ChangesTreeContainerProps> = ({results, delimiter, uriNavigator,
                                          leftDiffRefID, rightDiffRefID, repo, reference, internalRefresh, prefix,
                                          getMore, loading, nextPage, setAfterUpdated, onNavigate, onRevert, setIsTableMerge,
                                          changesTreeMessage= ""}) => {

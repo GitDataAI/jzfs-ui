@@ -1,5 +1,6 @@
 // 为repositories中的index.tsx提供接口
 import { CSSProperties, MouseEventHandler, ReactElement } from "react";
+import { RepositoryParams } from "../../../lib/api/interface";
 
 export interface CreateRepositoryButtonProps {
     variant?: string;
@@ -20,7 +21,7 @@ export interface GettingStartedCreateRepoButtonProps {
 export interface CreateRepositoryModalProps {
     show: boolean;
     error: null | undefined;
-    onSubmit:(repo: any) => Promise<boolean>;
+    onSubmit:(repo: RepositoryParams) => Promise<boolean>;
     onCancel:()=>void;
     inProgress: boolean;
     samlpleRepoChecked?: boolean;
@@ -34,7 +35,7 @@ export interface GetStartedProps{
 }
 
 export interface RepositoryListProps{
-    onPaginate: string|((after:any)=>void);
+    onPaginate: (page: string | boolean | null) => void;
     prefix: string;
     after: string|undefined;
     refresh: boolean;
@@ -45,14 +46,11 @@ export interface RepositoryListProps{
     createRepoError: null|Error;
 }
 
-export interface Repo {
-    name: string;
-    id: string;
-    creation_date: number;
-    default_branch: string;
-    storage_namespace: string;
-  }
-
+export interface SQLEditorProps {
+    initialValue: string;
+    onChange: (code: string) => void;
+    onRun: () => void;
+}
 //   repositories中未使用的代码，暂时存放
   // const { response, error: err, loading } = useAPI(() => config.getStorageConfig());
     // const LOCAL_BLOCKSTORE_TYPE:string = "local";

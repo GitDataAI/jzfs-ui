@@ -32,7 +32,8 @@ import Alert from "react-bootstrap/Alert";
 import {Link} from "../../../../../lib/components/nav";
 import {useRouter} from "../../../../../lib/hooks/router";
 import {RepoError} from "../error/error";
-import { BranchWidgetParms } from "../../../interface/repo_interface";
+import { BranchListProps, BranchWidgetParms, CreateBranchButtonProps } from "../../../interface/repo_interface";
+import { Branch } from "../../../../../lib/api/interface";
 
 const ImportBranchName = 'import-from-inventory';
 
@@ -118,11 +119,11 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
 };
 
 
-const CreateBranchButton = ({ repo, variant = "success", onCreate = null, children }) => {
+const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant = "success", onCreate = null, children }) => {
     const [show, setShow] = useState(false);
     const [disabled, setDisabled] = useState(false);
-    const [error, setError] = useState(null);
-    const textRef = useRef(null);
+    const [error, setError] = useState<Error | boolean | null>(null);
+    const textRef = useRef<HTMLInputElement>(null);
     const defaultBranch = useMemo(
         () => ({ id: repo.default_branch, type: "branch"}),
         [repo.default_branch]);
@@ -140,7 +141,7 @@ const CreateBranchButton = ({ repo, variant = "success", onCreate = null, childr
 
     const onSubmit = async () => {
         setDisabled(true);
-        const branchId = textRef.current.value;
+        const branchId = textRef.current ? textRef.current.value : '';
         const sourceRef = selectedBranch.id;
 
         try {
@@ -148,11 +149,12 @@ const CreateBranchButton = ({ repo, variant = "success", onCreate = null, childr
             setError(false);
             setDisabled(false);
             setShow(false);
-            onCreate();
+            if(onCreate) {
+            onCreate();}
         } catch (err) {
-            setError(err);
+            setError(err as Error);
             setDisabled(false);
-        }
+        } 
     };
 
     return (
@@ -176,8 +178,8 @@ const CreateBranchButton = ({ repo, variant = "success", onCreate = null, childr
                                 emptyText={'Select Source Branch'}
                                 prefix={'From '}
                                 selected={selectedBranch}
-                                selectRef={(refId) => {
-                                    setSelectedBranch(refId);
+                                selectRef={(refId:string) => {
+                                    setSelectedBranch({ id: refId, type: "branch" });
                                 } }
                                 withCommits={true}
                                 withWorkspace={false} onCancel={undefined}/>
@@ -201,7 +203,7 @@ const CreateBranchButton = ({ repo, variant = "success", onCreate = null, childr
 };
 
 
-const BranchList = ({ repo, prefix, after, onPaginate }) => {
+const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate }) => {
     const router = useRouter()
     const [refresh, setRefresh] = useState(true);
     const { results, error, loading, nextPage } = useAPIWithPagination(async () => {
@@ -218,7 +220,7 @@ const BranchList = ({ repo, prefix, after, onPaginate }) => {
         <>
             <Card>
                 <ListGroup variant="flush">
-                    {results.map(branch => (
+                    {results.map((branch:Branch) => (
                         <BranchWidget key={branch.id} repo={repo} branch={branch} onDelete={doRefresh}/>
                     ))}
                 </ListGroup>
@@ -253,7 +255,7 @@ const BranchList = ({ repo, prefix, after, onPaginate }) => {
     );
 };
 
-const BranchesContainer = () => {
+const BranchesContainer:React.FC = () => {
     const router = useRouter()
     const { repo, loading, error } = useRefs();
     const { after } = router.query;
@@ -268,7 +270,7 @@ const BranchesContainer = () => {
             after={(after) ? after : ""}
             prefix={routerPfx}
             onPaginate={after => {
-                const query = {after};
+                const query = {after,prefix:''};
                 if (router.query.prefix) query.prefix = router.query.prefix;
                 router.push({pathname: '/repositories/:repoId/branches', params: {repoId: repo.id}, query});
             }}/>

@@ -71,6 +71,8 @@ export interface RepositoryParams {
     Description: string;
     Head: string;
     CreateID: string;
+    creation_date: number;
+    storage_namespace : string;
 }
 export type params = {
     amount: number;

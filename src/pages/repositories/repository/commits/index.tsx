@@ -26,9 +26,10 @@ import {useRouter} from "../../../../lib/hooks/router";
 import {Route, Routes} from "react-router-dom";
 import RepositoryCommitPage from "./commit";
 import {RepoError} from "../repo-comp/error/error";
+import { Commit, CommitWidgetProps, CommitsBrowserProps } from "../../interface/repo_interface";
 
 
-const CommitWidget = ({ repo, commit }) => {
+const CommitWidget:React.FC<CommitWidgetProps> = ({ repo, commit }) => {
 
     const buttonVariant = "outline-dark";
 
@@ -84,16 +85,16 @@ const CommitWidget = ({ repo, commit }) => {
 }
 
 
-const CommitsBrowser = ({ repo, reference, after, onPaginate, onSelectRef }) => {
+const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, onPaginate, onSelectRef }) => {
 
     const [refresh, setRefresh] = useState(true)
-    const { results, error, loading, nextPage } = useAPIWithPagination(async () => {
+    const { results: rawResults, error, loading, nextPage } = useAPIWithPagination(async () => {
         return commits.log(repo.id, reference.id, after)
     }, [repo.id, reference.id, refresh, after])
-
+    const results =  rawResults as Commit[];
     if (loading) return <Loading/>
     if (error) return <AlertError error={error}/>
-
+    if(results)
     return (
         <div className="mb-5">
 
@@ -104,8 +105,8 @@ const CommitsBrowser = ({ repo, reference, after, onPaginate, onSelectRef }) => 
                         selected={(reference) ? reference : null}
                         withCommits={true}
                         withWorkspace={false}
-                        selectRef={onSelectRef}
-                    />
+                        selectRef={onSelectRef} 
+                        onCancel={undefined}                    />
                 </ActionGroup>
 
                 <ActionGroup orientation="right">

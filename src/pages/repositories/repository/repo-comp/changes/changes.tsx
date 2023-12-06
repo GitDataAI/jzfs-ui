@@ -20,23 +20,24 @@ import {ChangesTreeContainer, MetadataFields} from "../../../../../lib/component
 import {useRouter} from "../../../../../lib/hooks/router";
 import {URINavigator} from "../../../../../lib/components/repository/tree";
 import {RepoError} from "../error/error";
+import { ChangesBrowserProps, CommitButtonProps, GetMore, GetMoreUncommittedChanges, Pair, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
 
 
-const CommitButton = ({repo, onCommit, enabled = false}) => {
+const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
 
-    const textRef = useRef(null);
+    const textRef = useRef<HTMLInputElement>(null);
 
     const [committing, setCommitting] = useState(false)
     const [show, setShow] = useState(false)
-    const [metadataFields, setMetadataFields] = useState([])
+    const [metadataFields, setMetadataFields] = useState<Pair[]>([])
     const hide = () => {
         if (committing) return;
         setShow(false)
     }
 
     const onSubmit = () => {
-        const message = textRef.current.value;
-        const metadata = {};
+        const message = textRef.current ?  textRef.current.value : '';
+        const metadata: { [key: string]: string } = {};
         metadataFields.forEach(pair => metadata[pair.key] = pair.value)
         setCommitting(true)
         onCommit({message, metadata}, () => {
@@ -82,7 +83,7 @@ const CommitButton = ({repo, onCommit, enabled = false}) => {
 }
 
 
-const RevertButton = ({onRevert, enabled = false}) => {
+const RevertButton:React.FC<RevertButtonProps> = ({onRevert, enabled = false}) => {
     const [show, setShow] = useState(false)
     const hide = () => setShow(false)
 
@@ -93,9 +94,9 @@ const RevertButton = ({onRevert, enabled = false}) => {
                 onHide={hide}
                 msg="Are you sure you want to revert all uncommitted changes?"
                 onConfirm={() => {
-                    onRevert()
-                    hide()
-                }}/>
+                    onRevert();
+                    hide();
+                } } variant={""}/>
             <Button variant="light" disabled={!enabled} onClick={() => setShow(true)}>
                 <HistoryIcon/> Revert
             </Button>
@@ -103,33 +104,37 @@ const RevertButton = ({onRevert, enabled = false}) => {
     );
 }
 
-export async function appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState, getMore) {
+export async function appendMoreResults(
+    resultsState: ResultsState,
+    prefix: string,
+    afterUpdated: string,
+    setAfterUpdated: SetState<string>,
+    setResultsState: SetState<ResultsState>,
+    getMore: GetMore
+  ): Promise<ResultsState>{
     let resultsFiltered = resultsState.results
     if (resultsState.prefix !== prefix) {
         // prefix changed, need to delete previous results
         setAfterUpdated("")
         resultsFiltered = []
     }
-
-    if (resultsFiltered.length > 0 && resultsFiltered.at(-1).path > afterUpdated) {
-        // results already cached
+    if (resultsFiltered.length > 0 && resultsFiltered.at(-1) && resultsFiltered.at(-1).path > afterUpdated) {
         return {prefix: prefix, results: resultsFiltered, pagination: resultsState.pagination}
-    }
-
+      }
     const {results, pagination} = await getMore()
     setResultsState({prefix: prefix, results: resultsFiltered.concat(results), pagination: pagination})
-    return {results: resultsState.results, pagination: pagination}
+return {prefix: resultsState.prefix, results: resultsState.results, pagination: pagination}
 }
 
-const ChangesBrowser = ({repo, reference, prefix, onSelectRef, }) => {
-    const [actionError, setActionError] = useState(null);
+const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix, onSelectRef, }) => {
+    const [actionError, setActionError] = useState<Error | null>(null);
     const [internalRefresh, setInternalRefresh] = useState(true);
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
-    const [resultsState, setResultsState] = useState({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
+    const [resultsState, setResultsState] = useState<ResultsState>({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
 
     const delimiter = '/'
 
-    const getMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
+    const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
         return refs.changes(repo.id, reference.id, afterUpdated, path, useDelimiter ? delimiter : "", amount > 0 ? amount : undefined)
     }
 
@@ -150,7 +155,7 @@ const ChangesBrowser = ({repo, reference, prefix, onSelectRef, }) => {
     if (error) return <AlertError error={error}/>
     if (loading) return <Loading/>
 
-    let onReset = async (entry) => {
+    let onReset = async (entry: { path_type: string; path: string; }) => {
         branches
             .reset(repo.id, reference.id, {type: entry.path_type, path: entry.path})
             .then(refresh)
@@ -159,7 +164,7 @@ const ChangesBrowser = ({repo, reference, prefix, onSelectRef, }) => {
             })
     }
 
-    let onNavigate = (entry) => {
+    let onNavigate = (entry: { path: string; }) => {
         return {
             pathname: `/repositories/:repoId/changes`,
             params: {repoId: repo.id},
@@ -171,12 +176,13 @@ const ChangesBrowser = ({repo, reference, prefix, onSelectRef, }) => {
     }
 
     const uriNavigator =  <URINavigator path={prefix} reference={reference} repo={repo}
-                                      pathURLBuilder={(params, query) => {
-                                          return {
-                                              pathname: '/repositories/:repoId/changes',
-                                              params: params,
-                                              query: {ref: reference.id, prefix: query.path ?? ""},
-                                          }}}/>
+    pathURLBuilder={(params, query) => {
+        return {
+            pathname: '/repositories/:repoId/changes',
+            params: params,
+            query: { ref: reference.id, prefix: query.path ?? "" },
+        };
+    } } downloadUrl={undefined}/>
     const changesTreeMessage = <p>Showing changes for branch <strong>{reference.id}</strong></p>
     const committedRef = reference.id + "@"
     const uncommittedRef = reference.id
@@ -195,8 +201,7 @@ const ChangesBrowser = ({repo, reference, prefix, onSelectRef, }) => {
                         withCommits={false}
                         withWorkspace={false}
                         withTags={false}
-                        selectRef={onSelectRef}
-                    />
+                        selectRef={onSelectRef} onCancel={undefined}                    />
                 </ActionGroup>
 
                 <ActionGroup orientation="right">
@@ -214,7 +219,8 @@ const ChangesBrowser = ({repo, reference, prefix, onSelectRef, }) => {
                             setActionError(null);
                             refresh();
                         } catch (err) {
-                            setActionError(err);
+                            if(err instanceof Error) {
+                            setActionError(err);}
                         }
                         done();
                     }}/>
@@ -223,11 +229,13 @@ const ChangesBrowser = ({repo, reference, prefix, onSelectRef, }) => {
 
             {actionErrorDisplay}
             <ChangesTreeContainer results={results} delimiter={delimiter}
-                                  uriNavigator={uriNavigator} leftDiffRefID={committedRef} rightDiffRefID={uncommittedRef}
-                                  repo={repo} reference={reference} internalReferesh={internalRefresh} prefix={prefix}
-                                  getMore={getMoreUncommittedChanges}
-                                  loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated}
-                                  onNavigate={onNavigate} onRevert={onReset} changesTreeMessage={changesTreeMessage}/>
+            uriNavigator={uriNavigator} leftDiffRefID={committedRef} rightDiffRefID={uncommittedRef}
+            repo={repo} reference={reference} internalRefresh={internalRefresh} prefix={prefix}
+            getMore={getMoreUncommittedChanges}
+            loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated}
+            onNavigate={onNavigate} onRevert={onReset} changesTreeMessage={changesTreeMessage} setIsTableMerge={function (_isTableMerge: boolean): void {
+                throw new Error("Function not implemented.");
+            } }/>
         </>
     )
 }

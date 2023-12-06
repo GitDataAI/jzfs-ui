@@ -1,17 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
-import {Warnings} from "../../lib/components/controls";
+import {Warnings} from "./controls";
 import {FloatingLabel} from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
+import { RepositoryCreateFormProps } from './interface/comp_interface';
 
 const DEFAULT_BLOCKSTORE_EXAMPLE = "e.g. s3://example-bucket/";
 const DEFAULT_BLOCKSTORE_VALIDITY_REGEX = new RegExp(`^s3://`);
 
-export const RepositoryCreateForm = ({ id, config, onSubmit, formValid, setFormValid, error = null, samlpleRepoChecked = false }) => {
+export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ({ id, config, onSubmit, formValid, setFormValid, error = null, samlpleRepoChecked = false }) => {
     const repoValidityRegex = /^[a-z0-9][a-z0-9-]{2,62}$/;
 
-    const [repoValid, setRepoValid] = useState(null);
+    const [repoValid, setRepoValid] = useState<boolean | null>(null);
     const defaultNamespacePrefix = config.default_namespace_prefix
 
     const [storageNamespaceValid, setStorageNamespaceValid] = useState(defaultNamespacePrefix ? true : null);
@@ -19,8 +20,8 @@ export const RepositoryCreateForm = ({ id, config, onSubmit, formValid, setFormV
     
     const storageNamespaceField = useRef(null);
     const defaultBranchField = useRef(null);
-    const repoNameField = useRef(null);
-    const sampleDataCheckbox = useRef(null);
+    const repoNameField = useRef<HTMLInputElement>(null);
+    const sampleDataCheckbox = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (sampleDataCheckbox.current) {
@@ -30,12 +31,17 @@ export const RepositoryCreateForm = ({ id, config, onSubmit, formValid, setFormV
 
 
     const onRepoNameChange = () => {
-        const isRepoValid = repoValidityRegex.test(repoNameField.current.value);
-        setRepoValid(isRepoValid);
-        setFormValid(isRepoValid && storageNamespaceValid && defaultBranchValid);
-        if (defaultNamespacePrefix) {
-            storageNamespaceField.current.value = defaultNamespacePrefix + repoNameField.current.value
-            checkStorageNamespaceValidity()
+        if (repoNameField.current) {
+            const isRepoValid = repoValidityRegex.test(repoNameField.current.value);
+            setRepoValid(isRepoValid);
+            if (storageNamespaceValid !== null) {
+                setFormValid(storageNamespaceValid && defaultBranchValid && repoValid);
+            }
+            setFormValid(isRepoValid && storageNamespaceValid && defaultBranchValid);
+            if (defaultNamespacePrefix) {
+                storageNamespaceField.current.value = defaultNamespacePrefix + repoNameField.current.value
+                checkStorageNamespaceValidity()
+            }
         }
     };
 
@@ -143,7 +149,6 @@ export const RepositoryCreateForm = ({ id, config, onSubmit, formValid, setFormV
           {advancedSettings}
       </section>
     )
-
     return (
         <Form id={id} onSubmit={(e) => {
             e.preventDefault();

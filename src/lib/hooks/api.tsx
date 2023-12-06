@@ -1,9 +1,9 @@
 import {DependencyList, useEffect, useState} from 'react';
 import {AuthenticationError} from "../api";
 import {useRouter} from "./router";
-import { APIState, PromiseFunction } from '../components/interface/comp_interface';
+import { APIState, InitialPaginationState, PromiseFunction,} from '../components/interface/comp_interface';
 
-const initialPaginationState = {
+const initialPaginationState:InitialPaginationState = {
     loading: true,
     error: null,
     nextPage: null,

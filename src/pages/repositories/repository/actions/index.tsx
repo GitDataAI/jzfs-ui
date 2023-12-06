@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {ReactElement, useState} from "react";
 import {RepositoryPageLayout} from "../../../../lib/components/repository/layout";
 import {
     ActionGroup,
@@ -24,9 +24,10 @@ import {useRouter} from "../../../../lib/hooks/router";
 import RepositoryActionPage from "./run";
 import Alert from "react-bootstrap/Alert";
 import {RepoError} from "../repo-comp/error/error";
+import { ActionsListProps, Run, RunRowProps, RunTableProps } from "../../interface/repo_interface";
 
 
-const RunRow = ({ repo, run, onFilterBranch, onFilterCommit }) => {
+const RunRow:React.FC<RunRowProps> = ({ repo, run, onFilterBranch, onFilterCommit }) => {
     return (
         <tr>
             <td>
@@ -85,7 +86,7 @@ const RunRow = ({ repo, run, onFilterBranch, onFilterCommit }) => {
     )
 }
 
-const RunTable = ({ repo, runs, nextPage, after, onPaginate, onFilterBranch, onFilterCommit }) => {
+const RunTable:React.FC<RunTableProps> = ({ repo, runs, nextPage, after, onPaginate, onFilterBranch, onFilterCommit }) => {
     return (
         <>
             <Table>
@@ -113,11 +114,11 @@ const RunTable = ({ repo, runs, nextPage, after, onPaginate, onFilterBranch, onF
     )
 }
 
-const ActionsList = ({ repo, after, onPaginate, branch, commit, onFilterBranch, onFilterCommit }) => {
+const ActionsList:React.FC<ActionsListProps> = ({ repo, after, onPaginate, branch, commit, onFilterBranch, onFilterCommit }) => {
 
     const [refresh, setRefresh] = useState(false)
     const {results, loading, error, nextPage} = useAPIWithPagination(async () => {
-        return await actions.listRuns(repo.id, branch, commit, after)
+        return await actions.listRuns({ repoId:repo.id, branch, commit, after})
     }, [repo.id, after, refresh, branch, commit])
 
     const doRefresh = () => setRefresh(!refresh)
@@ -126,11 +127,12 @@ const ActionsList = ({ repo, after, onPaginate, branch, commit, onFilterBranch, 
     if (error) content = <AlertError error={error}/>
 
     else if (loading) content = <Loading/>
-    else if (results.length === 0 && !nextPage) content = <Alert variant="info" className={"mt-3"}>No action runs have been logged yet.</Alert>
-    else content = (
+    else if (results && results.length === 0 && !nextPage) content = <Alert variant="info" className={"mt-3"}>No action runs have been logged yet.</Alert>
+    else if(results && after) 
+    content = (
             <RunTable
                 repo={repo}
-                runs={results}
+                runs={results as Run[]}
                 nextPage={nextPage}
                 after={after}
                 onPaginate={onPaginate}
@@ -139,7 +141,7 @@ const ActionsList = ({ repo, after, onPaginate, branch, commit, onFilterBranch, 
             />
     )
 
-    let filters = [];
+    let filters:ReactElement[] = [];
     if (branch) {
         filters = [<TooltipButton key="branch" variant="light" tooltip="remove branch filter" onClick={() => onFilterBranch("")}>
             <XIcon/> {branch}
@@ -190,7 +192,7 @@ const ActionsContainer = () => {
             repo={repo}
             after={after}
             onPaginate={after => {
-                const query = {after};
+                const query = {after,commit,branch};
                 if (commit) query.commit = commit;
                 if (branch) query.branch = branch;
                 router.push({pathname: `/repositories/:repoId/actions`, query, params})
@@ -198,12 +200,12 @@ const ActionsContainer = () => {
             branch={branch}
             commit={commit}
             onFilterBranch={branch => {
-                const query = {}; // will reset pagination
+                const query = {branch};
                 if (branch) query.branch = branch;
                 router.push({pathname: `/repositories/:repoId/actions`, query, params})
             }}
             onFilterCommit={commit => {
-                const query = {} // will reset pagination
+                const query = {commit};
                 if (commit) query.commit = commit;
                 router.push({pathname: `/repositories/:repoId/actions`, query, params})
             }}
