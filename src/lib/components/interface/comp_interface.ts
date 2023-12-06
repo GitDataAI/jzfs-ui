@@ -2,6 +2,8 @@ import {  Dispatch, JSXElementConstructor, MutableRefObject, ReactElement, React
 import { FormControlProps } from "react-bootstrap";
 import { OverlayTriggerRenderProps } from "react-bootstrap/esm/OverlayTrigger";
 import { Placement } from "react-bootstrap/esm/types";
+import { Commit, Run } from "../../../pages/repositories/interface/repo_interface";
+import { RepositoryParams } from "../../api/interface";
 
 export interface SimpleModalProps {
     children: React.ReactNode;
@@ -11,7 +13,7 @@ export interface SimpleModalProps {
     footer?: React.ReactNode;
 }
 export interface AlertErrorProps {
-    error: Error | ReactElement | null;
+    error: Error | ReactElement | null | boolean;
     onDismiss?: () => void;
     className?: string | undefined;
   }
@@ -54,8 +56,12 @@ export interface ProgressSpinnerProps {
     text: string;
     changingElement?: string;
 }
+export interface Warning {
+
+}
 export interface WarningProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
+    warnings: Warning[]
 }
 export interface ToggleSwitchProps {
     label: string;
@@ -93,9 +99,9 @@ export interface PrefixSearchWidgetProps {
 export interface ClipboardButtonProps {
     text: string;
     variant: string;
-    onSuccess: () => void;
+    onSuccess?: () => void;
     icon?: React.ReactNode;
-    onError: () => void;
+    onError?: () => void;
     tooltip?: string;
     [key: string]: any;
 }
@@ -105,10 +111,10 @@ export interface TooltipButtonProps {
     children: React.ReactNode;
     tooltip: string;
     className?: string;
-    size?: 'sm' | 'lg' | undefined;
+    size?:'md' | 'sm' | 'lg' | undefined;
 }
 export interface LinkButtonProps {
-    href: string;
+    href: { pathname: string; query?:{ commit?:string; repoId?: string; commitId?: string; ref?:string};  params?: { repoId?: string; commitId?: string; } | string };
     children: React.ReactNode;
     buttonVariant: string;
     tooltip?: string;
@@ -134,11 +140,52 @@ export interface DebouncedFormControlProps extends FormControlProps {
 export interface APIState {
     loading: boolean;
     error: Error | null;
-    response: any | null; // 你可能想要替换这个类型为你的响应的实际类型
-    responseHeaders: any | null; // 你可能想要替换这个类型为你的响应头的实际类型
+    response: any | null; 
+    responseHeaders: any | null; 
 }
 
 export interface PromiseFunction {
     (): Promise<any>;
 }
+export interface PaginatorProps {
+    onPaginate: (page: string | boolean | null) => void;
+    nextPage: string | boolean | null | undefined;
+    after?: string;
+}
+export interface InitialPaginationState{
+    loading: boolean,
+    error: Error | null,
+    nextPage?: string | null  | boolean,
+    results?: Run[] | Commit[] |RepositoryParams[]
+}
+export interface ActionStatusIconProps {
+    status: 'completed' | 'failed' | 'running' | 'skipped';
+    className:string | undefined | null;
+}
+export interface Config {
+    default_namespace_prefix: string;
+    blockstore_type: string;
+    blockstore_namespace_ValidityRegex: string;
+    blockstore_namespace_example: string;
+    // 其他属性...
+}
 
+export interface RepositoryCreateFormProps {
+    id: string;
+    config: Config;
+    onSubmit: ((values: RepositoryParams) => void )| (() => void) |((values: RepositoryParams) => Promise<boolean>);
+    formValid: boolean;
+    setFormValid: (valid: boolean) => void;
+    error: Error | null;
+    samlpleRepoChecked: boolean;
+}
+
+export interface APIHook {
+    response: Response | null;
+    error: Error | null;
+    loading: boolean;
+}
+
+export interface LoginConfigProviderProps {
+    children: ReactNode;
+}
