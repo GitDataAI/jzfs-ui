@@ -14,18 +14,18 @@ import {URINavigator} from "../../../../../lib/components/repository/tree";
 import {appendMoreResults} from "../changes/changes";
 import {RefTypeBranch, RefTypeCommit} from "../../../../../constants";
 import Button from "react-bootstrap/Button";
-import {FormControl, FormHelperText, InputLabel, MenuItem, Select} from "@mui/material";
+import {FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import Modal from "react-bootstrap/Modal";
 import {RepoError} from "../error/error";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import {ComingSoonModal} from "../../../../../lib/components/modals";
-import { CompareListProps, IRefObject, MergeButtonProps } from "../../../interface/repo_interface";
+import { CompareListProps, IRefObject, MergeButtonProps, ResultsState, StatEvent } from "../../../interface/repo_interface";
 
 const CompareList: React.FC<CompareListProps> = ({ repo, reference, compareReference, prefix, onSelectRef, onSelectCompare, onNavigate }) => {
     const [internalRefresh, setInternalRefresh] = useState(true);
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
-    const [resultsState, setResultsState] = useState({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
+    const [resultsState, setResultsState] = useState<ResultsState>({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
     const [isTableMerge, setIsTableMerge] = useState(false);
 
     const router = useRouter();
@@ -115,11 +115,13 @@ const CompareList: React.FC<CompareListProps> = ({ repo, reference, compareRefer
     }
     else {
         content = <ChangesTreeContainer results={results} delimiter={delimiter}
-                                        uriNavigator={uriNavigator} leftDiffRefID={leftCommittedRef} rightDiffRefID={rightCommittedRef}
-                                        repo={repo} reference={reference} internalReferesh={internalRefresh} prefix={prefix}
-                                        getMore={defaultGetMoreChanges(repo, reference.id, compareReference.id, delimiter)}
-                                        loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated} onNavigate={onNavigate}
-                                        setIsTableMerge={setIsTableMerge} changesTreeMessage={changesTreeMessage}/>
+        uriNavigator={uriNavigator} leftDiffRefID={leftCommittedRef} rightDiffRefID={rightCommittedRef}
+        repo={repo} reference={reference} internalRefresh={internalRefresh} prefix={prefix}
+        getMore={defaultGetMoreChanges(repo, reference.id, compareReference.id, delimiter)}
+        loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated} onNavigate={onNavigate}
+        setIsTableMerge={setIsTableMerge} changesTreeMessage={changesTreeMessage} onRevert={function (entry: { path_type: string; path: string; }): Promise<void> | (() => void) {
+            throw new Error("Function not implemented.");
+        } }/>
     }
 
     const emptyDiff = (!loading && !error && !!results && results.length === 0);
@@ -191,7 +193,7 @@ const MergeButton: React.FC<MergeButtonProps> = ({repo, onDone, source, dest, di
 
     const [showDeltaMergeComingSoonModal, setShowDeltaMergeComingSoonModal] = useState(false);
     const sendDeltaMergeStats = async () => {
-        const deltaMergeStatEvents = [
+        const deltaMergeStatEvents: StatEvent[] = [
             {
                 "class": "experimental-feature",
                 "name": "delta-merge",
@@ -210,7 +212,7 @@ const MergeButton: React.FC<MergeButtonProps> = ({repo, onDone, source, dest, di
         }
     ,[]);
 
-    const onStrategyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onStrategyChange = (event: SelectChangeEvent<string>) => {
         setMergeState({merging: mergeState.merging, err: mergeState.err, show: mergeState.show, strategy: event.target.value});
     }
     const hide = () => {

@@ -216,7 +216,6 @@ export interface StatEvent {
 export interface Tag {
   id: string;
   commit_id: string;
-  // 其他属性...
 }
 export interface TagWidgetProps {
   repo: RepositoryParams;
@@ -237,4 +236,105 @@ export interface TagListProps {
 }
 export interface RepoErrorProps {
   error: RepositoryDeletionError | null;
+}
+
+export interface Run {
+  run_id: string;
+  event_type: string;
+  status: 'completed' | 'failed' | 'running' | 'skipped';
+  branch: string;
+  commit_id: string;
+  start_time: string | number;
+  end_time: string | number;
+}
+export interface RunSummaryProps {
+  repo: RepositoryParams;
+  run: Run;
+}
+interface Execution {
+  hook_run_id: string;
+  hook_id: string;
+  status: 'completed' | 'failed' | 'running' | 'skipped';
+  start_time: string | number;
+  end_time: string | number;
+}
+export interface HookLogProps {
+  repo: RepositoryParams;
+  run: Run;
+  execution: Execution;
+}
+export interface ExecutionsExplorerProps {
+  repo: RepositoryParams; 
+  run: Run; 
+  executions: Execution[]; 
+}
+export interface ActionBrowserProps {
+  repo: RepositoryParams; 
+  run: Run; 
+  hooks: HooksType; 
+  onSelectAction: (action: ActionType | null | string) => void; 
+  selectedAction: ActionType | null | string; 
+}
+interface HooksType {
+  results: HookRunType[];
+}
+interface HookRunType {
+  action: ActionType;
+  hook_run_id: string;
+  hook_id:string; 
+  status: 'completed' | 'failed' | 'running' | 'skipped';
+  start_time: string | number;
+  end_time: string | number;
+}
+export interface ActionType {
+  actionName : string;
+}
+export interface RunContainerProps {
+  repo: RepositoryParams; 
+  runId: string; 
+  onSelectAction: (action: ActionType | null | string) => void; 
+  selectedAction: ActionType | null | string; 
+}
+export interface RunRowProps {
+  repo: RepositoryParams;
+  run: Run;
+  onFilterBranch: (branch: string) => void;
+  onFilterCommit: (commitId: string) => void;
+}
+export interface RunTableProps {
+  repo: RepositoryParams;
+  runs: Run[];
+  nextPage: string | boolean | null | undefined;
+  after: string;
+  onPaginate:(after: any) => void | (() => void);
+  onFilterBranch: (branch: string) => void;
+  onFilterCommit: (commitId: string) => void;
+}
+export interface ActionsListProps {
+  repo: RepositoryParams;
+  after: string | undefined;
+  onPaginate:(after: any) => void | (() => void);
+  branch: string;
+  commit: string;
+  onFilterBranch: (branch: string) => void;
+  onFilterCommit: (commitId: string) => void;
+}
+
+export interface Commit {
+  id: string;
+  message: string;
+  committer: string;
+  creation_date: number;
+}
+
+export interface CommitWidgetProps {
+  repo: RepositoryParams;
+  commit: Commit;
+}
+export interface CommitsBrowserProps {
+  repo: RepositoryParams;
+  reference: Reference;
+  after: string;
+  onPaginate:(after: any) => void | (() => void);
+  onSelectRef: (ref: any) => void; 
 }

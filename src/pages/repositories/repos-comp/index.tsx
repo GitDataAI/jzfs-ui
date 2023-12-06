@@ -11,7 +11,8 @@ import {RepositoryCreateForm} from "../../../lib/components/repositoryCreateForm
 import {useAPI, useAPIWithPagination} from "../../../lib/hooks/api";
 import {Paginator} from "../../../lib/components/pagination";
 import {Link} from "../../../lib/components/nav";
-import { CreateRepositoryButtonProps, CreateRepositoryModalProps, GetStartedProps, GettingStartedCreateRepoButtonProps, Repo, RepositoryListProps } from "../interface/repos_interface";
+import { CreateRepositoryButtonProps, CreateRepositoryModalProps, GetStartedProps, GettingStartedCreateRepoButtonProps, RepositoryListProps } from "../interface/repos_interface";
+import { RepositoryParams } from "../../../lib/api/interface";
 
 dayjs.extend(relativeTime);
 
@@ -118,20 +119,21 @@ export const GetStarted: React.FC<GetStartedProps> = ({onCreateEmptyRepo, creati
 
 export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
 
-    const {results, loading, error, nextPage} = useAPIWithPagination(() => {
+    const {results:Repo, loading, error, nextPage} = useAPIWithPagination(() => {
         return repositories.list(prefix, after);
     }, [refresh, prefix, after]);
-
+    const results = Repo as RepositoryParams[];
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
-    if (!after && !prefix && results.length === 0) {
+    if (!after && !prefix && results && results.length === 0 ) {
         toggleShowActionsBar();
         return <GetStarted onCreateEmptyRepo={onCreateEmptyRepo} creatingRepo={creatingRepo} createRepoError={createRepoError}/>;
     }
     toggleShowActionsBar();
+    if(results)
     return (
         <div>
-            {results.map((repo: Repo) => (
+            {results.map((repo: RepositoryParams) => (
                 <Row key={repo.id}>
                     <Col className={"mb-2 mt-2"}>
                         <Card>

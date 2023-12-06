@@ -14,8 +14,8 @@ const ImportPhase = {
 }
 
 const startImport: IStartImport = async (setImportID, prependPath, commitMsg, sourceRef, repoId, refId, metadata = {}) => {
-    const response = await imports.create(repoId, refId, sourceRef, prependPath, commitMsg, metadata);
-    setImportID(response.id);
+    if(typeof sourceRef === 'string' && typeof prependPath === 'string' && typeof commitMsg === 'string') {
+    const response = await imports.create(repoId, refId, sourceRef, prependPath, commitMsg, metadata);    setImportID(response.id);}
 }
 
 const ImportProgress: React.FC<ImportProgressPros> = ({numObjects}) => {
