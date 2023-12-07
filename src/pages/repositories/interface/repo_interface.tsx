@@ -1,5 +1,5 @@
 import { RepositoryDeletionError } from "../../../lib/api";
-import { Branch, RepositoryParams } from "../../../lib/api/interface";
+import { Branch, QueryParams, RepositoryParams } from "../../../lib/api/interface";
 
 export type StorageConfigContextType = {
     warnings?: any[] | undefined;
@@ -95,8 +95,8 @@ export type StorageConfigContextType = {
     repo: RepositoryParams;
     reference: Reference;
     path: string;
-    after: string;
-    onPaginate: (after:string) => void;
+    after: QueryParams;
+    onPaginate: (after:QueryParams) => void;
     onRefresh: () => void;
     onUpload: () => void;
     onImport: () => void;
@@ -148,8 +148,8 @@ export interface CreateBranchButtonProps {
 export interface BranchListProps {
   repo: RepositoryParams;
   prefix: string;
-  after: string;
-  onPaginate: (after:any) => void | (() => void);
+  after: QueryParams;
+  onPaginate: (after:QueryParams) => void | (() => void);
 }
 export interface UseRefsReturn {
   repo: RepositoryParams; 
@@ -230,7 +230,7 @@ export interface CreateTagButtonProps {
 }
 export interface TagListProps {
   repo: RepositoryParams;
-  after: string; 
+  after: QueryParams; 
   prefix: string; 
   onPaginate: (page: any) => void; 
 }
@@ -305,15 +305,15 @@ export interface RunTableProps {
   repo: RepositoryParams;
   runs: Run[];
   nextPage: string | boolean | null | undefined;
-  after: string;
-  onPaginate:(after: any) => void | (() => void);
+  after: QueryParams;
+  onPaginate:(after: QueryParams) => void | (() => void);
   onFilterBranch: (branch: string) => void;
   onFilterCommit: (commitId: string) => void;
 }
 export interface ActionsListProps {
   repo: RepositoryParams;
   after: string | undefined;
-  onPaginate:(after: any) => void | (() => void);
+  onPaginate:(after: QueryParams) => void | (() => void);
   branch: string;
   commit: string;
   onFilterBranch: (branch: string) => void;
@@ -334,7 +334,7 @@ export interface CommitWidgetProps {
 export interface CommitsBrowserProps {
   repo: RepositoryParams;
   reference: Reference;
-  after: string;
-  onPaginate:(after: any) => void | (() => void);
+  after: QueryParams;
+  onPaginate:(after: QueryParams) => void | (() => void);
   onSelectRef: (ref: any) => void; 
 }

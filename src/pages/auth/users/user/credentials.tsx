@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {ReactElement, useState} from "react";
 
 import {AuthLayout} from "../../../../lib/components/auth/layout";
 import {UserHeaderWithContext} from "./userHeaderWithContext";
@@ -31,7 +31,7 @@ const UserCredentialsList = ({ userId, after, onPaginate }) => {
                 return key;
             });
     };
-    const content = (
+    const content:ReactElement = (
             <>
                 {createError && <AlertError error={createError}/>}
                 <CredentialsTable
@@ -44,7 +44,7 @@ const UserCredentialsList = ({ userId, after, onPaginate }) => {
             </>
         );
 
-        const getMsg = (email) => <span>Create new credentials for user <strong>{email}</strong>?</span>;
+        const getMsg = (email:string) => <span>Create new credentials for user <strong>{email}</strong>?</span>;
     return (
         <>
             <UserHeaderWithContext userId={userId} page={'credentials'}/>

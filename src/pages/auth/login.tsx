@@ -9,15 +9,15 @@ import {useAPI} from "../../lib/hooks/api";
 interface LoginConfig {
     login_url: string;
     login_failed_message?: string;
-    fallback_login_url?: string;
+    fallback_login_url?: Location | (string & Location);
     fallback_login_label?: string;
     login_cookie_names: string[];
-    logout_url: string;
+    logout_url: Location | (string & Location);
 }
 
 const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     const router = useRouter();
-    const [loginError, setLoginError] = useState(null);
+    const [loginError, setLoginError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
    
     return (
@@ -28,8 +28,11 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                     <Card.Body>
                         <Form onSubmit={async (e) => {
                             e.preventDefault()
+                            const form = e.target as HTMLFormElement;
+                            const username = form.elements.namedItem('username') as HTMLInputElement;
+                            const password = form.elements.namedItem('password') as HTMLInputElement;
                             try {
-                                await auth.login(e.target.username.value, e.target.password.value)
+                                await auth.login(username.value, password.value)
                                 setLoginError(null);
                                 router.push(next ? next : '/repositories');
                             } catch(err) {
@@ -60,8 +63,10 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                             document.cookie = `${cookie}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
                                         }
                                     );
-                                    window.location = loginConfig.fallback_login_url;
-                                }}>{loginConfig.fallback_login_label || 'Try another way to login'}</Button>
+
+if (loginConfig.fallback_login_url) {
+    window.location = loginConfig.fallback_login_url;
+}                                }}>{loginConfig.fallback_login_label || 'Try another way to login'}</Button>
                                 : ""
                             }
                         </div>
@@ -82,7 +87,7 @@ const LoginPage = () => {
 
     // if we are not initialized, or we are not done with comm prefs, redirect to 'setup' page
     if (!error && response && (response.state !== SETUP_STATE_INITIALIZED || response.comm_prefs_missing === true)) {
-        router.push({pathname: '/setup', query: router.query})
+        router.push({pathname: '/setup', query: router.query,params:{}})
         return null;
     }
     const loginConfig = response?.login_config;
