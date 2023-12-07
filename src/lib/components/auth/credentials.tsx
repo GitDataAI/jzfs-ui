@@ -9,9 +9,10 @@ import {useAPIWithPagination} from "../../hooks/api";
 import {ClipboardButton, DataTable, AlertError, FormattedDate, Loading} from "../controls";
 import {ConfirmationButton} from "../modals";
 import {Paginator} from "../pagination";
+import { CredentialsShowModalProps, CredentialsTableProps } from "../interface/comp_interface";
 
 
-export const CredentialsTable = ({userId, currentAccessKey, refresh, after, onPaginate}) => {
+export const CredentialsTable:React.FC<CredentialsTableProps> = ({userId, currentAccessKey, refresh, after, onPaginate}) => {
     const [internalRefresh, setInternalRefresh] = useState(false);
     const [revokeError, setRevokeError] = useState(null);
 
@@ -22,7 +23,7 @@ export const CredentialsTable = ({userId, currentAccessKey, refresh, after, onPa
     if (error) return <AlertError error={error}/>;
     if (revokeError) return <AlertError error={revokeError}/>;
     if (loading) return <Loading/>;
-
+    if(results)
     return (
         <>
             <DataTable
@@ -39,14 +40,14 @@ export const CredentialsTable = ({userId, currentAccessKey, refresh, after, onPa
                     <span className="row-hover">
                     {(currentAccessKey !== row.access_key_id) &&
                     <ConfirmationButton
-                        variant="outline-danger"
-                        size="sm"
-                        msg={<span>Are you sure you{'\''}d like to delete access key <code>{row.access_key_id}</code>?</span>}
-                        onConfirm={() => {
-                            auth.deleteCredentials(userId, row.access_key_id)
-                                .catch(err => setRevokeError(err))
-                                .then(() => setInternalRefresh(!internalRefresh))
-                        }}>
+                                variant="outline-danger"
+                                size="sm"
+                                msg={<span>Are you sure you{'\''}d like to delete access key <code>{row.access_key_id}</code>?</span>}
+                                onConfirm={() => {
+                                    auth.deleteCredentials(userId, row.access_key_id)
+                                        .catch(err => setRevokeError(err))
+                                        .then(() => setInternalRefresh(!internalRefresh));
+                                } } modalVariant={""}>
                         Revoke
                     </ConfirmationButton>
                     }
@@ -59,7 +60,7 @@ export const CredentialsTable = ({userId, currentAccessKey, refresh, after, onPa
 };
 
 
-export const CredentialsShowModal = ({ credentials, show, onHide }) => {
+export const CredentialsShowModal:React.FC<CredentialsShowModalProps> = ({ credentials, show, onHide }) => {
     if (!credentials) return <></>;
 
     return (

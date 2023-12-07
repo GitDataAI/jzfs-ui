@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -9,11 +9,13 @@ import Card from "react-bootstrap/Card";
 import Layout from "../layout";
 import {Link} from "../nav";
 import {useLoginConfigContext} from "../../hooks/conf";
+import { AuthLayoutProps } from "../interface/comp_interface";
 
 
-export const AuthLayout = ({ children, activeTab }) => {
-    const {RBAC: rbac} = useLoginConfigContext();
-    return (
+export const AuthLayout = ({ children, activeTab }:AuthLayoutProps):ReactElement => {
+    const context = useLoginConfigContext();
+    const rbac = 'RBAC' in context ? context.RBAC : undefined;
+       return (
         <Layout>
             <Container fluid="xl">
                 <Row className="mt-5">

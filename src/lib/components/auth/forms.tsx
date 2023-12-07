@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState} from "react";
 import Modal from "react-bootstrap/Modal";
 import Badge from "react-bootstrap/Badge";
 import Form from "react-bootstrap/Form";
@@ -8,16 +8,17 @@ import {SearchIcon} from "@primer/octicons-react";
 
 import {useAPI} from "../../hooks/api";
 import {Checkbox, DataTable, DebouncedFormControl, AlertError, Loading} from "../controls";
+import { AttachModalProps, EntityActionModalProps } from "../interface/comp_interface";
 
-const isEmptyString = (str) => (!str?.length);
+const isEmptyString = (str:string) => (!str?.length);
 
 
 export const AttachModal = ({ show, searchFn, onAttach, onHide, addText = "Add",
                           emptyState = 'No matches', modalTitle = 'Add',
-                     filterPlaceholder = 'Filter...'}) => {
-    const search = useRef(null);
+                     filterPlaceholder = 'Filter...'}:AttachModalProps) => {
+    const search = useRef<HTMLInputElement | null>(null);
     const [searchPrefix, setSearchPrefix] = useState("");
-    const [selected, setSelected] = useState([]);
+    const [selected, setSelected] = useState<number[]>([]);
 
     useEffect(() => {
         if (!!search.current && search.current.value === "")
@@ -52,7 +53,7 @@ export const AttachModal = ({ show, searchFn, onAttach, onHide, addText = "Add",
                     <p>
                         <strong>Selected: </strong>
                         {(selected.map(item => (
-                            <Badge key={item} pill variant="primary" className="me-1">
+                            <Badge key={item} pill  className="me-1">
                                 {item}
                             </Badge>
                         )))}
@@ -61,7 +62,7 @@ export const AttachModal = ({ show, searchFn, onAttach, onHide, addText = "Add",
                 </div>
             </>
         );
-
+                
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
@@ -76,7 +77,7 @@ export const AttachModal = ({ show, searchFn, onAttach, onHide, addText = "Add",
                         <DebouncedFormControl
                             ref={search}
                             placeholder={filterPlaceholder}
-                            onChange={() => {setSearchPrefix(search.current.value)}}/>
+                            onChange={() => {search.current? setSearchPrefix(search.current.value): ''}}/>
                     </InputGroup>
                 </Form>
                 <div className="mt-2">
@@ -93,9 +94,9 @@ export const AttachModal = ({ show, searchFn, onAttach, onHide, addText = "Add",
     );
 };
 
-export const EntityActionModal = ({ show, onHide, onAction, title, placeholder, actionName, validationFunction = null }) => {
-    const [error, setError] = useState(null);
-    const idField = useRef(null);
+export const EntityActionModal:React.FC<EntityActionModalProps> = ({ show, onHide, onAction, title, placeholder, actionName, validationFunction = null }) => {
+    const [error, setError] = useState<Error | null>(null);
+    const idField = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (!!idField.current && idField.current.value === "")
@@ -103,13 +104,14 @@ export const EntityActionModal = ({ show, onHide, onAction, title, placeholder, 
     });
 
     const onSubmit = () => {
-        if (validationFunction) {
+        if (validationFunction && idField.current) {
             const validationResult = validationFunction(idField.current.value);
-            if (!validationResult.isValid) {
+            if (!validationResult.isValid && validationResult.errorMessage) {
                 setError(validationResult.errorMessage);
                 return;
             }
         }
+        if(idField.current)
         onAction(idField.current.value).catch(err => setError(err));
     };
 

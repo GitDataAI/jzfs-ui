@@ -6,10 +6,12 @@ import {BreadcrumbItem} from "react-bootstrap";
 import {useLoginConfigContext} from "../../hooks/conf";
 
 import {Link, NavItem} from "../nav";
+import { GroupHeaderProps, GroupNavProps, PolicyHeaderProps, UserHeaderProps, UserNavProps } from "../interface/comp_interface";
 
 
-export const UserNav = ({ userId, page = 'groups' }) => {
-    const {RBAC: rbac} = useLoginConfigContext();
+export const UserNav:React.FC<UserNavProps> = ({ userId, page = 'groups' }) => {
+    const context = useLoginConfigContext();
+    const rbac = 'RBAC' in context ? context.RBAC : undefined;
     return (
         <Nav justify variant="tabs">
             <Link component={NavItem} active={page === 'groups'} href={{pathname: '/auth/users/:userId/groups', params: {userId}}}>
@@ -37,9 +39,10 @@ export const UserNav = ({ userId, page = 'groups' }) => {
 };
 
 
-export const GroupNav = ({ groupId, page = 'groups' }) => {
-    const {RBAC: rbac} = useLoginConfigContext();
-    return (
+export const GroupNav:React.FC<GroupNavProps> = ({ groupId, page = 'groups' }) => {
+    const context = useLoginConfigContext();
+    const rbac = 'RBAC' in context ? context.RBAC : undefined;
+       return (
         <>
             {rbac === 'simplified' ?
             <Link component={NavItem} active={page === 'members'} href={{pathname: '/auth/groups/:groupId/members', params: {groupId}}}>
@@ -57,7 +60,7 @@ export const GroupNav = ({ groupId, page = 'groups' }) => {
     );
 };
 
-export const UserHeader = ({ userEmail, userId, page }) => {
+export const UserHeader:React.FC<UserHeaderProps> = ({ userEmail, userId, page }) => {
     return (
         <div className="mb-4">
             <Breadcrumb>
@@ -74,7 +77,7 @@ export const UserHeader = ({ userEmail, userId, page }) => {
     );
 };
 
-export const GroupHeader = ({ groupId, page }) => {
+export const GroupHeader:React.FC<GroupHeaderProps> = ({ groupId, page }) => {
     return (
         <div className="mb-4">
             <Breadcrumb>
@@ -91,7 +94,7 @@ export const GroupHeader = ({ groupId, page }) => {
     );
 };
 
-export const PolicyHeader = ({ policyId }) => {
+export const PolicyHeader:React.FC<PolicyHeaderProps> = ({ policyId }) => {
     return (
         <div className="mb-4">
             <Breadcrumb>

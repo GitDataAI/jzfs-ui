@@ -3,7 +3,7 @@ import { FormControlProps } from "react-bootstrap";
 import { OverlayTriggerRenderProps } from "react-bootstrap/esm/OverlayTrigger";
 import { Placement } from "react-bootstrap/esm/types";
 import { Commit, Run } from "../../../pages/repositories/interface/repo_interface";
-import { RepositoryParams } from "../../api/interface";
+import { QueryParams, RepositoryParams } from "../../api/interface";
 
 export interface SimpleModalProps {
     children: React.ReactNode;
@@ -114,7 +114,7 @@ export interface TooltipButtonProps {
     size?:'md' | 'sm' | 'lg' | undefined;
 }
 export interface LinkButtonProps {
-    href: { pathname: string; query?:{ commit?:string; repoId?: string; commitId?: string; ref?:string};  params?: { repoId?: string; commitId?: string; } | string };
+    href: { pathname: string; query?:{ commit?:string; repoId?: string; commitId?: string; ref?:React.ForwardedRef<HTMLInputElement>};  params?: { repoId?: string; commitId?: string; } | string };
     children: React.ReactNode;
     buttonVariant: string;
     tooltip?: string;
@@ -150,7 +150,7 @@ export interface PromiseFunction {
 export interface PaginatorProps {
     onPaginate: (page: string | boolean | null) => void;
     nextPage: string | boolean | null | undefined;
-    after?: string;
+    after?: QueryParams;
 }
 export interface InitialPaginationState{
     loading: boolean,
@@ -185,7 +185,71 @@ export interface APIHook {
     error: Error | null;
     loading: boolean;
 }
-
 export interface LoginConfigProviderProps {
     children: ReactNode;
+}
+export interface CredentialsTableProps {
+    userId: string;
+    currentAccessKey: string;
+    refresh: boolean;
+    after: QueryParams; 
+    onPaginate: (page: string | boolean | null) => void; 
+}
+interface Credentials {
+    access_key_id: string;
+    secret_access_key: string;
+}
+export interface CredentialsShowModalProps {
+    credentials: Credentials | null;
+    show: boolean;
+    onHide: () => void;
+}
+export interface AttachModalProps {
+    show: boolean;
+    searchFn: (searchPrefix:string) => Promise<any>; // 请根据实际情况替换为正确的类型
+    onAttach: any; // 请根据实际情况替换为正确的类型
+    onHide: () => void;
+    addText?: string;
+    emptyState?: string;
+    modalTitle?: string;
+    filterPlaceholder?: string;
+}
+
+interface ValidationResult {
+    isValid: boolean;
+    errorMessage?: Error;
+}
+
+export interface EntityActionModalProps {
+    show: boolean;
+    onHide: () => void;
+    onAction: (value: string) => Promise<void>;
+    title: string;
+    placeholder: string;
+    actionName: string;
+    validationFunction?: (value: string) => ValidationResult;
+}
+export interface AuthLayoutProps {
+    children: ReactNode;
+    activeTab: string;
+}
+export interface UserNavProps {
+    userId: string;
+    page?: string;
+}
+export interface GroupNavProps {
+    groupId: string;
+    page?: string;
+}
+export interface UserHeaderProps {
+    userEmail: string;
+    userId: string;
+    page: string;
+}
+export interface GroupHeaderProps {
+    groupId: string;
+    page: string;
+}
+export interface PolicyHeaderProps {
+    policyId: string;
 }

@@ -302,4 +302,5 @@ export class Auth {
             await this.deletePolicy(policyId);
         }
     }
+    
 }
