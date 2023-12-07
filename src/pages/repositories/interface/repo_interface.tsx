@@ -319,12 +319,15 @@ export interface ActionsListProps {
   onFilterBranch: (branch: string) => void;
   onFilterCommit: (commitId: string) => void;
 }
-
+export type metadata  = {
+ metadata: Record<string,string>  
+}
 export interface Commit {
   id: string;
   message: string;
   committer: string;
   creation_date: number;
+  metadata: metadata[]
 }
 
 export interface CommitWidgetProps {
@@ -337,4 +340,10 @@ export interface CommitsBrowserProps {
   after: QueryParams;
   onPaginate:(after: QueryParams) => void | (() => void);
   onSelectRef: (ref: any) => void; 
+}
+export interface getKeysOrNullProps{
+  metadata:metadata;
+}
+export interface CommitMetadataTableProps{
+  commit:Commit;
 }
