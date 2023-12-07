@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState,ReactElement, ForwardRefRenderFunction, RefObject} from 'react';
+import React, {useCallback, useEffect, useRef, useState, ForwardRefRenderFunction} from 'react';
 import dayjs from "dayjs";
 
 import Form from "react-bootstrap/Form";
@@ -29,7 +29,7 @@ const defaultDebounceMs = 300;
 
 export const debounce = ({func, wait, immediate = false}:DebounceOptions):Func => {
     let timeout:NodeJS.Timeout | null = null;
-    return function(...args:any[]){
+    return function(this:any , ...args:any[]){
         const context = this;
         let later = function() {
             timeout = null;
@@ -82,8 +82,8 @@ export const AlertError: React.FC<AlertErrorProps> = ({error, onDismiss = null, 
 
     let content = React.isValidElement(error) ? error : error.toString();
     // handle wrapped errors
-    let err: Error | ReactElement | null= error;
-    while (!(err instanceof Error) && err != null) err = err.error;
+    let err= error;
+    while (!(err instanceof Error) && err != null && err.error) err = err.error;
     if (err instanceof Error) content = err.message;
     if (onDismiss !== null) {
         return <Alert className={className} variant="danger" dismissible onClose={onDismiss}>{content}</Alert>;
@@ -166,8 +166,7 @@ export const copyTextToClipboard:CopyTextToClipboard = async (text, onSuccess, o
     // Avoid flash of white box if rendered for any reason.
     textArea.style.background = 'transparent';
 
-
-    textArea.value = text;
+    if(typeof text === 'string') textArea.value = text;
 
     document.body.appendChild(textArea);
     textArea.focus();
@@ -176,9 +175,9 @@ export const copyTextToClipboard:CopyTextToClipboard = async (text, onSuccess, o
     let err = null;
     try {
         if ('clipboard' in navigator) {
-            await navigator.clipboard.writeText(text);
+            text === 'string'? await navigator.clipboard.writeText(text) :  new Error('text\'s type is Array<string>');
         } else {
-            document.execCommand('copy', true, text);
+            text === 'string'? document.execCommand('copy', true, text):  new Error('text\'s type is Array<string>');
         }
     } catch (e) {
         err = e;
@@ -231,6 +230,7 @@ export const LinkButton:React.FC<LinkButtonProps> = ({ href, children, buttonVar
 };
 
 export const TooltipButton:React.FC<TooltipButtonProps> = ({ onClick, variant, children, tooltip, className="", size = "sm" }) => {
+    if(size !== "md") 
     return (
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{tooltip}</Tooltip>}>
             <Button variant={variant} onClick={onClick} className={className} size={size}>
@@ -245,7 +245,6 @@ export const ClipboardButton:React.FC<ClipboardButtonProps> = ({ text, variant, 
     const [show, setShow] = useState<boolean | undefined>(false);
     const [copied, setCopied] = useState(false);
     const [target, isHovered] = useHover();
-
     const currentIcon = (!copied) ? icon : <CheckIcon/>;
 
     let updater: (() => void) | null | undefined = null;
@@ -254,12 +253,12 @@ export const ClipboardButton:React.FC<ClipboardButtonProps> = ({ text, variant, 
         current = target.current;
     }
     
-
+    if(onSuccess)
     return (
         <>
             <Overlay
                 placement="bottom"
-                show={show || isHovered}
+                show={show || (typeof isHovered === 'boolean' ? isHovered : false)}
                 target={current}>
                 {props => {
                     updater = props.popper && props.popper.scheduleUpdate;
@@ -270,7 +269,8 @@ export const ClipboardButton:React.FC<ClipboardButtonProps> = ({ text, variant, 
             <Button variant={variant} ref={target} onClick={() => {
                 setShow(false)
                 setCopied(true)
-                if (updater !== null) updater()
+                if (typeof updater == 'function') updater()
+                if(  typeof target !== 'boolean')
                 setTimeout(() => {
                     if (target.current !== null) setCopied(false)
                 }, 1000);
@@ -423,7 +423,7 @@ export const Warning:React.FC<WarningProps>= (props) =>
 export const Warnings = ({ warnings = [] }) => {
     return <ul className="pl-0 ms-0 warnings">
            {warnings.map((warning, i) =>
-           <Warning key={i}>{warning}</Warning>
+           <Warning key={i} warnings={[]}>{warning}</Warning>
            )}
        </ul>;
 };

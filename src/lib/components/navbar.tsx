@@ -8,6 +8,7 @@ import {Navbar, Nav, NavDropdown} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import {useLoginConfigContext} from "../hooks/conf";
 import {FeedPersonIcon} from "@primer/octicons-react";
+import { TopNavLinkProps } from "./interface/comp_interface";
 
 const NavUserInfo = () => {
     const { user, loading, error } = useUser();
@@ -52,9 +53,9 @@ const NavUserInfo = () => {
     );
 };
 
-const TopNavLink = ({ href, children }) => {
+const TopNavLink: React.FC<TopNavLinkProps> = ({ href, children }) => {
     const router = useRouter();
-    const isActive = (prefix) => router.route.indexOf(prefix) === 0;
+    const isActive = (prefix:string) => router.route.indexOf(prefix) === 0;
     
     return (
         <Link component={Nav.Link} active={isActive(href)} href={href}>

@@ -7,9 +7,11 @@ import {Link} from "../nav";
 import dayjs from "dayjs";
 import Card from "react-bootstrap/Card";
 import React from "react";
+import { CommitActionsProps } from "../interface/comp_interface";
+import { Commit, metadata } from "../../../pages/repositories/interface/repo_interface";
 
 
-const CommitActions = ({ repo, commit }) => {
+const CommitActions: React.FC<CommitActionsProps> = ({ repo, commit }) => {
 
   const buttonVariant = "outline-dark";
 
@@ -36,14 +38,14 @@ const CommitActions = ({ repo, commit }) => {
   );
 };
 
-const getKeysOrNull = (metadata) => {
+const getKeysOrNull = (metadata: metadata[]) => {
   if (!metadata) return null;
   const keys = Object.getOwnPropertyNames(metadata);
   if (keys.length === 0) return null;
   return keys;
 };
 
-const CommitMetadataTable = ({ commit }) => {
+const CommitMetadataTable= (commit: Commit) => {
   const keys = getKeysOrNull(commit.metadata);
   if (!keys) return null;
 

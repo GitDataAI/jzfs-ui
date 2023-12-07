@@ -1,9 +1,10 @@
-import {  Dispatch, JSXElementConstructor, MutableRefObject, ReactElement, ReactNode, SetStateAction } from "react";
+import {  ComponentType, Dispatch, JSXElementConstructor, MutableRefObject, ReactElement, ReactNode, Ref, SetStateAction } from "react";
 import { FormControlProps } from "react-bootstrap";
 import { OverlayTriggerRenderProps } from "react-bootstrap/esm/OverlayTrigger";
 import { Placement } from "react-bootstrap/esm/types";
 import { Commit, Run } from "../../../pages/repositories/interface/repo_interface";
 import { QueryParams, RepositoryParams } from "../../api/interface";
+import { Link as RouterLink } from 'react-router-dom';
 
 export interface SimpleModalProps {
     children: React.ReactNode;
@@ -12,8 +13,11 @@ export interface SimpleModalProps {
     onCancel: () => void;
     footer?: React.ReactNode;
 }
+export interface AlertErrorType{
+    error: Error | null |AlertErrorType;
+}
 export interface AlertErrorProps {
-    error: Error | ReactElement | null | boolean;
+    error: Error | null | AlertErrorType;
     onDismiss?: () => void;
     className?: string | undefined;
   }
@@ -97,7 +101,7 @@ export interface PrefixSearchWidgetProps {
     defaultValue?: string;
 }
 export interface ClipboardButtonProps {
-    text: string;
+    text: string[] | string;
     variant: string;
     onSuccess?: () => void;
     icon?: React.ReactNode;
@@ -111,10 +115,10 @@ export interface TooltipButtonProps {
     children: React.ReactNode;
     tooltip: string;
     className?: string;
-    size?:'md' | 'sm' | 'lg' | undefined;
+    size?:'md'| 'sm' | 'lg' | undefined;
 }
 export interface LinkButtonProps {
-    href: { pathname: string; query?:{ commit?:string; repoId?: string; commitId?: string; ref?:React.ForwardedRef<HTMLInputElement>};  params?: { repoId?: string; commitId?: string; } | string };
+    href: { pathname: string; query?:{ commit?:string; repoId?: string; commitId?: string; ref?:React.ForwardedRef<HTMLInputElement> | string};  params?: { repoId?: string; commitId?: string; } | string };
     children: React.ReactNode;
     buttonVariant: string;
     tooltip?: string;
@@ -131,7 +135,7 @@ export interface ActionsBarProps {
     children: ReactNode;
 }
 export interface CopyTextToClipboard {
-    (text: string, onSuccess: () => void, onError: (err: any) => void): Promise<void>;
+    (text: string[] | string, onSuccess: () => void, onError?: (err: any) => void): Promise<void>;
 }
 export interface DebouncedFormControlProps extends FormControlProps {
     debounce?: number;
@@ -252,4 +256,98 @@ export interface GroupHeaderProps {
 }
 export interface PolicyHeaderProps {
     policyId: string;
+}
+export interface CodeTabPanelProps {
+    children: string[] | string;
+    isSelected: boolean;
+    language?: string;
+    index: number;
+    [key: string]: any;
+}
+export interface LayoutProps {
+    logged?: boolean;
+    children: React.ReactNode;
+}
+export interface WrapLinkProps {
+    navigate?: any;
+    onClick?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+    to: string;
+    target?: string;
+    replace?: boolean;
+    state?: any;
+    [key: string]: any;
+}
+
+export type WrappedComponentProps = WrapLinkProps & {
+    ref: Ref<any>;
+};
+
+export type WrappedComponent = ComponentType<WrappedComponentProps>;
+
+export interface CompLinkProps extends Omit<React.ComponentProps<typeof RouterLink>, 'to'> {
+    href?: { pathname: string; params: { repoId: string; }; } | string;
+    to?: string;
+    children?: ReactNode;
+    components?: any;
+    component?: ComponentType<any>;
+    [key: string]: any;
+}
+export interface NavItemProps {
+    href: string;
+    active?: boolean;
+    children: ReactNode;
+}
+export interface TopNavLinkProps {
+    href: string;
+    children: ReactNode;
+}
+export interface TabsWrapperProps {
+    isCentered?: boolean;
+    children: ReactNode;
+    defaultTabIndex?: number;
+    handleTabChange: (event: React.ChangeEvent<{}>, value: any) => void;
+    ariaLabel?: string;
+    textColor?: 'inherit' | 'primary' | 'secondary' | 'default';
+    indicatorColor?: 'secondary' | 'primary';
+}
+export interface PolicyEditorProps {
+    show: boolean;
+    onHide: () => void;
+    onSubmit: (id?: string, statement?: string) => Promise<any>;
+    policy?: any;
+    noID?: boolean;
+    isCreate?: boolean;
+    validationFunction?: (id: string) => { isValid: boolean; errorMessage?: string };
+    externalError?: any;
+}
+export interface Statement {
+    action: string[];
+    resource: string;
+    effect: string;
+}
+
+export interface Policy {
+    statement: Statement[];
+    creation_date: string | number;
+}
+
+export interface PolicyDisplayProps {
+    policy: Policy;
+    asJSON?: boolean;
+}
+
+interface GetMoreResult {
+    results: any[];
+    pagination: {
+        next_offset: string;
+        has_more: boolean;
+    };
+}
+export interface ChangeSummaryProps {
+    prefix: string;
+    getMore: (next_offset: string, prefix: string, arg1: boolean, pageSize: number) => Promise<GetMoreResult>;
+}
+export interface CommitActionsProps {
+    repo: RepositoryParams;
+    commit: Commit;
 }

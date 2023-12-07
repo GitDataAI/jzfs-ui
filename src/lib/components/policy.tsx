@@ -6,11 +6,12 @@ import Form from "react-bootstrap/Form";
 import {FormControl} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {AlertError, FormattedDate} from "./controls";
+import { PolicyDisplayProps, PolicyEditorProps } from "./interface/comp_interface";
 
-export const PolicyEditor = ({ show, onHide, onSubmit, policy = null, noID = false, isCreate = false, validationFunction = null, externalError = null }) => {
-    const [error, setError] = useState(null);
-    const idField = useRef(null);
-    const bodyField = useRef(null);
+export const PolicyEditor:React.FC<PolicyEditorProps> = ({ show, onHide, onSubmit, policy = null, noID = false, isCreate = false, validationFunction = null, externalError = null }) => {
+    const [error, setError] = useState<Error | null>(null);
+    const idField = useRef<HTMLInputElement>(null);
+    const bodyField = useRef<string>(null);
 
     useEffect(() => {
         if (policy === null && !!idField.current && idField.current.value === "")
@@ -26,24 +27,24 @@ export const PolicyEditor = ({ show, onHide, onSubmit, policy = null, noID = fal
         }
     }, [policy]);
 
-    const [savedBody, setSavedBody] = useState(null);
+    const [savedBody, setSavedBody] = useState<string|null>(null);
 
     const submit = () => {
         if (validationFunction) {
-            const validationResult = validationFunction(idField.current.value);
+            const validationResult = validationFunction(idField.current? idField.current.value: '');
             if (!validationResult.isValid) {
                 setError(validationResult.errorMessage);
                 return;
             }
         }
-        const statement = bodyField.current.value;
+        const statement =bodyField.current? bodyField.current.value : '';
         try {
             JSON.parse(statement);
         } catch (error) {
             setError(error);
         return false;
         }
-        const promise = (policy === null) ? onSubmit(idField.current.value, statement) : onSubmit(statement)
+        const promise = (policy === null) ? (idField.current? onSubmit(idField.current.value, statement): new Promise()) : onSubmit(statement)
         return promise
         .then((res) => {
         setSavedBody(statement);
@@ -106,7 +107,7 @@ export const PolicyEditor = ({ show, onHide, onSubmit, policy = null, noID = fal
     );
 };
 
-export const PolicyDisplay = ({ policy, asJSON }) => {
+export const PolicyDisplay:React.FC<PolicyDisplayProps> = ({ policy, asJSON }) => {
     let childComponent;
     if (asJSON) {
         childComponent = (<pre className={"policy-body"}>{JSON.stringify({statement: policy.statement}, null, 4)}</pre>);

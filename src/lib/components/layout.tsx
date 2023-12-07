@@ -1,8 +1,9 @@
 import React from "react";
 
 import TopNav from './navbar';
+import { LayoutProps } from "./interface/comp_interface";
 
-const Layout = ({ logged = true, children }) => {
+const Layout:React.FC<LayoutProps> = ({ logged = true, children }) => {
     return (
         <>
             <TopNav logged={logged}/>
