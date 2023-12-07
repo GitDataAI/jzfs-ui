@@ -16,8 +16,8 @@ export const useQuery = <T>(): Partial<T> => {
 
 interface URLDetails {
   pathname: string;
-  params: Record<string, string>;
-  query: string | Record<string, string> | string[][] | URLSearchParams | undefined ;
+  params?: Record<string, string>;
+  query?: string | Record<string, string> | string[][] | URLSearchParams | undefined |Partial<Record<string, string | undefined>>;
 }
 
 type URLBuilderInput = URLDetails | string;
@@ -28,7 +28,10 @@ export const buildURL = (url: URLBuilderInput): string => {
   // otherwise, assume query, params and pathname
   const path = generatePath(url.pathname, url.params ? url.params : {});
   if (!url.query) return path;
-  const query = new URLSearchParams(url.query).toString();
+  const definedQuery = Object.fromEntries(
+    Object.entries(url.query || {}).filter(([key, value]) => value !== undefined)
+);
+  const query = new URLSearchParams(definedQuery).toString();  
   return `${path}?${query}`;
 };
 

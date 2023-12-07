@@ -15,4 +15,10 @@ export const WithLoginConfigContext:React.FC<LoginConfigProviderProps> = ({child
            </LoginConfigContext.Provider>;
 };
 
-export const useLoginConfigContext = () => useContext(LoginConfigContext);
+export const useLoginConfigContext = () => {
+  const context = useContext(LoginConfigContext);
+  if (!('RBAC' in context)) {
+      console.warn('RBAC is not available in LoginConfigContext');
+  }
+  return context;
+}
