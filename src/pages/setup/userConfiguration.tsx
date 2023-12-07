@@ -4,7 +4,7 @@ import {AlertError} from "../../lib/components/controls";
 
 interface UserConfigurationProps {
     onSubmit: (email: string, admin: string, checks: boolean) => Promise<void>;
-    setupError: Error;
+    setupError:string | Error;
     disabled: boolean;
     requireAdmin: boolean;
     requireCommPrefs: boolean;
