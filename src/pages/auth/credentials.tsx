@@ -45,9 +45,9 @@ const CredentialsContainer = () => {
                         msg={<span>Create a new Access Key for user <strong>{userId}</strong>?</span>}
                         onConfirm={hide => {
                             createKey()
-                                .then(key => { setCreatedKey(key) })
+                                .then(key => { setCreatedKey(key); })
                                 .finally(hide);
-                        }}>
+                        } } size={"lg"}>
                         Create Access Key
                     </ConfirmationButton>
                 </ActionGroup>
@@ -71,7 +71,7 @@ const CredentialsContainer = () => {
                 currentAccessKey={user.accessKeyId}
                 refresh={refreshToken}
                 after={(after) ? after : ""}
-                onPaginate={after => router.push({
+                onPaginate={(after:string) => router.push({
                     pathname: '/auth/credentials',
                     query: {after}
                 })}

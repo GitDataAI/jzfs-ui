@@ -13,12 +13,17 @@ import {useRouter} from "../../../lib/hooks/router";
 const TOKEN_PARAM_NAME = "token";
 const EMAIL_PARAM_NAME = "email";
 
-const CreateUserWithPasswordForm = ({token, email}) => {
+const CreateUserWithPasswordForm = ({token, email}:{token:string;email:string}) => {
     const router = useRouter();
+    const [formValid, setFormValid] = useState<boolean>(false);
+    const [pwdConfirmValid, setPwdConfirmValid] = useState<boolean | null>(null);
+    const [reqActivateUserError, setReqActivateUserError] = useState<Error | null>(null);
+    const newPwdField = useRef<HTMLInputElement>(null);
+    const confirmPasswordField = useRef<HTMLInputElement>(null);
+    const v1 = newPwdField.current? newPwdField.current.value :  '';
+    const v2 = confirmPasswordField.current? confirmPasswordField.current.value : '';
 
     const onPasswordChange = () => {
-        const v1 = newPwdField.current.value || '';
-        const v2 = confirmPasswordField.current.value || '';
         if (v1.length > 0 && v2.length > 0) {
             const isPasswordMatch = v1 === v2;
             setFormValid(isPasswordMatch);
@@ -27,13 +32,6 @@ const CreateUserWithPasswordForm = ({token, email}) => {
             setPwdConfirmValid(true);
         }
     };
-
-    const [formValid, setFormValid] = useState(false);
-    const [pwdConfirmValid, setPwdConfirmValid] = useState(null);
-    const [reqActivateUserError, setReqActivateUserError] = useState(null);
-    const newPwdField = useRef(null);
-    const confirmPasswordField = useRef(null);
-
     return (
         <Row>
             <Col md={{offset: 4, span: 4}}>
@@ -48,6 +46,7 @@ const CreateUserWithPasswordForm = ({token, email}) => {
                 <Card className="create-invited-user-widget">
                     <Card.Header>Activate User</Card.Header>
                     <Card.Body>
+                        {/* 改密表单，但是类型“Auth”上不存在属性“updatePasswordByToken”。暂时搁置 */}
                         <Form id='activate-user' onSubmit={async (e) => {
                             e.preventDefault();
                             try {
@@ -55,7 +54,7 @@ const CreateUserWithPasswordForm = ({token, email}) => {
                                 setReqActivateUserError(null);
                                 router.push("/auth/login");
                             } catch (err) {
-                                setReqActivateUserError(err);
+                                if(err)setReqActivateUserError(err);
                             }
                         }}>
                             <Form.Group controlId="email">
@@ -101,7 +100,7 @@ export const ActivateInvitedUserPage = () => {
     return (
         <Layout logged={false}>
             {
-                token ?
+                token&&invitedUserEmail ?
                     <CreateUserWithPasswordForm token={token} email={invitedUserEmail}/> :
                     <Route element={<Navigate to="/auth/login"/>} />
             }

@@ -9,7 +9,7 @@ import {UserConfiguration} from "./userConfiguration";
 
 
 const SetupContents = () => {
-    const [setupError, setSetupError] = useState(null);
+    const [setupError, setSetupError] = useState<Error | null | string>(null);
     const [setupData, setSetupData] = useState(null);
     const [disabled, setDisabled] = useState(false);
     const [currentStep, setCurrentStep] = useState(null);

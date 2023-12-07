@@ -1,6 +1,6 @@
 // 为repositories中的index.tsx提供接口
 import { CSSProperties, MouseEventHandler, ReactElement } from "react";
-import { RepositoryParams } from "../../../lib/api/interface";
+import { QueryParams, RepositoryParams } from "../../../lib/api/interface";
 
 export interface CreateRepositoryButtonProps {
     variant?: string;
@@ -37,7 +37,7 @@ export interface GetStartedProps{
 export interface RepositoryListProps{
     onPaginate: (page: string | boolean | null) => void;
     prefix: string;
-    after: string|undefined;
+    after:QueryParams;
     refresh: boolean;
     // onCreateSampleRepo:() => Promise<void>;
     onCreateEmptyRepo: ()=>void;

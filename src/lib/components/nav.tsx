@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Ref } from "react";
 import {NavLink as RouterLink, useHref, useLinkClickHandler} from "react-router-dom";
 
 import Nav from "react-bootstrap/Nav";
 
 import {buildURL} from "../hooks/router";
 import {Tabs} from "@mui/material";
+import { CompLinkProps, TabsWrapperProps, WrapLinkProps, WrappedComponent } from "./interface/comp_interface";
+import { NavItemProps } from "react-bootstrap/lib/NavItem";
 
-const wrapComponent = (component) => {
-    const linkWrapper = React.forwardRef(({navigate, onClick, to, target, replace, state, ...rest}, ref) => {
+const wrapComponent = (component:WrappedComponent):React.FC<WrapLinkProps> => {
+    const linkWrapper = React.forwardRef(({navigate, onClick, to, target, replace, state, ...rest}: WrapLinkProps, ref:Ref<any>) => {
         const href = useHref(to);
         const handleClick = useLinkClickHandler(to, {
             replace,
@@ -19,7 +21,7 @@ const wrapComponent = (component) => {
             ...rest,
             ref,
             href,
-            onClick: (event) => {
+            onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
                 if (onClick && typeof onClick === "function") {
                     onClick(event);
                 }
@@ -38,7 +40,7 @@ const wrapComponent = (component) => {
     return linkWrapper;
 }
 
-export const Link = (props) => {
+export const Link:React.FC<CompLinkProps> = (props) => {
     const dontPassTheseProps = ['href', 'to', 'children', 'components', 'component'];
     const filteredProps = Object.entries(props).filter(([key]) => {
         return !dontPassTheseProps.includes(key);
@@ -52,7 +54,7 @@ export const Link = (props) => {
     return React.createElement(RouterLink, linkProps, props.children);
 }
 
-export const NavItem = ({href, active, children}) => {
+export const NavItem:React.FC<NavItemProps> = ({href, active, children}) => {
     return (
         <Nav.Item>
             <Link href={href} component={Nav.Link} active={active}>
@@ -62,7 +64,7 @@ export const NavItem = ({href, active, children}) => {
     );
 };
 
-export const TabsWrapper = ({
+export const TabsWrapper:React.FC<TabsWrapperProps> = ({
                                 isCentered,
                                 children,
                                 defaultTabIndex,

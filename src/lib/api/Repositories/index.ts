@@ -1,4 +1,5 @@
 import {AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, RepositoryDeletionError, apiRequest, extractError, qs} from "../index"
+import { QueryParams } from "../interface";
 
 export class Repositories {
 
@@ -14,7 +15,7 @@ export class Repositories {
         return response.json();
     }
 
-    async list(prefix = "", after = "", amount = DEFAULT_LISTING_AMOUNT) {
+    async list(prefix = "", after:QueryParams = "", amount = DEFAULT_LISTING_AMOUNT) {
         const query = qs({prefix, after, amount});
         const response = await apiRequest(`/repositories?${query}`);
         if (response.status !== 200) {

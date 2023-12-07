@@ -8,22 +8,29 @@ import {
 } from "@primer/octicons-react";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {humanSize} from "./tree";
+import { ChangeSummaryProps } from "../interface/comp_interface";
 
 const MAX_NUM_OBJECTS = 10_000;
 const PAGE_SIZE = 1_000;
 
 class SummaryEntry {
+    count: number;
+    sizeBytes: number;
     constructor() {
         this.count = 0
         this.sizeBytes = 0
     }
-    add(count, sizeBytes) {
+    add(count: number, sizeBytes: number) {
         this.count += count
         this.sizeBytes += sizeBytes
     }
 }
 
 class SummaryData {
+    added: SummaryEntry;
+    changed: SummaryEntry;
+    removed: SummaryEntry;
+    conflict: SummaryEntry;
     constructor() {
         this.added = new SummaryEntry()
         this.changed = new SummaryEntry()
@@ -39,7 +46,7 @@ class SummaryData {
  * @param {string} prefix - prefix to display summary for.
  * @param {(after : string, path : string, useDelimiter :? boolean, amount :? number) => Promise<any> } getMore - function to use to get the change entries.
  */
-export default ({prefix, getMore}) => {
+export default ({prefix, getMore}:ChangeSummaryProps) => {
     const [pullMore, setPullMore] = useState(false);
     const [resultsState, setResultsState] = useState({results: [], pagination: {}});
     const [loading, setLoading] = useState(true);
@@ -68,7 +75,7 @@ export default ({prefix, getMore}) => {
             })
     }, [resultsState.results, loading, pullMore])
 
-    const onLoadAll = useCallback((e) => {
+    const onLoadAll = useCallback((e: { preventDefault: () => void; }) => {
         e.preventDefault()
         setLoading(true)
         setPullMore(true)
