@@ -8,7 +8,7 @@ import {
 } from "@primer/octicons-react";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {humanSize} from "./tree";
-import { ChangeSummaryProps } from "../interface/comp_interface";
+import { ChangeSummaryPagination, ChangeSummaryProps } from "../interface/comp_interface";
 
 const MAX_NUM_OBJECTS = 10_000;
 const PAGE_SIZE = 1_000;
@@ -48,7 +48,8 @@ class SummaryData {
  */
 export default ({prefix, getMore}:ChangeSummaryProps) => {
     const [pullMore, setPullMore] = useState(false);
-    const [resultsState, setResultsState] = useState({results: [], pagination: {}});
+    let pagination:ChangeSummaryPagination = {}
+    const [resultsState, setResultsState] = useState({results: [], pagination});
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         const calculateChanges = async () => {

@@ -2,9 +2,10 @@ import {  ComponentType, Dispatch, JSXElementConstructor, MutableRefObject, Reac
 import { FormControlProps } from "react-bootstrap";
 import { OverlayTriggerRenderProps } from "react-bootstrap/esm/OverlayTrigger";
 import { Placement } from "react-bootstrap/esm/types";
-import { Commit, Run } from "../../../pages/repositories/interface/repo_interface";
+import { Commit, Reference, Run } from "../../../pages/repositories/interface/repo_interface";
 import { QueryParams, RepositoryParams } from "../../api/interface";
 import { Link as RouterLink } from 'react-router-dom';
+import { Entry } from "../../../util/otfUtil";
 
 export interface SimpleModalProps {
     children: React.ReactNode;
@@ -338,10 +339,12 @@ export interface PolicyDisplayProps {
 
 interface GetMoreResult {
     results: any[];
-    pagination: {
-        next_offset: string;
-        has_more: boolean;
-    };
+    pagination: ChangeSummaryPagination
+}
+export interface ChangeSummaryPagination {
+    next_offset?: string, 
+    has_more?:boolean;
+
 }
 export interface ChangeSummaryProps {
     prefix: string;
@@ -350,4 +353,22 @@ export interface ChangeSummaryProps {
 export interface CommitActionsProps {
     repo: RepositoryParams;
     commit: Commit;
+}
+export  interface TreeItemRowProps {
+    entry: Entry;
+    repo: RepositoryParams;
+    reference: Reference;
+    leftDiffRefID: string;
+    rightDiffRefID: string;
+    internalRefresh: any;
+    onRevert: any;
+    onNavigate: any;
+    delimiter: any;
+    relativeTo: any;
+    getMore: any;
+    depth?: number;
+    setTableDiffExpanded: any;
+    setTableDiffState: any;
+    setIsTableMerge: any;
+    deltaDiffEnabled: any;
 }
