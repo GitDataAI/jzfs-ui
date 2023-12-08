@@ -1,5 +1,6 @@
 import { RepositoryDeletionError } from "../../../lib/api";
 import { Branch, QueryParams, RepositoryParams } from "../../../lib/api/interface";
+import { Entry } from "../../../util/otfUtil";
 
 export type StorageConfigContextType = {
     warnings?: any[] | undefined;
@@ -203,7 +204,7 @@ export interface ChangesTreeContainerProps {
   loading: boolean;
   nextPage: any | null;
   setAfterUpdated: React.Dispatch<React.SetStateAction<string>> | ((afterUpdated: string) => void);
-  onNavigate: (entry: any) => void; // 你需要根据实际情况定义 entry 的类型
+  onNavigate: (entry: Entry) => void; 
   onRevert: (entry: {    path_type: string;    path: string;}) => Promise<void> | (() => void);
   setIsTableMerge: (isTableMerge: boolean) => void;
   changesTreeMessage?: string | React.JSX.Element;
@@ -320,14 +321,15 @@ export interface ActionsListProps {
   onFilterCommit: (commitId: string) => void;
 }
 export type metadata  = {
- metadata: Record<string,string>  
+  [key: string]: string;
 }
 export interface Commit {
   id: string;
   message: string;
   committer: string;
   creation_date: number;
-  metadata: metadata[]
+  metadata: metadata;
+  parents: string[]
 }
 
 export interface CommitWidgetProps {
@@ -346,4 +348,9 @@ export interface getKeysOrNullProps{
 }
 export interface CommitMetadataTableProps{
   commit:Commit;
+}
+export interface CommitInfoCardProps {
+  repo: RepositoryParams;
+  commit: Commit;
+  bare?: boolean;
 }
