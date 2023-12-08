@@ -6,11 +6,12 @@ import {AlertError, Loading} from "../controls";
 import {humanSize} from "./tree";
 import Alert from "react-bootstrap/Alert";
 import {InfoIcon} from "@primer/octicons-react";
+import { ContentDiffProps, DiffSizeReportProps, DiffType, NoContentDiffProps, ObjectsDiffProps, Stat, StatDiffProps } from "../interface/comp_interface";
 
 const maxDiffSizeBytes = 120 << 10;
 const supportedReadableFormats = ["txt", "text", "csv", "tsv", "yaml", "yml", "json"];
 
-export const ObjectsDiff = ({diffType, repoId, leftRef, rightRef, path}) => {
+export const ObjectsDiff:React.FC<ObjectsDiffProps> = ({diffType, repoId, leftRef, rightRef, path}) => {
     const readable = readableObject(path);
     let left;
     let right;
@@ -35,7 +36,7 @@ export const ObjectsDiff = ({diffType, repoId, leftRef, rightRef, path}) => {
     }
 
     if ((left && left.loading) || (right && right.loading)) return <Loading/>;
-    const err = (left && left.error) || (right && right.err);
+    const err = (left && left.error) || (right && right.error);
     if (err) return <AlertError error={err}/>;
 
     const leftStat = left && left.response;
@@ -50,11 +51,11 @@ export const ObjectsDiff = ({diffType, repoId, leftRef, rightRef, path}) => {
     }
     const leftSize = leftStat && leftStat.size_bytes;
     const rightSize = rightStat && rightStat.size_bytes;
-    return <ContentDiff repoId={repoId} path={path} leftRef={left && leftRef} rightRef={right && rightRef}
+    return <ContentDiff repoId={repoId} path={path} leftRef={left? left && leftRef : leftRef} rightRef={right? right && rightRef : rightRef}
                         leftSize={leftSize} rightSize={rightSize} diffType={diffType}/>;
 }
 
-function readableObject(path) {
+function readableObject(path: string) {
     for (const ext of supportedReadableFormats) {
         if (path.endsWith("." + ext)) {
             return true;
@@ -63,7 +64,7 @@ function readableObject(path) {
     return false;
 }
 
-const NoContentDiff = ({left, right, diffType}) => {
+const NoContentDiff:React.FC<NoContentDiffProps> = ({left, right, diffType}) => {
     const supportedFileExtensions = supportedReadableFormats.map((fileType) => `.${fileType}`);
     return <div>
         <span><StatDiff left={left} right={right} diffType={diffType}/></span>
@@ -71,14 +72,14 @@ const NoContentDiff = ({left, right, diffType}) => {
     </div>;
 }
 
-const ContentDiff = ({repoId, path, leftRef, rightRef, leftSize, rightSize, diffType}) => {
+const ContentDiff:React.FC<ContentDiffProps> = ({repoId, path, leftRef, rightRef, leftSize, rightSize, diffType}) => {
     const left = leftRef && useAPI(async () => objects.get(repoId, leftRef, path),
         [repoId, leftRef, path]);
     const right = rightRef && useAPI(async () => objects.get(repoId, rightRef, path),
         [repoId, rightRef, path]);
 
     if ((left && left.loading) || (right && right.loading)) return <Loading/>;
-    const err = (left && left.error) || (right && right.err);
+    const err = (left && left.error) || (right && right.error);
     if (err) return <AlertError error={err}/>;
 
     return <div>
@@ -91,7 +92,7 @@ const ContentDiff = ({repoId, path, leftRef, rightRef, leftSize, rightSize, diff
     </div>;
 }
 
-function validateDiffInput(left, right, diffType) {
+function validateDiffInput(left: Stat | null, right: Stat | null, diffType: DiffType): JSX.Element | void {
     switch (diffType) {
         case 'changed':
             if (!left && !right) return <AlertError error={"Invalid diff input"}/>;
@@ -109,7 +110,7 @@ function validateDiffInput(left, right, diffType) {
     }
 }
 
-const StatDiff = ({left, right, diffType}) => {
+const StatDiff: React.FC<StatDiffProps> = ({left, right, diffType}) => {
     const err = validateDiffInput(left, right, diffType);
     if (err) return err;
     const rightSize = right && right.size_bytes;
@@ -121,7 +122,7 @@ const StatDiff = ({left, right, diffType}) => {
     </>;
 }
 
-const DiffSizeReport = ({leftSize, rightSize, diffType}) => {
+const DiffSizeReport: React.FC<DiffSizeReportProps> = ({leftSize, rightSize, diffType}) => {
     let label = diffType;
     let size;
     switch (diffType) {
@@ -134,9 +135,9 @@ const DiffSizeReport = ({leftSize, rightSize, diffType}) => {
             }
             if (size < 0) {
                 size = -size;
-                label = "added";
+                label =DiffType.Added;
             } else {
-                label = "removed";
+                label = DiffType.Removed;
             }
             break;
         case 'conflict': // conflict will compare left and right. further details: https://github.com/treeverse/lakeFS/issues/3269

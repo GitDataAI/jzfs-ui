@@ -1,6 +1,8 @@
-export const RefTypeBranch = 'branch';
-export const RefTypeCommit = 'commit';
-export const RefTypeTag = 'tag';
+import { RefType } from "./lib/components/interface/comp_interface";
+
+export const RefTypeBranch = RefType.Branch;
+export const RefTypeCommit = RefType.Commit;
+export const RefTypeTag = RefType.Tag;
 export enum TreeItemType {
     Object,
     Prefix,

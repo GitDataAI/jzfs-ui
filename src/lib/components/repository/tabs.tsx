@@ -7,15 +7,16 @@ import {useRefs} from "../../hooks/repo";
 import {Link, NavItem} from "../nav";
 import {useRouter} from "../../hooks/router";
 import {RefTypeBranch} from "../../../constants";
+import { ActiveTab } from "../interface/comp_interface";
 
 
 
-export const RepositoryNavTabs = ({ active }) => {
+export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
     const { reference } = useRefs();
     const router = useRouter();
     const { repoId } = router.params;
 
-    const withRefContext = (url) => {
+    const withRefContext = (url: string) => {
         const params = new URLSearchParams();
         if (reference) params.append('ref', reference.id);
         if (params.toString())
@@ -23,7 +24,7 @@ export const RepositoryNavTabs = ({ active }) => {
         return url;
     };
 
-    const withRefAndCompareContext = (url) => {
+    const withRefAndCompareContext = (url: string) => {
         const params = new URLSearchParams();
         if (reference) {
             params.append('ref', reference.id)
@@ -34,7 +35,7 @@ export const RepositoryNavTabs = ({ active }) => {
         return url;
     };
 
-    const withBranchContext = (url) => {
+    const withBranchContext = (url: string) => {
         const params = new URLSearchParams();
         if (!!reference && reference.type === RefTypeBranch) params.append('ref', reference.id);
         if (params.toString())

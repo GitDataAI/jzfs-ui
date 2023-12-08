@@ -9,8 +9,9 @@ import {repositories} from "../../api";
 import {AlertError, Loading} from "../controls";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
+import { DeltaLakeDiffProps, DiffType } from "../interface/comp_interface";
 
-export const DeltaLakeDiff = ({repo, leftRef, rightRef, tablePath}) => {
+export const DeltaLakeDiff:React.FC<DeltaLakeDiffProps> = ({repo, leftRef, rightRef, tablePath}) => {
     let { error, loading, response } = useAPI(() => repositories.otfDiff(repo.id, leftRef, rightRef, tablePath, OtfType.Delta), [])
     if (loading) return <Loading style={{margin: 0+"px"}}/>;
     if (!loading && error) return <AlertError error={error}/>;
@@ -23,7 +24,7 @@ export const DeltaLakeDiff = ({repo, leftRef, rightRef, tablePath}) => {
                 <tbody>
                 <TableDiffTypeRow diffType={diffType}/>
                 {
-                    otfDiffs.map(otfDiff => {
+                    otfDiffs.map((otfDiff:OtfDiffType) => {
                         return <OtfDiffRow key={otfDiff.timestamp + "-diff-row"} otfDiff={otfDiff}/>;
                     })
                 }
@@ -33,7 +34,7 @@ export const DeltaLakeDiff = ({repo, leftRef, rightRef, tablePath}) => {
     </>
 }
 
-const TableDiffTypeRow = ({diffType}) => {
+const TableDiffTypeRow = ({diffType}:{diffType:DiffType}) => {
     if (OtfDiffType.Changed === diffType) {
         return "";
     }

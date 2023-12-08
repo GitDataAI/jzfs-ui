@@ -15,10 +15,10 @@ export interface SimpleModalProps {
     footer?: React.ReactNode;
 }
 export interface AlertErrorType{
-    error: Error | null |AlertErrorType;
+    error: Error | null |AlertErrorType | string;
 }
 export interface AlertErrorProps {
-    error: Error | null | AlertErrorType;
+    error: Error | null | AlertErrorType | string;
     onDismiss?: () => void;
     className?: string | undefined;
   }
@@ -172,7 +172,6 @@ export interface Config {
     blockstore_type: string;
     blockstore_namespace_ValidityRegex: string;
     blockstore_namespace_example: string;
-    // 其他属性...
 }
 
 export interface RepositoryCreateFormProps {
@@ -286,7 +285,7 @@ export type WrappedComponentProps = WrapLinkProps & {
 export type WrappedComponent = ComponentType<WrappedComponentProps>;
 
 export interface CompLinkProps extends Omit<React.ComponentProps<typeof RouterLink>, 'to'> {
-    href?: { pathname: string; params: { repoId: string; }; } | string;
+    href?: { pathname: string; params?: { repoId: string; commitId?:string}; } | string;
     to?: string;
     children?: ReactNode;
     components?: any;
@@ -363,7 +362,7 @@ export  interface TreeItemRowProps {
     internalRefresh: any;
     onRevert: any;
     onNavigate: any;
-    delimiter: any;
+    delimiter: string;
     relativeTo: any;
     getMore: any;
     depth?: number;
@@ -371,4 +370,169 @@ export  interface TreeItemRowProps {
     setTableDiffState: any;
     setIsTableMerge: any;
     deltaDiffEnabled: any;
+}
+export interface TreeEntryPaginatorProps {
+    path: string;
+    setAfterUpdated: (page: any) => void;
+    nextPage: string | boolean | null | undefined;
+    depth?: number;
+    loading?: boolean;
+}
+export interface UseTreeItemTypeProps {
+    entry: Entry; 
+    repo: RepositoryParams; 
+    leftDiffRefID: string; 
+    rightDiffRefID: string; 
+    isDeltaEnabled: boolean;
+}
+export interface GetMoreChanges {
+    (repo: RepositoryParams, leftRefId: string, rightRefId: string, delimiter: string): (afterUpdated: QueryParams, path: string, useDelimiter?: boolean, amount?: number) => any;
+}
+
+export interface TableDiffState {
+    isShown: boolean;
+    expandedTablePath: string;
+    expandedTableName: string;
+}
+
+export type SetTableDiffState = Dispatch<SetStateAction<TableDiffState>>;
+
+export type SetIsTableMerge = Dispatch<SetStateAction<boolean>>;
+interface MetadataField {
+    key: string;
+    value: string;
+}
+type SetMetadataFields = Dispatch<SetStateAction<MetadataField[]>>;
+
+export interface MetadataFieldsProps {
+    metadataFields: MetadataField[];
+    setMetadataFields: SetMetadataFields;
+}
+export enum ActiveTab {
+    Objects = 'objects',
+    Changes = 'changes',
+    Commits = 'commits',
+    Branches = 'branches',
+    Tags = 'tags',
+    Compare = 'compare',
+    Actions = 'actions',
+    Settings = 'settings'
+}
+export interface RepositoryPageLayoutProps {
+    activePage: ActiveTab; 
+    children: React.ReactNode;
+    fluid?: string;
+}
+export enum DiffType {
+    Changed = 'changed',
+    Conflict = 'conflict',
+    Added = 'added',
+    Removed = 'removed'
+}
+
+export interface ObjectsDiffProps {
+    diffType: DiffType;
+    repoId: string;
+    leftRef: string;
+    rightRef: string;
+    path: string;
+}
+export  interface Stat{
+    loading: boolean;
+    error: Error | null;
+    response: any;
+    responseHeaders: any;   
+    size_bytes:number
+}
+export interface NoContentDiffProps {
+    left: Stat;
+    right: Stat;
+    diffType: DiffType;
+}
+export interface ContentDiffProps {
+    repoId: string;
+    path: string;
+    leftRef: string;
+    rightRef: string;
+    leftSize: number;
+    rightSize: number;
+    diffType: DiffType;
+}
+export interface StatDiffProps {
+    left: Stat;
+    right: Stat;
+    diffType: DiffType;
+}
+export interface DiffSizeReportProps {
+    leftSize: number;
+    rightSize: number;
+    diffType: DiffType;
+}
+
+export enum RefType {
+    Branch = 'branch',
+    Tag = 'tag',
+    Commit = 'commit'
+}
+
+export interface RefSelectorProps {
+    repo: RepositoryParams;
+    selected: ref;
+    selectRef: (ref: ref) => void;
+    withCommits: boolean;
+    withWorkspace: boolean;
+    withTags: boolean;
+    amount?: number;
+}
+export interface ref {
+    id: string;
+    type: RefType; 
+}
+
+export interface CommitListProps {
+    commits: Commit[];
+    selectRef: (ref: ref) => void;
+    reset: () => void;
+    branch: string;
+    withWorkspace: boolean;
+}
+export interface RefEntryProps {
+    repo: RepositoryParams;
+    namedRef: string;
+    refType: RefType;
+    selectRef: (ref: ref) => void;
+    selected: ref;
+    logCommits: () => void;
+    withCommits: boolean;
+}
+interface Pagination {
+    has_more: boolean;
+}
+
+interface Result {
+    id: string;
+}
+export interface RepoPaginatorProps {
+    pagination: Pagination;
+    onPaginate: (next: string) => void;
+    results: Result[];
+    from: string;
+}
+export interface RefDropdownProps {
+    repo: RepositoryParams;
+    selected: ref;
+    selectRef: (ref: ref) => void;
+    onCancel?: () => void;
+    variant?: string;
+    prefix?: string;
+    emptyText?: string;
+    withCommits?: boolean;
+    withWorkspace?: boolean;
+    withTags?: boolean;
+}
+export interface DeltaLakeDiffProps {
+    repo: RepositoryParams;
+    leftRef: string;
+    rightRef: string;
+    tablePath: string;
 }

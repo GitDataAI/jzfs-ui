@@ -11,6 +11,7 @@ import {Link} from "../nav";
 import { config } from "../../api";
 import { useAPI } from "../../hooks/api";
 import RepoOnboardingChecklistSlider from "./repoOnboardingChecklistSlider";
+import { RepositoryPageLayoutProps } from "../interface/comp_interface";
 
 const RepoNav = () => {
     const { repo } = useRefs();
@@ -29,7 +30,7 @@ const RepoNav = () => {
     )
 };
 
-export const RepositoryPageLayout = ({ activePage, children, fluid = "sm" }) => {
+export const RepositoryPageLayout:React.FC<RepositoryPageLayoutProps> = ({ activePage, children, fluid = "sm" }) => {
     const [showChecklist, setShowChecklist] = useLocalStorage(
         "showChecklist",
         false

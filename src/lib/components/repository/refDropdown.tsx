@@ -1,19 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
-
-import Form from "react-bootstrap/Form";
-import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
-import Badge from "react-bootstrap/Badge";
-import Overlay from "react-bootstrap/Overlay";
 import {ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XIcon} from "@primer/octicons-react";
-import Popover from "react-bootstrap/Popover";
-
 import {tags, branches, commits} from '../../api';
-import {Nav} from "react-bootstrap";
+import {Nav, Badge,Form,Button,Alert,Overlay,Popover } from "react-bootstrap";
 import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../../constants";
+import { CommitListProps, RefDropdownProps, RefEntryProps, RefSelectorProps, ref, RepoPaginatorProps } from "../interface/comp_interface";
+import { Commit } from "../../../pages/repositories/interface/repo_interface";
 
 
-const RefSelector = ({ repo, selected, selectRef, withCommits, withWorkspace, withTags, amount = 300 }) => {
+const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, withCommits, withWorkspace, withTags, amount = 300 }) => {
     // used for ref pagination
     const [pagination, setPagination] = useState({after: "", prefix: "", amount});
     const [refList, setRefs] = useState({loading: true, payload: null, error: null});
@@ -97,7 +91,7 @@ const RefSelector = ({ repo, selected, selectRef, withCommits, withWorkspace, wi
     }
 
 
-    const results = refList.payload.results;
+    const results = refList.payload? refList.payload.results;
 
     return (
         <div className="ref-selector">
@@ -115,7 +109,7 @@ const RefSelector = ({ repo, selected, selectRef, withCommits, withWorkspace, wi
                             ))}
                         </ul>
                         <Paginator results={refList.payload.results} pagination={refList.payload.pagination} from={pagination.after} onPaginate={(after) => {
-                            setPagination({after})
+                            setPagination({after , prefix: "", amount})
                         }}/>
                     </>
                 ) : (
@@ -127,8 +121,8 @@ const RefSelector = ({ repo, selected, selectRef, withCommits, withWorkspace, wi
     );
 };
 
-const CommitList = ({ commits, selectRef, reset, branch, withWorkspace }) => {
-    const getMessage = commit => {
+const CommitList:React.FC<CommitListProps> = ({ commits, selectRef, reset, branch, withWorkspace }) => {
+    const getMessage = (commit:Commit) => {
         if (!commit.message) {
             return 'repository epoch';
         }
@@ -171,7 +165,7 @@ const CommitList = ({ commits, selectRef, reset, branch, withWorkspace }) => {
     );
 };
 
-const RefEntry = ({repo, namedRef, refType, selectRef, selected, logCommits, withCommits}) => {
+const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, selected, logCommits, withCommits}) => {
     return (
         <li className="list-group-item" key={namedRef}>
             {(!!selected && namedRef === selected.id) ?
@@ -192,7 +186,7 @@ const RefEntry = ({repo, namedRef, refType, selectRef, selected, logCommits, wit
     );
 };
 
-const Paginator = ({ pagination, onPaginate, results, from }) => {
+const Paginator:React.FC<RepoPaginatorProps> = ({ pagination, onPaginate, results, from }) => {
     const next = (results.length) ? results[results.length-1].id : "";
 
     if (!pagination.has_more && from === "") return (<span/>);
@@ -212,7 +206,7 @@ const Paginator = ({ pagination, onPaginate, results, from }) => {
     );
 };
 
-const RefDropdown = ({ repo, selected, selectRef, onCancel, variant="light", prefix = '', emptyText = '', withCommits = true, withWorkspace = true, withTags = true }) => {
+const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onCancel, variant="light", prefix = '', emptyText = '', withCommits = true, withWorkspace = true, withTags = true }) => {
 
     const [show, setShow] = useState(false);
     const target = useRef(null);
@@ -254,7 +248,7 @@ const RefDropdown = ({ repo, selected, selectRef, onCancel, variant="light", pre
         );
     }
 
-    const showId = (ref) => {
+    const showId = (ref:ref) => {
         if (!ref)
             return ''
         if (ref.type === RefTypeCommit)

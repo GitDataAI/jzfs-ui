@@ -18,6 +18,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { ChangesTreeContainerProps } from "../../../pages/repositories/interface/repo_interface";
+import { GetMoreChanges, MetadataFieldsProps, SetIsTableMerge, SetTableDiffState, TreeEntryPaginatorProps, TreeItemRowProps, UseTreeItemTypeProps } from "../interface/comp_interface";
 
 /**
  * Tree item is a node in the tree view. It can be expanded to multiple TreeEntryRow:
@@ -35,14 +36,14 @@ import { ChangesTreeContainerProps } from "../../../pages/repositories/interface
  * @param relativeTo prefix of the parent item ('' for root elements)
  * @param {(after : string, path : string, useDelimiter :? boolean, amount :? number) => Promise<any> } getMore callback to be called when more items need to be rendered
  */
-export const TreeItemRow = ({ entry, repo, reference, leftDiffRefID, rightDiffRefID, internalRefresh, onRevert, onNavigate, delimiter, relativeTo, getMore,
+export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference, leftDiffRefID, rightDiffRefID, internalRefresh, onRevert, onNavigate, delimiter, relativeTo, getMore,
                                 depth=0, setTableDiffExpanded, setTableDiffState, setIsTableMerge, deltaDiffEnabled}) => {
     const [dirExpanded, setDirExpanded] = useState(false); // state of a non-leaf item expansion
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
     const [resultsState, setResultsState] = useState({results:[], pagination:{}}); // current retrieved children of the item
     const [diffExpanded, setDiffExpanded] = useState(false); // state of a leaf item expansion
 
-    const itemType = useAPI(() => useTreeItemType(entry, repo, leftDiffRefID, rightDiffRefID, deltaDiffEnabled), []);
+    const itemType = useAPI(() => useTreeItemType({entry, repo, leftDiffRefID, rightDiffRefID, isDeltaEnabled:deltaDiffEnabled}), []);
 
     const { error, loading, nextPage } = useAPIWithPagination(async () => {
         if (!dirExpanded) return
@@ -75,7 +76,7 @@ export const TreeItemRow = ({ entry, repo, reference, leftDiffRefID, rightDiffRe
             {diffExpanded && <tr key={"row-" + entry.path} className={"leaf-entry-row"}>
                 <td className="objects-diff" colSpan={4}>
                     <ObjectsDiff
-                        diffType={entry.type}
+                        diffType={entry.path_type}
                         repoId={repo.id}
                         leftRef={leftDiffRefID}
                         rightRef={rightDiffRefID}
@@ -93,7 +94,7 @@ export const TreeItemRow = ({ entry, repo, reference, leftDiffRefID, rightDiffRe
             {dirExpanded && results &&
             results.map(child =>
                 (<TreeItemRow key={child.path + "-item"} entry={child} repo={repo} reference={reference} leftDiffRefID={leftDiffRefID} rightDiffRefID={rightDiffRefID} onRevert={onRevert} onNavigate={onNavigate}
-                              internalReferesh={internalRefresh} delimiter={delimiter} depth={depth + 1}
+                              internalRefresh={internalRefresh} delimiter={delimiter} depth={depth + 1}
                               relativeTo={entry.path} getMore={getMore} setTableDiffExpanded={onTableDiffExpansion(child, setTableDiffState, setIsTableMerge)} setTableDiffState={setTableDiffState}
                               setIsTableMerge={setIsTableMerge}
                               deltaDiffEnabled={deltaDiffEnabled}/>))}
@@ -107,7 +108,7 @@ export const TreeItemRow = ({ entry, repo, reference, leftDiffRefID, rightDiffRe
     }
 }
 
-export const TreeEntryPaginator = ({ path, setAfterUpdated, nextPage, depth=0, loading=false }) => {
+export const TreeEntryPaginator:React.FC<TreeEntryPaginatorProps> = ({ path, setAfterUpdated, nextPage, depth=0, loading=false }) => {
     let pathSectionText = "Load more results ...";
     if (path !== ""){
         pathSectionText = `Load more results for prefix ${path} ....`
@@ -129,7 +130,7 @@ export const TreeEntryPaginator = ({ path, setAfterUpdated, nextPage, depth=0, l
     );
 };
 
-async function useTreeItemType(entry, repo, leftDiffRefID, rightDiffRefID, isDeltaEnabled) {
+async function useTreeItemType({entry, repo, leftDiffRefID, rightDiffRefID, isDeltaEnabled}: UseTreeItemTypeProps): Promise<TreeItemType> {
     if (entry.path_type === "object") {
         return TreeItemType.Object;
     }
@@ -182,7 +183,7 @@ export const ChangesTreeContainer:React.FC<ChangesTreeContainerProps> = ({result
     const closeAndRememberCompareTip = useCallback(() => {
         window.localStorage.setItem(compareTipStorageKey, "false");
         setShowCompareTip(false);
-    });
+    },[]);
 
     if (isDeltaDiffEnabled.loading) {
         return <Loading />
@@ -252,36 +253,38 @@ export const ChangesTreeContainer:React.FC<ChangesTreeContainerProps> = ({result
     }
 }
 
-export const defaultGetMoreChanges = (repo, leftRefId, rightRefId, delimiter) => (afterUpdated, path, useDelimiter= true, amount = -1) => {
+export const defaultGetMoreChanges:GetMoreChanges = (repo, leftRefId, rightRefId, delimiter) => (afterUpdated, path, useDelimiter= true, amount = -1) => {
     return refs.diff(repo.id, leftRefId, rightRefId, afterUpdated, path, useDelimiter ? delimiter : "", amount > 0 ? amount : undefined);
 };
 
-const onTableDiffExpansion = (entry, setTableDiffState, setIsTableMerge) => () => {
+const onTableDiffExpansion : (entry: otfUtils.Entry, setTableDiffState: SetTableDiffState, setIsTableMerge?: SetIsTableMerge) => () => void
+= (entry, setTableDiffState, setIsTableMerge)  => () => {
     const pathParts = entry.path.split('/');
     const tableName = pathParts.pop() || pathParts.pop();  // handle trailing slash at the end of table name
+    if(tableName)
     setTableDiffState({isShown: true,  expandedTablePath: entry.path, expandedTableName: tableName})
     if (setIsTableMerge) {
         setIsTableMerge(true);
     }
 }
 
-export const MetadataFields = ({ metadataFields, setMetadataFields}) => {
-    const onChangeKey = useCallback((i) => {
-        return e => {
+export const MetadataFields: React.FC<MetadataFieldsProps> = ({ metadataFields, setMetadataFields}) => {
+    const onChangeKey = useCallback((i: number) => {
+        return (e:React.ChangeEvent<HTMLInputElement>) => {
             const key = e.currentTarget.value;
             setMetadataFields(prev => [...prev.slice(0,i), {...prev[i], key}, ...prev.slice(i+1)]);
             e.preventDefault()
         };
     }, [setMetadataFields]);
 
-    const onChangeValue = useCallback((i) => {
-        return e => {
+    const onChangeValue = useCallback((i: number) => {
+        return (e:React.ChangeEvent<HTMLInputElement>)=> {
             const value = e.currentTarget.value;
             setMetadataFields(prev => [...prev.slice(0,i),  {...prev[i], value}, ...prev.slice(i+1)]);
         };
     }, [setMetadataFields]);
 
-    const onRemovePair = useCallback((i) => {
+    const onRemovePair = useCallback((i: number) => {
         return () => setMetadataFields(prev => [...prev.slice(0, i), ...prev.slice(i + 1)])
     }, [setMetadataFields])
 
