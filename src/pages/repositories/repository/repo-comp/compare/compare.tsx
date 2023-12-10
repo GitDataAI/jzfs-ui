@@ -21,6 +21,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import {ComingSoonModal} from "../../../../../lib/components/modals";
 import { CompareListProps, IRefObject, MergeButtonProps, ResultsState, StatEvent } from "../../../interface/repo_interface";
+import { Entry } from "../../../../../util/otfUtil";
 
 const CompareList: React.FC<CompareListProps> = ({ repo, reference, compareReference, prefix, onSelectRef, onSelectCompare, onNavigate }) => {
     const [internalRefresh, setInternalRefresh] = useState(true);
@@ -119,7 +120,7 @@ const CompareList: React.FC<CompareListProps> = ({ repo, reference, compareRefer
         repo={repo} reference={reference} internalRefresh={internalRefresh} prefix={prefix}
         getMore={defaultGetMoreChanges(repo, reference.id, compareReference.id, delimiter)}
         loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated} onNavigate={onNavigate}
-        setIsTableMerge={setIsTableMerge} changesTreeMessage={changesTreeMessage} onRevert={function (entry: { path_type: string; path: string; }): Promise<void> | (() => void) {
+        setIsTableMerge={setIsTableMerge} changesTreeMessage={changesTreeMessage} onRevert={function (entry: Entry): Promise<void> | (() => void) {
             throw new Error("Function not implemented.");
         } }/>
     }
