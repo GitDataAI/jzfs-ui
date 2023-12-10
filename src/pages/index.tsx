@@ -1,26 +1,24 @@
-// 存放路由，暂定与之前路由逻辑相同
-
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import {WithLoginConfigContext} from "../lib/hooks/conf";
+import React, { Suspense } from 'react';
 
-
-// pages
-import Repositories from './repositories';
-import Auth from './auth';
-import Setup from './setup';
-import React from 'react';
+const Repositories = React.lazy(() => import('./repositories'));
+const Auth = React.lazy(() => import('./auth'));
+const Setup = React.lazy(() => import('./setup'));
 
 export const IndexPage = () => {
     return (
         <Router>
             <WithLoginConfigContext>
-                <Routes>
-                    <Route path="/" element={<Navigate to="/repositories"/>} />
-                    <Route path="/repositories/*" element={<Repositories/>} />
-                    <Route path="/auth/*" element={<Auth/>} />
-                    <Route path="/setup/*" element={<Setup/>} />
-                    <Route path="*" element={<Navigate to="/repositories" replace />} />
-                </Routes>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Routes>
+                        <Route path="/" element={<Navigate to="/repositories"/>} />
+                        <Route path="/repositories/*" element={<Repositories/>} />
+                        <Route path="/auth/*" element={<Auth/>} />
+                        <Route path="/setup/*" element={<Setup/>} />
+                        <Route path="*" element={<Navigate to="/repositories" replace />} />
+                    </Routes>
+                </Suspense>
             </WithLoginConfigContext>
         </Router>
     );
