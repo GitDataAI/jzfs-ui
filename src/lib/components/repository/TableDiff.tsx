@@ -9,22 +9,24 @@ import {repositories} from "../../api";
 import {AlertError, Loading} from "../controls";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
-import { DeltaLakeDiffProps, DiffType } from "../interface/comp_interface";
+import { DeltaLakeDiffProps, OperationMetadataRowProps } from "../interface/comp_interface";
+import { RepositoryParams } from "../../api/interface";
+import { Commit, OperationExpansionSectionProps, Run } from "../../../pages/repositories/interface/repo_interface";
 
 export const DeltaLakeDiff:React.FC<DeltaLakeDiffProps> = ({repo, leftRef, rightRef, tablePath}) => {
-    let { error, loading, response } = useAPI(() => repositories.otfDiff(repo.id, leftRef, rightRef, tablePath, OtfType.Delta), [])
+    let { error, loading, response } = useAPI(() => repositories.otfDiff(repo.id?repo.id:'', leftRef, rightRef, tablePath, OtfType.Delta), [])
     if (loading) return <Loading style={{margin: 0+"px"}}/>;
     if (!loading && error) return <AlertError error={error}/>;
 
-    const otfDiffs = response.results;
-    const diffType = response.diff_type;
+    const otfDiffs = response ? response.results: [];
+    const diffType = response ?  response.diff_type : '';
     return <>
         {(OtfDiffType.Dropped !== diffType && otfDiffs.length === 0) ?  <Alert variant="info" style={{margin: 0+"px"}}>No changes</Alert> :
             <Table className="table-diff" size="md">
                 <tbody>
                 <TableDiffTypeRow diffType={diffType}/>
                 {
-                    otfDiffs.map((otfDiff:OtfDiffType) => {
+                    otfDiffs.map((otfDiff) => {
                         return <OtfDiffRow key={otfDiff.timestamp + "-diff-row"} otfDiff={otfDiff}/>;
                     })
                 }
@@ -34,7 +36,7 @@ export const DeltaLakeDiff:React.FC<DeltaLakeDiffProps> = ({repo, leftRef, right
     </>
 }
 
-const TableDiffTypeRow = ({diffType}:{diffType:DiffType}) => {
+const TableDiffTypeRow = ({diffType}:{diffType:string}) => {
     if (OtfDiffType.Changed === diffType) {
         return "";
     }
@@ -45,7 +47,7 @@ const TableDiffTypeRow = ({diffType}:{diffType:DiffType}) => {
     </tr>
 }
 
-const OtfDiffRow = ({otfDiff}) => {
+const OtfDiffRow = ({otfDiff}:{otfDiff:RepositoryParams | Run | Commit}) => {
     const [rowExpanded, setRowExpanded] = useState(false);
     const rowClass = "otf-diff-" + otfDiff.operation_type;
     return <>
@@ -56,7 +58,7 @@ const OtfDiffRow = ({otfDiff}) => {
     </>
 }
 
-const OperationMetadataRow = ({otfDiff, operationExpanded, onExpand, ...rest}) => {
+const OperationMetadataRow:React.FC<OperationMetadataRowProps> = ({otfDiff, operationExpanded, onExpand, ...rest}) => {
     return <tr {...rest}>
         <td className={"table-operation-type pl-lg-10 col-10"}>{otfDiff.operation}</td>
         <td className="table-id col-sm-auto">Version = {otfDiff.id}</td>
@@ -67,9 +69,9 @@ const OperationMetadataRow = ({otfDiff, operationExpanded, onExpand, ...rest}) =
 
 }
 
-const OperationDetailsRow = ({otfDiff}) => {
+const OperationDetailsRow = ({otfDiff}:{otfDiff:RepositoryParams | Run | Commit}) => {
     const operationTimestamp = otfDiff.timestamp;
-    const operationContent = stringifyOperationContent(otfDiff.operation_content);
+    const operationContent = stringifyOperationContent(otfDiff.operation_content?otfDiff.operation_content:'');
     return <tr className="otf-diff-operation-details">
         <td className="pl-lg-10 col-10 table-operation-details">
             <strong>Timestamp:</strong> {operationTimestamp}
@@ -81,7 +83,7 @@ const OperationDetailsRow = ({otfDiff}) => {
     </tr>
 }
 
-const OperationExpansionSection = ({operationExpanded, onExpand}) => {
+const OperationExpansionSection:React.FC<OperationExpansionSectionProps> = ({operationExpanded, onExpand}) => {
     return <OverlayTrigger placement="bottom" overlay={<Tooltip>{operationExpanded ? "Hide operation info" : "Show operation info"}</Tooltip>}>
         <Button variant="link" className="table-operation-expansion" onClick={onExpand}>{operationExpanded ? <ChevronDownIcon/> : <ChevronRightIcon/>}</Button>
     </OverlayTrigger>
@@ -94,7 +96,7 @@ const OperationExpansionSection = ({operationExpanded, onExpand}) => {
  * @param content of the table operation
  * @return a prettified string including the operation content.
  */
-function stringifyOperationContent(content) {
+function stringifyOperationContent(content: string){
     let jsonData = {};
     for (const [key, value] of Object.entries(content)) {
         jsonData[key] = parseValue(value);
@@ -102,7 +104,7 @@ function stringifyOperationContent(content) {
     return JSON.stringify(jsonData, null, 4);
 }
 
-function parseValue(val) {
+function parseValue(val: string) {
     let parsedVal = "";
     try {
         parsedVal = JSON.parse(val);

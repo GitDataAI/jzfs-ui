@@ -191,7 +191,7 @@ export type GetMoreUncommittedChanges = (
   amount?: number
 ) => Promise<any>;
 export interface ChangesTreeContainerProps {
-  results: { path: string }[];
+  results:Entry[];
   delimiter: string;
   uriNavigator: React.JSX.Element;
   leftDiffRefID: string;
@@ -240,6 +240,7 @@ export interface RepoErrorProps {
 }
 
 export interface Run {
+  id:string
   run_id: string;
   event_type: string;
   status: 'completed' | 'failed' | 'running' | 'skipped';
@@ -247,6 +248,10 @@ export interface Run {
   commit_id: string;
   start_time: string | number;
   end_time: string | number;
+  timestamp:string;
+  operation_type:string;
+  operation_content: string;
+  operation:React.ReactNode
 }
 export interface RunSummaryProps {
   repo: RepositoryParams;
@@ -329,7 +334,11 @@ export interface Commit {
   committer: string;
   creation_date: number;
   metadata: metadata;
-  parents: string[]
+  parents: string[];
+  timestamp:string;
+  operation_type:string;
+  operation_content: string;
+  operation:React.ReactNode
 }
 
 export interface CommitWidgetProps {
@@ -353,4 +362,8 @@ export interface CommitInfoCardProps {
   repo: RepositoryParams;
   commit: Commit;
   bare?: boolean;
+}
+export interface OperationExpansionSectionProps {
+  operationExpanded: boolean;
+  onExpand: () => void;
 }

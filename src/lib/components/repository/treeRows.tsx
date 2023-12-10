@@ -13,15 +13,21 @@ import {OverlayTrigger} from "react-bootstrap";
 import Tooltip from "react-bootstrap/Tooltip";
 import Button from "react-bootstrap/Button";
 import {TreeRowType} from "../../../constants";
+import { ObjectTreeEntryRowProps, PrefixExpansionSectionProps, PrefixTreeEntryRowProps, TableRowProps, TableTreeEntryRowProps } from "../interface/comp_interface";
+import { Entry } from "../../../util/otfUtil";
 
-class RowAction {
+export class RowAction {
     /**
      * @param {JSX.Element} icon
      * @param {string} tooltip
      * @param {string} text
      * @param {()=>void} onClick
      */
-    constructor(icon, tooltip= "", text, onClick) {
+    icon: JSX.Element | null;
+    tooltip: string | null;
+    text: string | null;
+    onClick: () => void;
+    constructor(icon:JSX.Element | null, tooltip:string | null= "", text: string | null, onClick:()=>void) {
         this.icon = icon
         this.tooltip = tooltip
         this.text = text
@@ -32,7 +38,7 @@ class RowAction {
 /**
  * @param {[RowAction]} actions
  */
-const ChangeRowActions = ({actions}) => <>
+const ChangeRowActions = ({actions}:{actions:RowAction[]}) => <>
     {
         actions.map(action => (
             <><OverlayTrigger placement="bottom" overlay={<Tooltip hidden={!action.tooltip}>{action.tooltip}</Tooltip>}>
@@ -49,7 +55,7 @@ const ChangeRowActions = ({actions}) => <>
         ))}
 </>;
 
-export const ObjectTreeEntryRow = ({entry, relativeTo = "", diffExpanded, depth = 0, loading = false, onRevert, onClickExpandDiff = null}) => {
+export const ObjectTreeEntryRow:React.FC<ObjectTreeEntryRowProps> = ({entry, relativeTo = "", diffExpanded, depth = 0, loading = false, onRevert, onClickExpandDiff = null}) => {
     const [showRevertConfirm, setShowRevertConfirm] = useState(false)
     let rowClass = 'tree-entry-row ' + diffType(entry);
     let pathSection = extractPathText(entry, relativeTo);
@@ -66,15 +72,15 @@ export const ObjectTreeEntryRow = ({entry, relativeTo = "", diffExpanded, depth 
     }
     return (
         <TableRow className={rowClass} entry={entry} diffIndicator={diffIndicator} rowActions={rowActions}
-                  onRevert={onRevert} depth={depth} loading={loading} pathSection={pathSection}
-                  showRevertConfirm={showRevertConfirm} setShowRevertConfirm={() => setShowRevertConfirm(false)}/>
+        onRevert={onRevert} depth={depth} loading={loading} pathSection={pathSection}
+        showRevertConfirm={showRevertConfirm} setShowRevertConfirm={() => setShowRevertConfirm(false)} showSummary={undefined} getMore={undefined} dirExpanded={undefined} onExpand={undefined}/>
     );
 };
 
-export const PrefixTreeEntryRow = ({entry, relativeTo = "", dirExpanded, depth = 0, onClick, loading = false, onRevert, onNavigate, getMore}) => {
+export const PrefixTreeEntryRow:React.FC<PrefixTreeEntryRowProps> = ({entry, relativeTo = "", dirExpanded, depth = 0, onClick, loading = false, onRevert, onNavigate, getMore}) => {
     const [showRevertConfirm, setShowRevertConfirm] = useState(false)
     let rowClass = 'tree-entry-row ' + diffType(entry);
-    let pathSection = extractPathText(entry, relativeTo);
+    let pathSection: JSX.Element | string = extractPathText(entry, relativeTo);
     let diffIndicator = <DiffIndicationIcon entry={entry} rowType={TreeRowType.Prefix}/>;
     const [showSummary, setShowSummary] = useState(false);
     if (entry.path_type === "common_prefix") {
@@ -97,7 +103,7 @@ export const PrefixTreeEntryRow = ({entry, relativeTo = "", dirExpanded, depth =
     );
 };
 
-export const TableTreeEntryRow = ({entry, relativeTo = "", onClickExpandDiff, depth = 0, loading = false, onRevert}) => {
+export const TableTreeEntryRow:React.FC<TableTreeEntryRowProps> = ({entry, relativeTo = "", onClickExpandDiff, depth = 0, loading = false, onRevert}) => {
     const [showRevertConfirm, setShowRevertConfirm] = useState(false)
     let rowClass = 'tree-entry-row ' + diffType(entry);
     let pathSection = extractTableName(entry, relativeTo);
@@ -117,20 +123,20 @@ export const TableTreeEntryRow = ({entry, relativeTo = "", onClickExpandDiff, de
     );
 };
 
-const PrefixExpansionSection = ({dirExpanded, onClick}) => {
+const PrefixExpansionSection = ({dirExpanded, onClick}:PrefixExpansionSectionProps) => {
     return (<span onClick={onClick}>
                 {dirExpanded ? <ChevronDownIcon/> : <ChevronRightIcon/>}
             </span>)
 }
 
-const TableRow = ({diffIndicator, depth, loading, showSummary, entry, getMore, rowActions,
+const TableRow:React.FC<TableRowProps> = ({className,diffIndicator, depth, loading, showSummary, entry, getMore, rowActions,
                       showRevertConfirm, setShowRevertConfirm, pathSection, onRevert, dirExpanded, onExpand, ...rest}) => {
-    return (<tr {...rest}>
+    return (<tr {...rest} className={className}>
             <td className="entry-type-indicator">{diffIndicator}</td>
             <td className="tree-path">
                         <span style={{marginLeft: (depth * 20) + "px"}}>
                             {pathSection}
-                            {onExpand && <PrefixExpansionSection dirExpanded={dirExpanded} onClick={onExpand}/>}
+                            {onExpand && <PrefixExpansionSection dirExpanded={dirExpanded? dirExpanded: false } onClick={onExpand}/>}
                             {loading ? <ClockIcon/> : ""}
                         </span>
             </td>
@@ -139,13 +145,13 @@ const TableRow = ({diffIndicator, depth, loading, showSummary, entry, getMore, r
                 <ChangeRowActions actions={rowActions} />
                 <ConfirmationModal show={showRevertConfirm} onHide={setShowRevertConfirm}
                                    msg={`Are you sure you wish to revert "${entry.path}" (${entry.type})?`}
-                                   onConfirm={() => onRevert(entry)}/>
-            </td>
+                                   onConfirm={ onRevert? () => onRevert(entry) : undefined}/>
+            </td> 
         </tr>
     )
 }
 
-function extractPathText(entry, relativeTo) {
+function extractPathText(entry:Entry, relativeTo:string) {
     let pathText = entry.path;
     if (pathText.startsWith(relativeTo)) {
         pathText = pathText.substr(relativeTo.length);
@@ -153,7 +159,7 @@ function extractPathText(entry, relativeTo) {
     return pathText;
 }
 
-function diffType(entry) {
+function diffType(entry:Entry) {
     switch (entry.type) {
         case 'changed':
         case 'prefix_changed':
@@ -169,7 +175,7 @@ function diffType(entry) {
     }
 }
 
-function extractTableName(entry, relativeTo) {
+function extractTableName(entry:Entry, relativeTo:string) {
     let pathText = entry.path;
     if (pathText.startsWith(relativeTo)) {
         pathText = pathText.substr(relativeTo.length);
@@ -180,7 +186,7 @@ function extractTableName(entry, relativeTo) {
     return pathText;
 }
 
-export const DiffIndicationIcon = ({entry, rowType}) => {
+export const DiffIndicationIcon = ({entry, rowType}:{entry:Entry, rowType:number}) => {
     let diffIcon;
     let tooltipId;
     let tooltipText;

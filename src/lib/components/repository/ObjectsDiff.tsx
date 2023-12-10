@@ -6,7 +6,7 @@ import {AlertError, Loading} from "../controls";
 import {humanSize} from "./tree";
 import Alert from "react-bootstrap/Alert";
 import {InfoIcon} from "@primer/octicons-react";
-import { ContentDiffProps, DiffSizeReportProps, DiffType, NoContentDiffProps, ObjectsDiffProps, Stat, StatDiffProps } from "../interface/comp_interface";
+import {  ContentDiffProps, DiffSizeReportProps, DiffType, NoContentDiffProps, ObjectsDiffProps, ResponseProps, StatDiffProps } from "../interface/comp_interface";
 
 const maxDiffSizeBytes = 120 << 10;
 const supportedReadableFormats = ["txt", "text", "csv", "tsv", "yaml", "yml", "json"];
@@ -41,7 +41,7 @@ export const ObjectsDiff:React.FC<ObjectsDiffProps> = ({diffType, repoId, leftRe
 
     const leftStat = left && left.response;
     const rightStat = right && right.response;
-    if (!readable) {
+    if (!readable&&leftStat&&rightStat) {
         return <NoContentDiff left={leftStat} right={rightStat} diffType={diffType}/>;
     }
     const objectTooBig = (leftStat && leftStat.size_bytes > maxDiffSizeBytes) || (rightStat && rightStat.size_bytes > maxDiffSizeBytes);
@@ -51,6 +51,7 @@ export const ObjectsDiff:React.FC<ObjectsDiffProps> = ({diffType, repoId, leftRe
     }
     const leftSize = leftStat && leftStat.size_bytes;
     const rightSize = rightStat && rightStat.size_bytes;
+    if(leftSize&&rightSize)
     return <ContentDiff repoId={repoId} path={path} leftRef={left? left && leftRef : leftRef} rightRef={right? right && rightRef : rightRef}
                         leftSize={leftSize} rightSize={rightSize} diffType={diffType}/>;
 }
@@ -85,14 +86,14 @@ const ContentDiff:React.FC<ContentDiffProps> = ({repoId, path, leftRef, rightRef
     return <div>
         <span><DiffSizeReport leftSize={leftSize} rightSize={rightSize} diffType={diffType}/></span>
         <ReactDiffViewer
-            oldValue={left && left.response}
-            newValue={right && right.response}
+            oldValue={left && left.response? left.response : undefined }
+            newValue={right && right.response? right.response :undefined}
             splitView={false}
             compareMethod={DiffMethod.WORDS}/>
     </div>;
 }
 
-function validateDiffInput(left: Stat | null, right: Stat | null, diffType: DiffType): JSX.Element | void {
+function validateDiffInput(left: ResponseProps | null, right: ResponseProps | null, diffType: DiffType | string): JSX.Element | void {
     switch (diffType) {
         case 'changed':
             if (!left && !right) return <AlertError error={"Invalid diff input"}/>;

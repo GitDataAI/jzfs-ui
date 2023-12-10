@@ -61,7 +61,7 @@ export default ({prefix, getMore}:ChangeSummaryProps) => {
             if (!loading) {
                 return
             }
-            const {results, pagination} = await getMore(resultsState.pagination.next_offset || "", prefix, false, PAGE_SIZE)
+            const {results, pagination} = getMore? await getMore(resultsState.pagination.next_offset || "", prefix, false, PAGE_SIZE) : {results:'', pagination:''}
             if (!pagination.has_more) {
                 setLoading(false)
             }

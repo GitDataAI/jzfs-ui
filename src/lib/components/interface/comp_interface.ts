@@ -3,9 +3,10 @@ import { FormControlProps } from "react-bootstrap";
 import { OverlayTriggerRenderProps } from "react-bootstrap/esm/OverlayTrigger";
 import { Placement } from "react-bootstrap/esm/types";
 import { Commit, Reference, Run } from "../../../pages/repositories/interface/repo_interface";
-import { QueryParams, RepositoryParams } from "../../api/interface";
+import { Branch, QueryParams, RepositoryParams } from "../../api/interface";
 import { Link as RouterLink } from 'react-router-dom';
 import { Entry } from "../../../util/otfUtil";
+import { RowAction } from "../repository/treeRows";
 
 export interface SimpleModalProps {
     children: React.ReactNode;
@@ -83,7 +84,7 @@ export interface CheckboxProps {
 }
 export interface DataTableProps {
     headers: string[];
-    results: any[];
+    results: Run[] | Commit[] |RepositoryParams[];
     rowFn: (row: any) => React.ReactNode[];
     keyFn?: (row: any) => string;
     actions?: { key: string, buttonFn: (row: any) => React.ReactNode }[];
@@ -119,7 +120,7 @@ export interface TooltipButtonProps {
     size?:'md'| 'sm' | 'lg' | undefined;
 }
 export interface LinkButtonProps {
-    href: { pathname: string; query?:{ commit?:string; repoId?: string; commitId?: string; ref?:React.ForwardedRef<HTMLInputElement> | string};  params?: { repoId?: string; commitId?: string; } | string };
+    href?: { pathname: string; params?: { repoId: string; commitId?:string}; } | string;
     children: React.ReactNode;
     buttonVariant: string;
     tooltip?: string;
@@ -145,10 +146,22 @@ export interface DebouncedFormControlProps extends FormControlProps {
 export interface APIState {
     loading: boolean;
     error: Error | null;
-    response: any | null; 
+    response: ResponseProps | null; 
     responseHeaders: any | null; 
 }
-
+export interface ResponseProps {
+    upgrade_url: string | undefined;
+    friendly_name: string;
+    default_namespace_prefix: string;
+    blockstore_type: string;
+    blockstore_namespace_ValidityRegex: string;
+    blockstore_namespace_example: string;
+    pagination:Pagination;
+    results: Run[] | Commit[] |RepositoryParams[];
+    size_bytes:number
+    diff_type:DiffType
+    upgrade_recommended?:boolean;
+} 
 export interface PromiseFunction {
     (): Promise<any>;
 }
@@ -168,6 +181,7 @@ export interface ActionStatusIconProps {
     className:string | undefined | null;
 }
 export interface Config {
+    warnings: string[];
     default_namespace_prefix: string;
     blockstore_type: string;
     blockstore_namespace_ValidityRegex: string;
@@ -210,8 +224,8 @@ export interface CredentialsShowModalProps {
 }
 export interface AttachModalProps {
     show: boolean;
-    searchFn: (searchPrefix:string) => Promise<any>; // 请根据实际情况替换为正确的类型
-    onAttach: any; // 请根据实际情况替换为正确的类型
+    searchFn: (searchPrefix:string) => Promise<any>; // 
+    onAttach: any; // 
     onHide: () => void;
     addText?: string;
     emptyState?: string;
@@ -307,7 +321,7 @@ export interface TabsWrapperProps {
     defaultTabIndex?: number;
     handleTabChange: (event: React.ChangeEvent<{}>, value: any) => void;
     ariaLabel?: string;
-    textColor?: 'inherit' | 'primary' | 'secondary' | 'default';
+    textColor?: 'inherit' | 'primary' | 'secondary' ;
     indicatorColor?: 'secondary' | 'primary';
 }
 export interface PolicyEditorProps {
@@ -337,17 +351,16 @@ export interface PolicyDisplayProps {
 }
 
 interface GetMoreResult {
-    results: any[];
+    results: Run[] | Commit[] |RepositoryParams[];
     pagination: ChangeSummaryPagination
 }
 export interface ChangeSummaryPagination {
     next_offset?: string, 
     has_more?:boolean;
-
 }
 export interface ChangeSummaryProps {
     prefix: string;
-    getMore: (next_offset: string, prefix: string, arg1: boolean, pageSize: number) => Promise<GetMoreResult>;
+    getMore?: (next_offset: string, prefix: string, arg1: boolean, pageSize: number) => Promise<GetMoreResult>;
 }
 export interface CommitActionsProps {
     repo: RepositoryParams;
@@ -360,14 +373,14 @@ export  interface TreeItemRowProps {
     leftDiffRefID: string;
     rightDiffRefID: string;
     internalRefresh: any;
-    onRevert: any;
-    onNavigate: any;
+    onRevert?: (entry: Entry) => void | (() => void) ; 
+    onNavigate: (entry: Entry) => void |((entry: { path_type: string; path: string; }) => Promise<void>);
     delimiter: string;
-    relativeTo: any;
-    getMore: any;
+    relativeTo?: string;
+    getMore: (after : string, path : string, useDelimiter ?: boolean, amount ?: number) => Promise<any>;
     depth?: number;
     setTableDiffExpanded: any;
-    setTableDiffState: any;
+    setTableDiffState: SetTableDiffState;
     setIsTableMerge: any;
     deltaDiffEnabled: any;
 }
@@ -381,8 +394,8 @@ export interface TreeEntryPaginatorProps {
 export interface UseTreeItemTypeProps {
     entry: Entry; 
     repo: RepositoryParams; 
-    leftDiffRefID: string; 
-    rightDiffRefID: string; 
+    leftDiffRefID: string | Branch; 
+    rightDiffRefID: string | Branch; 
     isDeltaEnabled: boolean;
 }
 export interface GetMoreChanges {
@@ -431,7 +444,7 @@ export enum DiffType {
 }
 
 export interface ObjectsDiffProps {
-    diffType: DiffType;
+    diffType: DiffType | string;
     repoId: string;
     leftRef: string;
     rightRef: string;
@@ -445,9 +458,9 @@ export  interface Stat{
     size_bytes:number
 }
 export interface NoContentDiffProps {
-    left: Stat;
-    right: Stat;
-    diffType: DiffType;
+    left: ResponseProps;
+    right: ResponseProps;
+    diffType: DiffType | string;
 }
 export interface ContentDiffProps {
     repoId: string;
@@ -456,17 +469,17 @@ export interface ContentDiffProps {
     rightRef: string;
     leftSize: number;
     rightSize: number;
-    diffType: DiffType;
+    diffType: DiffType | string;
 }
 export interface StatDiffProps {
-    left: Stat;
-    right: Stat;
-    diffType: DiffType;
+    left: ResponseProps;
+    right: ResponseProps;
+    diffType: DiffType | string;
 }
 export interface DiffSizeReportProps {
     leftSize: number;
     rightSize: number;
-    diffType: DiffType;
+    diffType: DiffType | string;
 }
 
 export enum RefType {
@@ -477,7 +490,7 @@ export enum RefType {
 
 export interface RefSelectorProps {
     repo: RepositoryParams;
-    selected: ref;
+    selected: ref | string;
     selectRef: (ref: ref) => void;
     withCommits: boolean;
     withWorkspace: boolean;
@@ -505,17 +518,15 @@ export interface RefEntryProps {
     logCommits: () => void;
     withCommits: boolean;
 }
-interface Pagination {
-    has_more: boolean;
+export interface Pagination {
+    has_more?: boolean;
+    next_offset?:  string;
 }
 
-interface Result {
-    id: string;
-}
 export interface RepoPaginatorProps {
     pagination: Pagination;
     onPaginate: (next: string) => void;
-    results: Result[];
+    results: Run[] | Commit[] |RepositoryParams[];
     from: string;
 }
 export interface RefDropdownProps {
@@ -536,3 +547,58 @@ export interface DeltaLakeDiffProps {
     rightRef: string;
     tablePath: string;
 }
+export interface TableRowProps {
+    className:string;
+    diffIndicator: React.JSX.Element; 
+    depth: number; 
+    loading: boolean;
+    showSummary?: boolean; 
+    entry: Entry; 
+    getMore?: (next_offset: string, prefix: string, arg1: boolean, pageSize: number) => Promise<GetMoreResult>;
+    rowActions: RowAction[]; 
+    showRevertConfirm: boolean;
+    setShowRevertConfirm: ()=> void; 
+    pathSection: JSX.Element | string; 
+    onRevert?: (entry: Entry) => void | (() => void) ; 
+    dirExpanded?: boolean; 
+    onExpand?: () => void; 
+    rest?: any; 
+  }
+export interface ObjectTreeEntryRowProps {
+    entry: Entry;
+    relativeTo?: string;
+    diffExpanded?: boolean;
+    depth?: number;
+    loading?: boolean;
+    onRevert?: (entry: Entry) => void | (() => void) ; 
+    onClickExpandDiff?: () => void;
+  }
+export interface PrefixTreeEntryRowProps {
+    entry: Entry;
+    relativeTo?: string;
+    dirExpanded: boolean;
+    depth?: number;
+    onClick: () => void;
+    loading?: boolean;
+    onRevert?: (entry: Entry) => void | (() => void) ; 
+    onNavigate: (entry: Entry) => string;
+    getMore: (next_offset: string, prefix: string, arg1: boolean, pageSize: number) => Promise<GetMoreResult>;
+  }
+export interface TableTreeEntryRowProps {
+  entry: Entry;
+  relativeTo?: string;
+  onClickExpandDiff: () => void;
+  depth?: number;
+  loading?: boolean;
+  onRevert?: (entry: Entry) => void | (() => void) ; 
+}
+export interface PrefixExpansionSectionProps {
+    dirExpanded: boolean;
+    onClick: () => void;
+}
+export interface OperationMetadataRowProps {
+    otfDiff: RepositoryParams | Run | Commit;
+    operationExpanded: boolean;
+    onExpand: () => void;
+    [key: string]: any; 
+  }

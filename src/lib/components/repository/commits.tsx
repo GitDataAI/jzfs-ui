@@ -46,7 +46,7 @@ const getKeysOrNull = (metadata: metadata) => {
   return keys;
 };
 
-const CommitMetadataTable= (commit: Commit) => {
+const CommitMetadataTable= ({commit}:{commit:Commit}) => {
   const keys = getKeysOrNull(commit.metadata);
   if (!keys) return null;
 
@@ -68,7 +68,7 @@ const CommitMetadataTable= (commit: Commit) => {
   );
 };
 
-const CommitMetadataUIButtons = (commit:Commit) => {
+const CommitMetadataUIButtons = ({commit}:{commit:Commit}) => {
   const keys = getKeysOrNull(commit.metadata);
   if (!keys) return null;
 

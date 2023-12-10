@@ -18,7 +18,8 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { ChangesTreeContainerProps } from "../../../pages/repositories/interface/repo_interface";
-import { GetMoreChanges, MetadataFieldsProps, SetIsTableMerge, SetTableDiffState, TreeEntryPaginatorProps, TreeItemRowProps, UseTreeItemTypeProps } from "../interface/comp_interface";
+import { GetMoreChanges, MetadataFieldsProps, Pagination, SetIsTableMerge, SetTableDiffState, TreeEntryPaginatorProps, TreeItemRowProps, UseTreeItemTypeProps } from "../interface/comp_interface";
+import { Entry } from "../../../util/otfUtil";
 
 /**
  * Tree item is a node in the tree view. It can be expanded to multiple TreeEntryRow:
@@ -40,8 +41,7 @@ export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference,
                                 depth=0, setTableDiffExpanded, setTableDiffState, setIsTableMerge, deltaDiffEnabled}) => {
     const [dirExpanded, setDirExpanded] = useState(false); // state of a non-leaf item expansion
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
-    const [resultsState, setResultsState] = useState({results:[], pagination:{}}); // current retrieved children of the item
-    const [diffExpanded, setDiffExpanded] = useState(false); // state of a leaf item expansion
+    const [resultsState, setResultsState] = useState<{results: Entry[], pagination: Pagination}>({results:[], pagination:{}});    const [diffExpanded, setDiffExpanded] = useState(false); // state of a leaf item expansion
 
     const itemType = useAPI(() => useTreeItemType({entry, repo, leftDiffRefID, rightDiffRefID, isDeltaEnabled:deltaDiffEnabled}), []);
 
@@ -65,13 +65,13 @@ export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference,
 
     if (itemType.loading || (loading && results.length === 0)) {
         return <ObjectTreeEntryRow key={entry.path + "entry-row"} entry={entry} loading={true} relativeTo={relativeTo}
-                                   depth={depth} onRevert={onRevert} repo={repo} reference={reference}
-                                   getMore={getMore}/>
+                                   depth={depth} onRevert={onRevert} 
+                                  />
     }
     if (itemType.response === TreeItemType.Object) {
         return <>
             <ObjectTreeEntryRow key={entry.path + "entry-row"} entry={entry} relativeTo={relativeTo}
-                                depth={depth === 0 ? 0 : depth + 1} onRevert={onRevert} repo={repo}
+                                depth={depth === 0 ? 0 : depth + 1} onRevert={onRevert}
                                 diffExpanded={diffExpanded} onClickExpandDiff={() => setDiffExpanded(!diffExpanded)}/>
             {diffExpanded && <tr key={"row-" + entry.path} className={"leaf-entry-row"}>
                 <td className="objects-diff" colSpan={4}>

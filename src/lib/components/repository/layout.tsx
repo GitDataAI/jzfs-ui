@@ -11,7 +11,7 @@ import {Link} from "../nav";
 import { config } from "../../api";
 import { useAPI } from "../../hooks/api";
 import RepoOnboardingChecklistSlider from "./repoOnboardingChecklistSlider";
-import { RepositoryPageLayoutProps } from "../interface/comp_interface";
+import { RepositoryPageLayoutProps, ResponseProps } from "../interface/comp_interface";
 
 const RepoNav = () => {
     const { repo } = useRefs();
@@ -37,7 +37,7 @@ export const RepositoryPageLayout:React.FC<RepositoryPageLayoutProps> = ({ activ
     );
     const [dismissedChecklistForRepo, setDismissedChecklistForRepo] =
         useLocalStorage(`dismissedChecklistForRepo`, false);
-    const [configRes, setConfigRes] = useState(null);
+    const [configRes, setConfigRes] = useState<ResponseProps | null>(null);
     const { response } = useAPI(() => {
         return config.getStorageConfig();
     }, []);

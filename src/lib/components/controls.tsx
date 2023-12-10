@@ -262,7 +262,6 @@ export const ClipboardButton:React.FC<ClipboardButtonProps> = ({ text, variant, 
                 target={current}>
                 {props => {
                     updater = props.popper && props.popper.scheduleUpdate;
-                    props.show = undefined
                     return (<Tooltip {...props}>{tooltip}</Tooltip>)
                 }}
             </Overlay>
@@ -420,7 +419,7 @@ export const Warning:React.FC<WarningProps>= (props) =>
     </Alert>
 </>;
 
-export const Warnings = ({ warnings = [] }) => {
+export const Warnings = ({ warnings = [] }:{warnings:string[]}) => {
     return <ul className="pl-0 ms-0 warnings">
            {warnings.map((warning, i) =>
            <Warning key={i} warnings={[]}>{warning}</Warning>
