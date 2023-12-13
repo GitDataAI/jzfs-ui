@@ -63,10 +63,12 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                             document.cookie = `${cookie}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
                                         }
                                     );
-
-if (loginConfig.fallback_login_url) {
-    window.location = loginConfig.fallback_login_url;
-}                                }}>{loginConfig.fallback_login_label || 'Try another way to login'}</Button>
+                        if (loginConfig.fallback_login_url) 
+                        {
+                            window.location = loginConfig.fallback_login_url;
+                        }                                }}>
+                        {loginConfig.fallback_login_label || 'Try another way to login'}
+                            </Button>
                                 : ""
                             }
                         </div>

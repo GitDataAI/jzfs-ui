@@ -20,8 +20,7 @@ export async function isDeltaLakeTable(entry:Entry, repo:RepositoryParams, ref:a
     if (entry.path_type === "object") {
         return
     }
-
-    let response = await objects.list(repo.id, ref, entry.path + "_delta_log/")
+    let response = repo.id? await objects.list(repo.id, ref, entry.path + "_delta_log/"):''
     return response !== null && response.results.length !== 0;
 }
 

@@ -29,7 +29,7 @@ export default ({ command }) => {
         port: 3000,
         proxy: {
           '/api': {
-            target: 'http://47.109.99.244:8000',
+            target: 'http://47.109.99.244:34913',
             changeOrigin: true,
             secure: false
           },
