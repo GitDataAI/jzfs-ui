@@ -9,7 +9,7 @@ import {AlertError, FormattedDate} from "./controls";
 import { PolicyDisplayProps, PolicyEditorProps } from "./interface/comp_interface";
 
 export const PolicyEditor:React.FC<PolicyEditorProps> = ({ show, onHide, onSubmit, policy = null, noID = false, isCreate = false, validationFunction = null, externalError = null }) => {
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<Error | null | string>(null);
     const idField = useRef<HTMLInputElement>(null);
     const bodyField = useRef<string>(null);
 
@@ -33,18 +33,18 @@ export const PolicyEditor:React.FC<PolicyEditorProps> = ({ show, onHide, onSubmi
         if (validationFunction) {
             const validationResult = validationFunction(idField.current? idField.current.value: '');
             if (!validationResult.isValid) {
-                setError(validationResult.errorMessage);
+                setError(validationResult.errorMessage? validationResult.errorMessage : '');
                 return;
             }
         }
-        const statement =bodyField.current? bodyField.current.value : '';
+        const statement =bodyField.current? bodyField.current : '';
         try {
             JSON.parse(statement);
         } catch (error) {
-            setError(error);
+            setError(error as Error);
         return false;
         }
-        const promise = (policy === null) ? (idField.current? onSubmit(idField.current.value, statement): new Promise()) : onSubmit(statement)
+        const promise = (policy === null) ? (idField.current? onSubmit(idField.current.value, statement): new Promise((_resolve,_reject)=>{},)) : onSubmit(statement)
         return promise
         .then((res) => {
         setSavedBody(statement);

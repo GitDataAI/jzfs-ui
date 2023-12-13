@@ -18,7 +18,7 @@ export interface RequestData {
     [key: string]: any;
 }
 export interface Branch extends Branches {
-    commit_id: any;
+    commit_id: string;
     id:string
 }
 export interface _Headers {
@@ -64,15 +64,20 @@ export interface PostStatsEventsParams {
 }
 export interface RepositoryParams {
     default_branch: string;
-    id:string;
-    repoId: string;
+    id?:string;
+    repoId?: string;
     name: string;
-    StorageNamespace: string;
-    Description: string;
-    Head: string;
-    CreateID: string;
-    creation_date: number;
+    StorageNamespace?: string;
+    Description?: string;
+    Head?: string;
+    CreateID?: string;
+    creation_date?: number;
     storage_namespace : string;
+    timestamp?:string;
+    operation_type?:string;
+    operation_content?: string;
+    operation?:React.ReactNode
+    sample_data: boolean;
 }
 export type params = {
     amount: number;

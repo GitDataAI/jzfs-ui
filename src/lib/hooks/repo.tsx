@@ -5,7 +5,7 @@ import {useRouter} from "./router";
 import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../constants";
 
 
-export const resolveRef = async (repoId, refId) => {
+export const resolveRef = async (repoId:string, refId:string) => {
     // try branch
     try {
         const branch = await branches.get(repoId, refId);

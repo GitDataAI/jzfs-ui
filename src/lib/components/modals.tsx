@@ -14,8 +14,8 @@ interface ConfirmationModalProps {
     show: boolean;
     onHide: () => void;
     msg: ReactNode;
-    onConfirm: MouseEventHandler<HTMLElement>;
-    variant: ButtonVariant;
+    onConfirm?: MouseEventHandler<HTMLElement>;
+    variant?: ButtonVariant;
 }
 
 interface ConfirmationButtonProps {

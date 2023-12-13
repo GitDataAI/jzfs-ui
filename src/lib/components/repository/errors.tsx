@@ -1,17 +1,17 @@
 import React from "react";
 import {Alert} from "react-bootstrap";
 
-function extractActionRunID(err) {
+function extractActionRunID(err: string) {
     const m = /^Error: (\S+) hook aborted, run id '([^']+)'/.exec(err);
     return m ? m[2] : '';
 }
 
-function extractActionHookRunID(err) {
+function extractActionHookRunID(err: string) {
     const m = /^\t\* hook run id '([^']+)' failed/.exec(err);
     return m ? m[1] : '';
 }
 
-export function formatAlertText(repositoryId, err) {
+export function formatAlertText(repositoryId:string, err:string | null) {
     if (!err) {
         return '';
     }

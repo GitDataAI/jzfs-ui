@@ -18,8 +18,8 @@ export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ({ id, c
     const [storageNamespaceValid, setStorageNamespaceValid] = useState(defaultNamespacePrefix ? true : null);
     const [defaultBranchValid, setDefaultBranchValid] = useState(true);
     
-    const storageNamespaceField = useRef(null);
-    const defaultBranchField = useRef(null);
+    const storageNamespaceField = useRef<HTMLInputElement>(null);
+    const defaultBranchField = useRef<HTMLInputElement>(null);
     const repoNameField = useRef<HTMLInputElement>(null);
     const sampleDataCheckbox = useRef<HTMLInputElement>(null);
 
@@ -35,26 +35,26 @@ export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ({ id, c
             const isRepoValid = repoValidityRegex.test(repoNameField.current.value);
             setRepoValid(isRepoValid);
             if (storageNamespaceValid !== null) {
-                setFormValid(storageNamespaceValid && defaultBranchValid && repoValid);
+                setFormValid(storageNamespaceValid && defaultBranchValid &&  repoValid? repoValid : false);
             }
-            setFormValid(isRepoValid && storageNamespaceValid && defaultBranchValid);
+            setFormValid(isRepoValid && storageNamespaceValid? storageNamespaceValid : false && defaultBranchValid);
             if (defaultNamespacePrefix) {
-                storageNamespaceField.current.value = defaultNamespacePrefix + repoNameField.current.value
+                storageNamespaceField.current? storageNamespaceField.current.value = defaultNamespacePrefix + repoNameField.current.value :''
                 checkStorageNamespaceValidity()
             }
         }
     };
 
     const checkStorageNamespaceValidity = () => {
-        const isStorageNamespaceValid = storageNamespaceValidityRegex.test(storageNamespaceField.current.value);
+        const isStorageNamespaceValid = storageNamespaceValidityRegex.test(storageNamespaceField.current?storageNamespaceField.current.value : '');
         setStorageNamespaceValid(isStorageNamespaceValid);
-        setFormValid(isStorageNamespaceValid && defaultBranchValid && repoValidityRegex.test(repoNameField.current.value));
+        setFormValid(isStorageNamespaceValid && defaultBranchValid && repoValidityRegex.test(repoNameField.current? repoNameField.current.value : ''));
     };
 
     const checkDefaultBranchValidity = () => {
-        const isBranchValid = defaultBranchField.current.value.length;
+        const isBranchValid = defaultBranchField.current? true : false;
         setDefaultBranchValid(isBranchValid);
-        setFormValid(isBranchValid && storageNamespaceValid && repoValid);
+        setFormValid(isBranchValid && storageNamespaceValid? storageNamespaceValid: false && repoValid);
     };
 
     const storageType = config.blockstore_type
@@ -156,10 +156,10 @@ export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ({ id, c
                 return;
             }
             onSubmit({
-                name: repoNameField.current.value,
-                storage_namespace: storageNamespaceField.current.value,
-                default_branch: defaultBranchField.current.value,
-                sample_data: sampleDataCheckbox.current.checked,
+                name: repoNameField.current? repoNameField.current.value :'',
+                storage_namespace: storageNamespaceField.current ?storageNamespaceField.current.value : '',
+                default_branch: defaultBranchField.current? defaultBranchField.current.value: '',
+                sample_data:sampleDataCheckbox.current? sampleDataCheckbox.current.checked: false,
             });
         }}>
             <h4 className="mb-3">Create A New Repository</h4>

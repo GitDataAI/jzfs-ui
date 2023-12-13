@@ -11,6 +11,7 @@ import { RepositoryParams } from "../lib/api/interface";
  */
 
 export interface Entry {
+    type: any;
     path_type: string;
     path: string;
 }

@@ -8,7 +8,8 @@ import dayjs from "dayjs";
 import Card from "react-bootstrap/Card";
 import React from "react";
 import { CommitActionsProps } from "../interface/comp_interface";
-import { Commit, metadata } from "../../../pages/repositories/interface/repo_interface";
+import { Commit, CommitInfoCardProps, metadata } from "../../../pages/repositories/interface/repo_interface";
+import { RepositoryParams } from "../../api/interface";
 
 
 const CommitActions: React.FC<CommitActionsProps> = ({ repo, commit }) => {
@@ -38,14 +39,14 @@ const CommitActions: React.FC<CommitActionsProps> = ({ repo, commit }) => {
   );
 };
 
-const getKeysOrNull = (metadata: metadata[]) => {
+const getKeysOrNull = (metadata: metadata) => {
   if (!metadata) return null;
   const keys = Object.getOwnPropertyNames(metadata);
   if (keys.length === 0) return null;
   return keys;
 };
 
-const CommitMetadataTable= (commit: Commit) => {
+const CommitMetadataTable= ({commit}:{commit:Commit}) => {
   const keys = getKeysOrNull(commit.metadata);
   if (!keys) return null;
 
@@ -67,7 +68,7 @@ const CommitMetadataTable= (commit: Commit) => {
   );
 };
 
-const CommitMetadataUIButtons = ({ commit }) => {
+const CommitMetadataUIButtons = ({commit}:{commit:Commit}) => {
   const keys = getKeysOrNull(commit.metadata);
   if (!keys) return null;
 
@@ -78,7 +79,7 @@ const CommitMetadataUIButtons = ({ commit }) => {
   );
 };
 
-const CommitLink = ({ repoId, commitId }) => {
+const CommitLink = ({ repoId, commitId }:{ repoId:string, commitId:string }) => {
   return (
     <>
       <Link href={{
@@ -92,7 +93,7 @@ const CommitLink = ({ repoId, commitId }) => {
   );
 }
 
-const CommitInfo = ({ repo, commit }) => {
+const CommitInfo = ({ repo, commit }:{ repo:RepositoryParams, commit:Commit }) => {
   return (
     <Table size="sm" borderless hover>
       <tbody>
@@ -128,7 +129,7 @@ const CommitInfo = ({ repo, commit }) => {
   );
 };
 
-export const CommitInfoCard = ({ repo, commit, bare = false }) => {
+export const CommitInfoCard:React.FC<CommitInfoCardProps>= ({ repo, commit, bare = false }) => {
   const content = (
     <>
         <div className="d-flex">

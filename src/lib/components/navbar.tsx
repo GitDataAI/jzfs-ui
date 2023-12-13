@@ -19,8 +19,7 @@ const NavUserInfo = () => {
 
     if (loading) return <Navbar.Text>Loading...</Navbar.Text>;
     if (!user || !!error) return (<></>);
-    const notifyNewVersion = !versionLoading && !versionError && versionResponse.upgrade_recommended
-    const NavBarTitle = () => {
+    const notifyNewVersion = !versionLoading && !versionError && versionResponse && versionResponse.upgrade_recommended;    const NavBarTitle = () => {
         return (
         <>
             {notifyNewVersion && <> <div className="user-menu-notification-indicator"></div> </> }
