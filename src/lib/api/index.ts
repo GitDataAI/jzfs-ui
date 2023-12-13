@@ -55,7 +55,7 @@ export const qs = (queryParts:QueryParts) => {
     return new URLSearchParams(parts).toString();
 };
 
-export const extractError = async (response:_Response) => {
+export const extractError = async (response:Response) => {
     let body;
     if (response.headers.get('Content-Type') === 'application/json') {
         const jsonBody = await response.json();
@@ -66,15 +66,15 @@ export const extractError = async (response:_Response) => {
     return body;
 };
 
-export const defaultAPIHeaders = {
+export const defaultAPIHeaders = new Headers({
     "Accept": "application/json",
     "Content-Type": "application/json",
     "X-Lakefs-Client": "lakefs-webui/__buildVersion",
-};
+});
 
 const authenticationError = "error authenticating request"
 
-export const apiRequest = async (uri:string, requestData: RequestData = {}, additionalHeaders: _Headers = {}) => {
+export const apiRequest = async (uri:string, requestData: RequestData = {}, additionalHeaders?: Headers) => {
     const headers = new Headers({
         ...defaultAPIHeaders,
         ...additionalHeaders,

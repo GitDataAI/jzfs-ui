@@ -1,4 +1,4 @@
-import {API_ENDPOINT, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs, uploadWithProgress} from "../index"
+import {API_ENDPOINT, AuthenticationError, AuthorizationError, BadRequestError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs, uploadWithProgress} from "../index"
 import { Upload, apiResponse } from "../interface";
 
 export class Objects {
@@ -89,5 +89,100 @@ export class Objects {
             throw new Error(await extractError(response));
         }
         return response.json()
+    }
+    // 获取用户内的Object的内容，二进制字符串：（type: string, format: binary）
+    async  getObject(user: string, repoId: string, branch: string, path: string) {
+        const headers = new Headers();
+        headers.append('Range', 'bytes=0-1023');
+        const response = await apiRequest(`/${user}/${repoId}/object?branch=${branch}&path=${path}`, { method: 'GET' }, headers);
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 404:
+                    throw new NotFoundError(errorBody);
+                case 410:
+                    throw new Error(`Object expired: ${await extractError(response)}`);
+                case 416:
+                    throw new BadRequestError(errorBody);
+                case 420:
+                    throw new Error(`Requests are too frequent.Please slow down the request speed: ${await extractError(response)}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response.json();
+    }
+// 检查对象是否存在，内容长度（Content-Length:number）、最后修改时间（Last-Modified:string）、ETag（string）
+    async  headObject(user: string, repoId: string, branch: string, path: string) {
+        const headers = new Headers();
+        headers.append('Range', 'bytes=0-1023');
+        const response = await apiRequest(`/${user}/${repoId}/object?branch=${branch}&path=${path}`, { method: 'HEAD' }, headers);
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 404:
+                    throw new NotFoundError(errorBody);
+                case 410:
+                    throw new Error(`Object expired: ${await extractError(response)}`);
+                case 416:
+                    throw new BadRequestError(errorBody);
+                case 420:
+                    throw new Error(`Requests are too frequent.Please slow down the request speed: ${await extractError(response)}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response;
+    }
+    // 上传对象，（包含了上传的对象的元数据）
+    async uploadObject(user: string, repoId: string, wipID: string, content: any) {
+        const formData = new FormData();
+        formData.append('content', content);
+        const headers = new Headers();
+        headers.append('If-None-Match', '*');
+        const response = await apiRequest(`/${user}/${repoId}/objects?wipID=${wipID}`, { method: 'POST', body: formData, headers: headers });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 400:
+                    throw new Error(`Precondition failed: ${await extractError(response)}`);
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 403:
+                    throw new AuthorizationError(errorBody);
+                case 404:
+                    throw new NotFoundError(errorBody);
+                case 412:
+                    throw new Error(`Precondition failed: ${await extractError(response)}`);
+                case 420:
+                    throw new Error(`Requests are too frequent.Please slow down the request speed: ${await extractError(response)}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response.json();
+    }
+    // 删除对象
+    async deleteObject(user: string, repoId: string, wipID: string) {
+        const response = await apiRequest(`/${user}/${repoId}/objects?wipID=${wipID}`, { method: 'DELETE' });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 403:
+                    throw new AuthorizationError(errorBody);
+                case 404:
+                    throw new NotFoundError(errorBody);
+                case 420:
+                    throw new Error(`Requests are too frequent.Please slow down the request speed: ${await extractError(response)}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
     }
 }

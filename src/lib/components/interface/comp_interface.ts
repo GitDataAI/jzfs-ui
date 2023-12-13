@@ -149,7 +149,7 @@ export interface APIState {
     response: ResponseProps | null; 
     responseHeaders: any | null; 
 }
-export interface ResponseProps {
+export interface ResponseProps extends Response {
     upgrade_url: string | undefined;
     friendly_name: string;
     default_namespace_prefix: string;

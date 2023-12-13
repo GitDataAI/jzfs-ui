@@ -106,3 +106,8 @@ export interface Upload {
       contentMD5: string | null;
     }>;
   }
+  export interface  UserRegisterInfo{
+    username:string;
+    email:string;
+    password:string;
+    }

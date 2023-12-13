@@ -1,5 +1,5 @@
-import {API_ENDPOINT, AuthenticationError, DEFAULT_LISTING_AMOUNT, apiRequest, cache, defaultAPIHeaders, extractError, qs} from "../index"
-import { QueryParams } from "../interface";
+import { AuthenticationError, DEFAULT_LISTING_AMOUNT, apiRequest, cache, extractError, qs} from "../index"
+import { QueryParams, UserRegisterInfo } from "../interface";
 export class Auth {
     async getAuthCapabilities() {
         const response = await apiRequest('/auth/capabilities', {
@@ -13,26 +13,26 @@ export class Auth {
         }
     }
 
-    async login(accessKeyId:string, secretAccessKey:string) {
-        const response = await fetch(`${API_ENDPOINT}/auth/login`, {
-            headers: new Headers(defaultAPIHeaders),
-            method: 'POST',
-            body: JSON.stringify({access_key_id: accessKeyId, secret_access_key: secretAccessKey})
-        });
+    // async login(accessKeyId:string, secretAccessKey:string) {
+    //     const response = await fetch(`${API_ENDPOINT}/auth/login`, {
+    //         headers: new Headers(defaultAPIHeaders),
+    //         method: 'POST',
+    //         body: JSON.stringify({access_key_id: accessKeyId, secret_access_key: secretAccessKey})
+    //     });
 
-        if (response.status === 401) {
-            throw new AuthenticationError('invalid credentials', response.status);
-        }
-        if (response.status !== 200) {
-            throw new AuthenticationError('Unknown authentication error', response.status);
-        }
+    //     if (response.status === 401) {
+    //         throw new AuthenticationError('invalid credentials', response.status);
+    //     }
+    //     if (response.status !== 200) {
+    //         throw new AuthenticationError('Unknown authentication error', response.status);
+    //     }
 
-        this.clearCurrentUser();
-        const user = await this.getCurrentUser();
+    //     this.clearCurrentUser();
+    //     const user = await this.getCurrentUser();
 
-        cache.set('user', user);
-        return user;
-    }
+    //     cache.set('user', user);
+    //     return user;
+    // }
 
     clearCurrentUser() {
         cache.delete('user');
@@ -303,4 +303,57 @@ export class Auth {
         }
     }
     
+    // 登录，返回一个JSON对象，包含了认证令牌的信息
+    async login(username: string, password: string) {
+        const response = await apiRequest(`/auth/login`, { 
+            method: 'POST', 
+            body: JSON.stringify({ username, password }) 
+        });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 420:
+                    throw new Error(`Too many requests: ${errorBody}`);
+                default:
+                    throw new Error(`Internal server error: ${errorBody}`);
+            }
+        }
+        return response.json();
+    }
+    // 注册，返回一个JSON对象，包含了注册信息
+    
+    async register(userRegisterInfo: UserRegisterInfo) {
+        const response = await apiRequest(`/auth/register`, { 
+            method: 'POST', 
+            body: JSON.stringify(userRegisterInfo) 
+        });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 400:
+                    throw new Error(`Validation Error: ${errorBody}`);
+                case 420:
+                    throw new Error(`Too many requests: ${errorBody}`);
+                default:
+                    throw new Error(`Internal server error: ${errorBody}`);
+            }
+        }
+        return response.json();
+    }
+    // 获取当前登录用户的信息，返回一个JSON对象，包含了用户信息
+    async getUserInfo() {
+        const response = await apiRequest(`/auth/user`, { method: 'GET' });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                default:
+                    throw new Error(`Internal server error: ${errorBody}`);
+            }
+        }
+        return response.json();
+    }
 }
