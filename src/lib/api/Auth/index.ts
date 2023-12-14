@@ -325,10 +325,12 @@ export class Auth {
     // 注册，返回一个JSON对象，包含了注册信息
     
     async register(userRegisterInfo: UserRegisterInfo) {
-        const response = await apiRequest(`/auth/register`, { 
+        let headers = new Headers()
+        headers.append("Content-Type", "application/json")
+        const response = await apiRequest(`/users/register`, { 
             method: 'POST', 
             body: JSON.stringify(userRegisterInfo) 
-        });
+        }, headers);
         if (!response.ok) {
             const errorBody = await extractError(response);
             switch (response.status) {

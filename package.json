@@ -26,6 +26,7 @@
     "dayjs": "^1.11.7",
     "http-proxy-middleware": "^1.1.1",
     "lodash": "^4.17.21",
+    "merge-headers": "^1.1.1",
     "p-map": "^6.0.0",
     "prismjs": "^1.29.0",
     "query-string": "^7.1.1",
