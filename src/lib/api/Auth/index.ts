@@ -27,11 +27,7 @@ export class Auth {
     //         throw new AuthenticationError('Unknown authentication error', response.status);
     //     }
 
-    //     this.clearCurrentUser();
-    //     const user = await this.getCurrentUser();
-
-    //     cache.set('user', user);
-    //     return user;
+    
     // }
 
     clearCurrentUser() {
@@ -320,7 +316,11 @@ export class Auth {
                     throw new Error(`Internal server error: ${errorBody}`);
             }
         }
-        return response.json();
+        this.clearCurrentUser();
+        const user = await response.json();
+
+        cache.set('user', user);
+        return user;
     }
     // 注册，返回一个JSON对象，包含了注册信息
     

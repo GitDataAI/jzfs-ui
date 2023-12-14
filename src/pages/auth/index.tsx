@@ -12,7 +12,7 @@ import RegisterPage from "./register";
 const Auth = () => {
     return (
         <Routes>
-            <Route path="" element={<Navigate to="credentials"/>} />
+            <Route path="" element={<Navigate to="CredentialsPage"/>} />
             <Route path="login" element={<LoginPage/>} />
             <Route path="register" element={<RegisterPage/>} />
             <Route path="credentials" element={<CredentialsPage/>} />
