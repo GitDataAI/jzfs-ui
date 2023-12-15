@@ -2,7 +2,7 @@ import {apiRequest, extractError} from "../index"
 
 export class Setup {
     async getState() {
-        const response = await apiRequest('/setup_lakefs', {
+        const response = await apiRequest('/setup', {
             method: 'GET',
         });
         switch (response.status) {
