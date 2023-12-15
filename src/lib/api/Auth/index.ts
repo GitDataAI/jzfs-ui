@@ -44,7 +44,7 @@ export class Auth {
     }
 
     async getCurrentUser() {
-        const userResponse = await apiRequest('/user')
+        const userResponse = await apiRequest('/users/user')
         const body = await userResponse.json();
         return body.user;
     }
@@ -316,11 +316,8 @@ export class Auth {
                     throw new Error(`Internal server error: ${errorBody}`);
             }
         }
-        this.clearCurrentUser();
-        const user = await response.json();
-
-        cache.set('user', user);
-        return user;
+        cache.set('token', response.token);
+        return response;
     }
     // 注册，返回一个JSON对象，包含了注册信息
     
@@ -346,7 +343,7 @@ export class Auth {
     }
     // 获取当前登录用户的信息，返回一个JSON对象，包含了用户信息
     async getUserInfo() {
-        const response = await apiRequest(`/auth/user`, { method: 'GET' });
+        const response = await apiRequest(`/users/user`, { method: 'GET' });
         if (!response.ok) {
             const errorBody = await extractError(response);
             switch (response.status) {
