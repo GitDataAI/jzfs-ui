@@ -60,7 +60,12 @@ export class Repositories {
        
     // 创建新的仓库，返回一个JSON
     async createRepository(user: string, name: string, description: string = '') {
-        const response = await apiRequest(`/${user}/repository/new?name=${name}&description=${description}`, { method: 'POST' });
+        let headers = new Headers()
+        headers.append("Content-Type", "application/json")
+        const response = await apiRequest(`/users/repos`, { 
+            method: 'POST', 
+            body: JSON.stringify({user, name, description}) 
+        }, headers);
         if (!response.ok) {
             const errorBody = await extractError(response);
             switch (response.status) {
@@ -132,8 +137,8 @@ export class Repositories {
     return response.json();
     }
     // 获取用户的仓库列表，返回一个array
-    async listRepository(user: string) {
-        const response = await apiRequest(`/${user}/repository/list`, { method: 'GET' });
+    async listRepository() {
+        const response = await apiRequest(`/users/repos`, { method: 'GET' });
         if (!response.ok) {
             const errorBody = await extractError(response);
             switch (response.status) {
