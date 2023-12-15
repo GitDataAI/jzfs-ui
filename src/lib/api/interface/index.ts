@@ -97,7 +97,7 @@ export interface Upload {
     ): Promise<void>;
   }
   
- export interface UploadWithProgress {
+export interface UploadWithProgress {
     (url: string, file: File, method?: string, onProgress?: ((percentage: number) => void )| null, additionalHeaders?: AdditionalHeaders): Promise<{
       status: number;
       body: string;
@@ -106,8 +106,18 @@ export interface Upload {
       contentMD5: string | null;
     }>;
   }
-  export interface  UserRegisterInfo{
+export interface  UserRegisterInfo{
     username:string;
     email:string;
     password:string;
     }
+export interface UserInfo{
+  username: string;
+  email:string;
+  currentSignInAt?: string;
+  lastSignInAt?:string;
+  currentSignInIP?:string;
+  lastSignInIP?: string;
+  createdAt?:string;
+  updateAt?:string;
+}

@@ -36,18 +36,20 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
 
   const [formValid, setFormValid] = useState(false);
 
-  const { response, error: err, loading } = useAPI(() => config.getStorageConfig());
+//   const { response, error: err, loading } = useAPI(() => config.getStorageConfig());
+    const response  = {
 
-    const showError = (error) ? error : err;
-    if (loading) {
-        return (
-            <Modal show={show} onHide={onCancel} size="lg">
-                <Modal.Body>
-                    <Loading/>
-                </Modal.Body>
-            </Modal>
-        );
-    }
+    };
+    const showError = (error) ? error : new Error;
+    // if (loading) {
+    //     return (
+    //         <Modal show={show} onHide={onCancel} size="lg">
+    //             <Modal.Body>
+    //                 <Loading/>
+    //             </Modal.Body>
+    //         </Modal>
+    //     );
+    // }
 
     return (
         <Modal show={show} onHide={onCancel} size="lg">
@@ -120,7 +122,8 @@ export const GetStarted: React.FC<GetStartedProps> = ({onCreateEmptyRepo, creati
 export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
 
     const {results:Repo, loading, error, nextPage} = useAPIWithPagination(() => {
-        return repositories.list(prefix, after);
+        // return repositories.list(prefix, after);
+        return repositories.listRepository();
     }, [refresh, prefix, after]);
     const results = Repo as RepositoryParams[];
     if (loading) return <Loading/>;

@@ -29,13 +29,13 @@ const NavUserInfo = () => {
     }
     return (
         <NavDropdown title={<NavBarTitle />} className="navbar-username" align="end">
-            {notifyNewVersion && <>
+            {/* {notifyNewVersion && <>
             <NavDropdown.Item href={versionResponse.upgrade_url}>
                     <>
                     <div className="menu-item-notification-indicator"></div>
                     New JiaoziFS version is available!
                     </>
-            </NavDropdown.Item><NavDropdown.Divider/></>}
+            </NavDropdown.Item><NavDropdown.Divider/></>} */}
             <NavDropdown.Item
                 onClick={()=> {
                     auth.clearCurrentUser();

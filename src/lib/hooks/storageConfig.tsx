@@ -34,13 +34,13 @@ const storageConfigInitialState: StorageConfigContextType = {
   pre_sign_support_ui: false,
 };
 
-export const fetchStorageConfig = async () => {
-  // we assume that we're actually getting a StorageConfigContextType
-  // but there's no real guarantee
-  // we'll need to valudate and fix this when the API client is typed
-  const storageConfig = await config.getStorageConfig();
-  return storageConfig;
-};
+// export const fetchStorageConfig = async () => {
+//   // we assume that we're actually getting a StorageConfigContextType
+//   // but there's no real guarantee
+//   // we'll need to valudate and fix this when the API client is typed
+//   const storageConfig = await config.getStorageConfig();
+//   return storageConfig;
+// };
 
 const StorageConfigContext = createContext<StorageConfigContextType>(
   storageConfigInitialState
@@ -58,13 +58,13 @@ export const StorageConfigProvider: FC<{ children: React.ReactNode }> = ({
     storageConfigInitialState
   );
 
-  useEffect(() => {
-    const fetchStorageConfigAndSetState = async () => {
-      const storageConfig = await fetchStorageConfig();
-      setStorageConfig(storageConfig);
-    };
-    fetchStorageConfigAndSetState();
-  }, []);
+  // useEffect(() => {
+  //   const fetchStorageConfigAndSetState = async () => {
+  //     const storageConfig = await fetchStorageConfig();
+  //     setStorageConfig(storageConfig);
+  //   };
+  //   fetchStorageConfigAndSetState();
+  // }, []);
 
   return (
     <StorageConfigContext.Provider value={storageConfig}>

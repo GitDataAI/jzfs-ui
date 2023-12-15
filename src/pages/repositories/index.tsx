@@ -9,13 +9,15 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Layout from "../../lib/components/layout";
 import {ActionsBar, useDebouncedState} from "../../lib/components/controls";
 import {config, repositories} from '../../lib/api';
-import {useAPI} from "../../lib/hooks/api";
+// import {useAPI} from "../../lib/hooks/api";
 import {useRouter} from "../../lib/hooks/router";
 
 import {Route, Routes} from "react-router-dom";
 import RepositoryPage from './repository';
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
-import { Repo } from "./interface/repos_interface";
+import { RepositoryParams } from "../../lib/api/interface";
+import { useAPI } from "../../lib/hooks/api";
+
 
 dayjs.extend(relativeTime);
 
@@ -27,16 +29,16 @@ const RepositoriesPage = () => {
     const [refresh, setRefresh] = useState(false);
     const [creatingRepo, setCreatingRepo] = useState(false);
     const [showActionsBar, setShowActionsBar] = useState(false);
-
     const routerPfx = (router.query.prefix) ? router.query.prefix : "";
     const [prefix, setPrefix] = useDebouncedState(
         routerPfx,
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix},params:{}})
     );
 
-    useAPI(() => config.getStorageConfig());
+    const {response,loading,error} = useAPI(() => repositories.listRepository());
+    
 
-    const createRepo = async (repo: Repo, presentRepo = true) => {
+    const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
         try {
             setCreatingRepo(true);
             setCreateRepoError(null);

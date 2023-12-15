@@ -1,5 +1,5 @@
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
-// import {WithLoginConfigContext} from "../lib/hooks/conf";
+import {WithLoginConfigContext} from "../lib/hooks/conf";
 import React, { Suspense } from 'react';
 
 const Repositories = React.lazy(() => import('./repositories'));
@@ -9,7 +9,7 @@ const Setup = React.lazy(() => import('./setup'));
 export const IndexPage = () => {
     return (
         <Router>
-            {/* <WithLoginConfigContext> */}
+            <WithLoginConfigContext>
                 <Suspense fallback={<div>Loading...</div>}>
                     <Routes>
                         <Route path="/" element={<Navigate to="/repositories"/>} />
@@ -19,7 +19,7 @@ export const IndexPage = () => {
                         <Route path="*" element={<Navigate to="/repositories" replace />} />
                     </Routes>
                 </Suspense>
-            {/* </WithLoginConfigContext> */}
+            </WithLoginConfigContext>
         </Router>
     );
 };

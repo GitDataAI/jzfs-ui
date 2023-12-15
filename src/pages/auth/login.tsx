@@ -15,8 +15,7 @@ interface LoginConfig {
     logout_url: Location | (string & Location);
 }
 
-// const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
-const LoginForm = () => {
+const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     const router = useRouter();
     const [loginError, setLoginError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
@@ -35,13 +34,13 @@ const LoginForm = () => {
                             try {
                                 await auth.login(username.value, password.value)
                                 setLoginError(null);
+                                console.log(next);
                                 router.push(next ? next : '/repositories');
                             } catch(err) {
                                 if (err instanceof AuthenticationError && err.status === 401) {
-                                    // const contents = {__html: `${loginConfig.login_failed_message}` ||
-                                        // "Credentials don't match."};
-                                        "Credentials don't match."
-                                    // setLoginError(<span dangerouslySetInnerHTML={contents}/>);
+                                    const contents = {__html: `${loginConfig.login_failed_message}` ||
+                                        "Credentials don't match."};
+                                    setLoginError(<span dangerouslySetInnerHTML={contents}/>);
                                 }
                             }
                         }}>
@@ -58,7 +57,7 @@ const LoginForm = () => {
                             <Button variant="primary" type="submit">Login</Button>
                         </Form>
                         <div className={"mt-2 mb-1"}>
-                            {/* { loginConfig.fallback_login_url ?
+                            { loginConfig.fallback_login_url ?
                                 <Button variant="link" className="text-secondary mt-2" onClick={async ()=> {
                                     loginConfig.login_cookie_names?.forEach(
                                         cookie => {
@@ -72,7 +71,7 @@ const LoginForm = () => {
                         {loginConfig.fallback_login_label || 'Try another way to login'}
                             </Button>
                                 : ""
-                            } */}
+                            }
                         </div>
                     </Card.Body>
                 </Card>
@@ -83,31 +82,30 @@ const LoginForm = () => {
 
 
 const LoginPage = () => {
-    // const router = useRouter();
-    // const { response, error, loading } = useAPI(() => setup.getState());
-    // if (loading) {
-    //     return null;
-    // }
+    const router = useRouter();
+    const { response, error, loading } = useAPI(() => setup.getState());
+    if (loading) {
+        return null;
+    }
 
-    // // if we are not initialized, or we are not done with comm prefs, redirect to 'setup' page
-    // if (!error && response && (response.state !== SETUP_STATE_INITIALIZED || response.comm_prefs_missing === true)) {
-    //     router.push({pathname: '/setup', query: router.query,params:{}})
-    //     return null;
-    // }
-    // const loginConfig = response?.login_config;
-    // if (router.query.redirected)  {
-    //     if(!error && loginConfig?.login_url) {
-    //         window.location = loginConfig.login_url;
-    //         return null;
-    //     }
-    //     delete router.query.redirected;
+    // if we are not initialized, or we are not done with comm prefs, redirect to 'setup' page
+    if (!error && response && (response.state !== SETUP_STATE_INITIALIZED || response.comm_prefs_missing === true)) {
+        router.push({pathname: '/setup', query: router.query,params:{}})
+        return null;
+    }
+    const loginConfig = response?.login_config;
+    if (router.query.redirected)  {
+        if(!error && loginConfig?.login_url) {
+            window.location = loginConfig.login_url;
+            return null;
+        }
+        delete router.query.redirected;
 
-    //     router.push({pathname: '/auth/login', query: router.query})
-    // }
+        router.push({pathname: '/auth/login', query: router.query})
+    }
     return (
         <Layout logged={false}>
-            {/* <LoginForm loginConfig={loginConfig}/> */}
-            <LoginForm/>
+            <LoginForm loginConfig={loginConfig}/>
         </Layout>
     );
 };
