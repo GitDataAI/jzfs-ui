@@ -9,11 +9,19 @@ const RegisterForm = () => {
     const router = useRouter();
     const [RegisterError, setRegisterError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
+    const reghandleclick = (e) =>{
+        e.preventDefault();
+        router.push('/auth/register')
+    }
+    const loghandleclick = (e) =>{
+        e.preventDefault();
+        router.push('/auth/login')
+    }
     return(
         <Row>
         <Col md={{offset: 4, span: 4}}>
             <Card className="login-widget">
-                <Card.Header>Register</Card.Header>
+            <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                 <Card.Body>
                     <Form onSubmit={async (e) => {
                         e.preventDefault()

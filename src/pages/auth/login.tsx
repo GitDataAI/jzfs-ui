@@ -6,6 +6,7 @@ import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
 import {useAPI} from "../../lib/hooks/api";
 
+
 interface LoginConfig {
     login_url: string;
     login_failed_message?: string;
@@ -19,13 +20,20 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     const router = useRouter();
     const [loginError, setLoginError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
-   
+    const reghandleclick = (e) =>{
+        e.preventDefault();
+        router.push('/auth/register')
+    }
+    const loghandleclick = (e) =>{
+        e.preventDefault();
+        router.push('/auth/login')
+    }
     return (
         <Row>
             <Col md={{offset: 4, span: 4}}>
                 <Card className="login-widget">
-                    <Card.Header>Login</Card.Header>
-                    <Card.Body>
+                <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
+                        <Card.Body>
                         <Form onSubmit={async (e) => {
                             e.preventDefault()
                             const form = e.target as HTMLFormElement;
