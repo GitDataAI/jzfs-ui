@@ -19,7 +19,7 @@ const RegisterForm = () => {
     }
     return(
         <Row>
-        <Col md={{offset: 4, span: 4}}>
+            <Col md={{offset: 5, span: 8}} >
             <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                 <Card.Body>
