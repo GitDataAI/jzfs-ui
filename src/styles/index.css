@@ -20,6 +20,7 @@ a {
   color: #fc42c9;
   border-bottom: 3px solid #fc42c9;
 }
+.login-widget.jiaozi-login.card .active,
 .login-widget.jiaozi-login.card a::after {
   color: #fc42c9;
   border-bottom: 3px solid #fc42c9;

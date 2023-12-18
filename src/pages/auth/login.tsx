@@ -31,7 +31,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
         <Row className="justify-content-center align-items-center">
             <Col md={{offset: 5, span: 8}} >
                 <Card className="login-widget jiaozi-login">
-                <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
+                <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>
                         <Form onSubmit={async (e) => {
                             e.preventDefault()
