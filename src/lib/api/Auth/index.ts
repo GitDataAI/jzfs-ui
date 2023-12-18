@@ -304,18 +304,23 @@ export class Auth {
         const response = await apiRequest(`/auth/login`, { 
             method: 'POST', 
             body: JSON.stringify({ username, password }) 
+        }).then(async()=>{
+            this.clearCurrentUser()
+            const user = await this.getUserInfo()
+            cache.set('user', user.username)
+            return
+        }).catch(async(err)=>{
+                const errorBody = await extractError(err);
+                switch (err.status) {
+                    case 401:
+                        throw new AuthenticationError(errorBody, err.status);
+                    case 420:
+                        throw new Error(`Too many requests: ${errorBody}`);
+                    default:
+                        throw new Error(`Internal server error: ${errorBody}`);
+                }
         });
-        if (!response.ok) {
-            const errorBody = await extractError(response);
-            switch (response.status) {
-                case 401:
-                    throw new AuthenticationError(errorBody, response.status);
-                case 420:
-                    throw new Error(`Too many requests: ${errorBody}`);
-                default:
-                    throw new Error(`Internal server error: ${errorBody}`);
-            }
-        }
+       
         cache.set('token', response.token);
         return response;
     }
@@ -353,6 +358,7 @@ export class Auth {
                     throw new Error(`Internal server error: ${errorBody}`);
             }
         }
+
         return response.json();
     }
 }
