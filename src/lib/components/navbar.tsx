@@ -95,6 +95,7 @@ const TopNav = ({logged = true}) => {
                          navbarScroll>
                         <TopNavLink href="/repositories">Repositories</TopNavLink>
                         <TopNavLink href="/auth">Organizations</TopNavLink>
+                        <TopNavLink href="/auth/login">返回登录界面（临时按钮，仅用于测试接口阶段）</TopNavLink>
                     </Nav>
 
                     <NavUserInfo/>
