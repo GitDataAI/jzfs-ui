@@ -9,6 +9,7 @@ import Container from "react-bootstrap/Container";
 import {useLoginConfigContext} from "../hooks/conf";
 import {FeedPersonIcon} from "@primer/octicons-react";
 import { TopNavLinkProps } from "./interface/comp_interface";
+import './style/index.scss'
 
 const NavUserInfo = () => {
     const { user, loading, error } = useUser();
@@ -29,13 +30,13 @@ const NavUserInfo = () => {
     }
     return (
         <NavDropdown title={<NavBarTitle />} className="navbar-username" align="end">
-            {/* {notifyNewVersion && <>
+            {notifyNewVersion && <>
             <NavDropdown.Item href={versionResponse.upgrade_url}>
                     <>
                     <div className="menu-item-notification-indicator"></div>
                     New JiaoziFS version is available!
                     </>
-            </NavDropdown.Item><NavDropdown.Divider/></>} */}
+            </NavDropdown.Item><NavDropdown.Divider/></>}
             <NavDropdown.Item
                 onClick={()=> {
                     auth.clearCurrentUser();

@@ -20,7 +20,7 @@ const RegisterForm = () => {
     return(
         <Row>
         <Col md={{offset: 4, span: 4}}>
-            <Card className="login-widget">
+            <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                 <Card.Body>
                     <Form onSubmit={async (e) => {
