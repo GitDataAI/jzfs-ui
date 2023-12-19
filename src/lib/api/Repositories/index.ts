@@ -59,12 +59,12 @@ export class Repositories {
     }
        
     // 创建新的仓库，返回一个JSON
-    async createRepository(user: string, name: string, description: string = '') {
+    async createRepository(repo: RepositoryParams) {
         let headers = new Headers()
         headers.append("Content-Type", "application/json")
         const response = await apiRequest(`/users/repos`, { 
             method: 'POST', 
-            body: JSON.stringify({user, name, description}) 
+            body: JSON.stringify(repo) 
         }, headers);
         if (!response.ok) {
             const errorBody = await extractError(response);
@@ -83,7 +83,7 @@ export class Repositories {
     }
     // 获取仓库，返回一个JSON
     async getRepository(user: string, repoId: string) {
-    const response = await apiRequest(`/${user}/${repoId}`, { method: 'GET' });
+    const response = await apiRequest(`/repos/${user}/${repoId}`, { method: 'GET' });
     if (!response.ok) {
         const errorBody = await extractError(response);
         switch (response.status) {

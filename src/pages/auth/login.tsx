@@ -39,9 +39,9 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                             const username = form.elements.namedItem('username') as HTMLInputElement;
                             const password = form.elements.namedItem('password') as HTMLInputElement;
                             try {
-                                await auth.login(username.value, password.value)
+                                const response =  auth.login(username.value, password.value)
                                 setLoginError(null);
-                                console.log(next);
+                                console.log(response);
                                 router.push(next ? next : '/repositories');
                             } catch(err) {
                                 if (err instanceof AuthenticationError && err.status === 401) {

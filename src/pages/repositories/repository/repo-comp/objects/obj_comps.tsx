@@ -152,7 +152,8 @@ export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) =>
   }, [repoId]);
 
   const { response } = useAPI(async () => {
-    const repo = await repositories.get(repoId);
+    const user = window.localStorage.getItem("user")
+    const repo = await repositories.getRepository(user,repoId);
     if (
       !repo.storage_namespace.startsWith("s3:") &&
       !repo.storage_namespace.startsWith("http")

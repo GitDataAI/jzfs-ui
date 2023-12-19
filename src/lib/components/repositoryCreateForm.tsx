@@ -156,7 +156,7 @@ export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ({ id, c
                 return;
             }
             onSubmit({
-                name: repoNameField.current? repoNameField.current.value :'',
+                Name: repoNameField.current? repoNameField.current.value :'',
                 storage_namespace: storageNamespaceField.current ?storageNamespaceField.current.value : '',
                 default_branch: defaultBranchField.current? defaultBranchField.current.value: '',
                 sample_data:sampleDataCheckbox.current? sampleDataCheckbox.current.checked: false,

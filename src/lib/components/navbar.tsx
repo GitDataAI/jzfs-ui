@@ -6,14 +6,13 @@ import {Link} from "./nav";
 import {useAPI} from "../hooks/api";
 import {Navbar, Nav, NavDropdown} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
-import {useLoginConfigContext} from "../hooks/conf";
 import {FeedPersonIcon} from "@primer/octicons-react";
 import { TopNavLinkProps } from "./interface/comp_interface";
 import './style/index.scss'
 
 const NavUserInfo = () => {
     const { user, loading, error } = useUser();
-    const logoutUrl = useLoginConfigContext()?.logout_url || "/logout"
+    const logoutUrl = "/auth/login"
     const { response: versionResponse, loading: versionLoading, error: versionError } = useAPI(() => {
         return config.getLakeFSVersion()
     }, [])
@@ -38,9 +37,10 @@ const NavUserInfo = () => {
                     </>
             </NavDropdown.Item><NavDropdown.Divider/></>}
             <NavDropdown.Item
-                onClick={()=> {
+                onClick={async()=> {
                     auth.clearCurrentUser();
                     window.location = logoutUrl;
+                    console.log(await auth.logout());
                 }}>
                 Logout
             </NavDropdown.Item>

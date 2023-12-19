@@ -301,14 +301,15 @@ export class Auth {
     
     // 登录，返回一个JSON对象，包含了认证令牌的信息
     async login(username: string, password: string) {
-        const response = await apiRequest(`/auth/login`, { 
+        await apiRequest(`/auth/login`, { 
             method: 'POST', 
             body: JSON.stringify({ username, password }) 
-        }).then(async()=>{
+        }).then(async(response)=>{
             this.clearCurrentUser()
-            const user = await this.getUserInfo()
+            const logininfo  = await response.json()
+            const user = await this.getUserInfo(logininfo.token)
             cache.set('user', user.username)
-            return
+            return response.json()
         }).catch(async(err)=>{
                 const errorBody = await extractError(err);
                 switch (err.status) {
@@ -320,9 +321,6 @@ export class Auth {
                         throw new Error(`Internal server error: ${errorBody}`);
                 }
         });
-       
-        cache.set('token', response.token);
-        return response;
     }
     // 注册，返回一个JSON对象，包含了注册信息
     
@@ -347,8 +345,10 @@ export class Auth {
         return response.json();
     }
     // 获取当前登录用户的信息，返回一个JSON对象，包含了用户信息
-    async getUserInfo() {
-        const response = await apiRequest(`/users/user`, { method: 'GET' });
+    async getUserInfo(token:string){
+        let headers = new Headers()
+        headers.append("Authorization", token)
+        const response = await apiRequest(`/users/user`, { method: 'GET' },headers);
         if (!response.ok) {
             const errorBody = await extractError(response);
             switch (response.status) {
@@ -361,4 +361,22 @@ export class Auth {
 
         return response.json();
     }
+    
+    // 注销登录
+    async logout() {
+        const response = await apiRequest(`/auth/logout`, { method: 'POST' });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 420:
+                    throw new Error(`Too many requests: ${errorBody}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response.json();
+    }
+    
 }

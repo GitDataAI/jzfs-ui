@@ -53,8 +53,9 @@ export const TextDownloader: FC<RendererComponentWithTextCallback> = ({
   presign,
   onReady,
 }) => {
+  let user =  window.localStorage.getItem('user')
   const { response, error, loading } = useAPI(
-    async () => await objects.get(repoId, refId, path, presign),
+    async () => await objects.getObject(user, repoId,branch,path),
     [repoId, refId, path]
   );
   if (loading) {

@@ -119,50 +119,63 @@ export const GetStarted: React.FC<GetStartedProps> = ({onCreateEmptyRepo, creati
     );
 };
 
-export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
+// export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
+export const RepositoryList = () => {
 
-    const {results:Repo, loading, error, nextPage} = useAPIWithPagination(() => {
-        // return repositories.list(prefix, after);
-        return repositories.listRepository();
-    }, [refresh, prefix, after]);
-    const results = Repo as RepositoryParams[];
+    // const {results:Repo, loading, error, nextPage} = useAPIWithPagination(() => {
+    //     // return repositories.list(prefix, after);
+    //     return repositories.listRepository();
+    // }, [refresh, prefix, after]);
+    // const results = Repo as RepositoryParams[];
+    // if (loading) return <Loading/>;
+    // if (error) { console.log('err') 
+    //    return <AlertError error={error}/>;}
+    // if (!after && !prefix && results && results.length === 0 ) {
+        
+    //     toggleShowActionsBar();
+    //     return <GetStarted onCreateEmptyRepo={onCreateEmptyRepo} creatingRepo={creatingRepo} createRepoError={createRepoError}/>;
+    // }
+    // toggleShowActionsBar();
+    const {response,loading,error} = useAPI(() => repositories.listRepository());
     if (loading) return <Loading/>;
-    if (error) return <AlertError error={error}/>;
-    if (!after && !prefix && results && results.length === 0 ) {
-        toggleShowActionsBar();
-        return <GetStarted onCreateEmptyRepo={onCreateEmptyRepo} creatingRepo={creatingRepo} createRepoError={createRepoError}/>;
-    }
-    toggleShowActionsBar();
-    if(results)
+    if (error) { console.log('err') 
+       return <AlertError error={error}/>;}
+    if(response){
+        console.log('list:' , response);
     return (
         <div>
-            {results.map((repo: RepositoryParams) => (
-                <Row key={repo.id}>
+            {
+                response.map((repo)=>{
+                    console.log(Date.parse(repo.CreatedAt));
+                    return(
+                <Row key={repo.ID}>
                     <Col className={"mb-2 mt-2"}>
                         <Card>
                             <Card.Body>
                                 <h5>
                                     <Link href={{
                                         pathname: `/repositories/:repoId/objects`,
-                                        params: {repoId: repo.id}
+                                        params: {repoId: repo.Name}
                                     }}>
-                                        {repo.id}
+                                        {repo.Name}
                                     </Link>
                                 </h5>
                                 <p>
                                     <small>
-                                        created at <code>{dayjs.unix(repo.creation_date).toISOString()}</code> ({dayjs.unix(repo.creation_date).fromNow()})<br/>
-                                        default branch: <code>{repo.default_branch}</code>,{' '}
-                                        storage namespace: <code>{repo.storage_namespace}</code>
+                                        created at <code>{dayjs.unix( Math.floor(Date.parse(repo.CreatedAt)/1000)).toISOString()}</code> ({dayjs.unix( Math.floor(Date.parse(repo.CreatedAt)/1000)).fromNow()})<br/>
+                                        default branch: <code>{repo.HEAD}</code>,{' '}
+                                        storage namespace: <code>{repo.Name}</code>
                                     </small>
                                 </p>
                             </Card.Body>
                         </Card>
                     </Col>
                 </Row>
-            ))}
+                    )
+                })
+            }
 
-            <Paginator after={after} nextPage={nextPage} onPaginate={onPaginate}/>
+            {/* <Paginator after={after} nextPage={nextPage} onPaginate={onPaginate}/> */}
         </div>
-    );
+    );}
 };

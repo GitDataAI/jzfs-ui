@@ -36,13 +36,14 @@ const RepositoriesPage = () => {
     );
 
     const {response,loading,error} = useAPI(() => repositories.listRepository());
+    console.log(response);
     
 
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
         try {
             setCreatingRepo(true);
             setCreateRepoError(null);
-            await repositories.create(repo);
+            await repositories.createRepository(repo);
             setRefresh(!refresh);
             if (presentRepo) {
                 router.push({pathname: `/repositories/:repoId/objects`, params: {repoId: repo.name},query:{}});
@@ -55,9 +56,9 @@ const RepositoriesPage = () => {
         }
     };
 
-    const toggleShowActionsBar = useCallback((show = true) => {
-        setShowActionsBar(show);
-    }, [setShowActionsBar]);
+    // const toggleShowActionsBar = useCallback((show = true) => {
+    //     setShowActionsBar(show);
+    // }, [setShowActionsBar]);
 
     const createRepositoryButtonCallback = useCallback(() => {
         setSampleRepoChecked(false);
@@ -68,7 +69,7 @@ const RepositoriesPage = () => {
     return (
         <Layout>
             <Container fluid="xl" className="mt-3">
-                {showActionsBar && <ActionsBar>
+                {<ActionsBar>
                     <Form style={{minWidth: 300}} onSubmit={e => { e.preventDefault(); }}>
                         <Form.Group>
                             <Col>
@@ -92,19 +93,19 @@ const RepositoriesPage = () => {
                 </ActionsBar> }
 
                 <RepositoryList
-                    prefix={routerPfx}
-                    refresh={refresh}
-                    after={(router.query.after) ? router.query.after : ""}
-                    onPaginate={after => {
-                        const query = {after,prefix};
-                        if (router.query.prefix) query.prefix = router.query.prefix;
-                        router.push({pathname: `/repositories`, query,params:{}});
-                    }}
-                    // onCreateSampleRepo={createSampleRepoButtonCallback}
-                    onCreateEmptyRepo={createRepositoryButtonCallback}
-                    toggleShowActionsBar={toggleShowActionsBar}
-                    creatingRepo={creatingRepo}
-                    createRepoError={createRepoError}
+                    // prefix={routerPfx}
+                    // refresh={refresh}
+                    // after={(router.query.after) ? router.query.after : ""}
+                    // onPaginate={after => {
+                    //     const query = {after,prefix};
+                    //     if (router.query.prefix) query.prefix = router.query.prefix;
+                    //     router.push({pathname: `/repositories`, query,params:{}});
+                    // }}
+                    // // onCreateSampleRepo={createSampleRepoButtonCallback}
+                    // onCreateEmptyRepo={createRepositoryButtonCallback}
+                    // toggleShowActionsBar={toggleShowActionsBar}
+                    // creatingRepo={creatingRepo}
+                    // createRepoError={createRepoError}
                     />
 
                 <CreateRepositoryModal

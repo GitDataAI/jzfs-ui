@@ -74,9 +74,10 @@ const NoContentDiff:React.FC<NoContentDiffProps> = ({left, right, diffType}) => 
 }
 
 const ContentDiff:React.FC<ContentDiffProps> = ({repoId, path, leftRef, rightRef, leftSize, rightSize, diffType}) => {
-    const left = leftRef && useAPI(async () => objects.get(repoId, leftRef, path),
+    let user =  window.localStorage.getItem('user')
+    const left = leftRef && useAPI(async () => objects.getObject(user, repoId ,branch,path),
         [repoId, leftRef, path]);
-    const right = rightRef && useAPI(async () => objects.get(repoId, rightRef, path),
+    const right = rightRef && useAPI(async () => objects.getObject(user, repoId),
         [repoId, rightRef, path]);
 
     if ((left && left.loading) || (right && right.loading)) return <Loading/>;

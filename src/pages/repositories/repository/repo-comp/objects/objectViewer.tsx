@@ -58,13 +58,14 @@ export const getContentType = (headers: Headers): string | null => {
 };
 
 const FileObjectsViewerPage = () => {
-  const config = useStorageConfig();
+  // const config = useStorageConfig();
   const { repoId } = useParams<ObjectViewerPathParams>();
   const queryString = useQuery<ObjectViewerQueryString>();
   const refId = queryString["ref"] ?? "";
   const path = queryString["path"] ?? "";
   const { response, error, loading } = useAPI(() => {
-    return objects.head(repoId, refId, path);
+    const user = window.localStorage.getItem("user");
+    return objects.headObject(user,repoId, refId, path);
   }, [repoId, refId, path]);
 
   let content;
