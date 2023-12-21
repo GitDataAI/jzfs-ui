@@ -52,13 +52,13 @@ export const TreeContainer:React.FC<TreeContainerProps> = ({
   refreshToken,
 }) => {
   const { results, error, loading, nextPage } = useAPIWithPagination(() => {
-    return objects.list(
+    const user = window.localStorage.getItem("user")
+    return objects.getObject(
+      user,
       repo.id,
-      reference.id,
+      branch,
       path,
-      after,
-      config.pre_sign_support_ui
-    );
+      );
   }, [repo.id, reference.id, path, after, refreshToken]);
   const initialState = {
     inProgress: false,

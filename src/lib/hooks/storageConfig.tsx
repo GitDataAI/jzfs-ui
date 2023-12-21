@@ -38,7 +38,7 @@ const storageConfigInitialState: StorageConfigContextType = {
 //   // we assume that we're actually getting a StorageConfigContextType
 //   // but there's no real guarantee
 //   // we'll need to valudate and fix this when the API client is typed
-//   const storageConfig = await config.getStorageConfig();
+  // const storageConfig = await config.getStorageConfig();
 //   return storageConfig;
 // };
 
@@ -60,7 +60,7 @@ export const StorageConfigProvider: FC<{ children: React.ReactNode }> = ({
 
   // useEffect(() => {
   //   const fetchStorageConfigAndSetState = async () => {
-  //     const storageConfig = await fetchStorageConfig();
+      // const storageConfig = await fetchStorageConfig();
   //     setStorageConfig(storageConfig);
   //   };
   //   fetchStorageConfigAndSetState();

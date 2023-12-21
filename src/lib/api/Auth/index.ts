@@ -1,5 +1,6 @@
 import { AuthenticationError, DEFAULT_LISTING_AMOUNT, apiRequest, cache, extractError, qs} from "../index"
 import { QueryParams, UserRegisterInfo } from "../interface";
+import { UserInfo } from "../interface/Api";
 export class Auth {
     async getAuthCapabilities() {
         const response = await apiRequest('/auth/capabilities', {
@@ -309,6 +310,7 @@ export class Auth {
             const logininfo  = await response.json()
             const user = await this.getUserInfo(logininfo.token)
             cache.set('user', user.username)
+            console.log(window.localStorage);
             return response.json()
         }).catch(async(err)=>{
                 const errorBody = await extractError(err);
@@ -345,7 +347,7 @@ export class Auth {
         return response.json();
     }
     // 获取当前登录用户的信息，返回一个JSON对象，包含了用户信息
-    async getUserInfo(token:string){
+    async getUserInfo(token:string):Promise<UserInfo>{
         let headers = new Headers()
         headers.append("Authorization", token)
         const response = await apiRequest(`/users/user`, { method: 'GET' },headers);

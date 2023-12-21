@@ -13,29 +13,20 @@ import './style/index.scss'
 const NavUserInfo = () => {
     const { user, loading, error } = useUser();
     const logoutUrl = "/auth/login"
-    const { response: versionResponse, loading: versionLoading, error: versionError } = useAPI(() => {
-        return config.getLakeFSVersion()
-    }, [])
+
 
     if (loading) return <Navbar.Text>Loading...</Navbar.Text>;
     if (!user || !!error) return (<></>);
-    const notifyNewVersion = !versionLoading && !versionError && versionResponse && versionResponse.upgrade_recommended;    const NavBarTitle = () => {
+    const NavBarTitle = () => {
         return (
         <>
-            {notifyNewVersion && <> <div className="user-menu-notification-indicator"></div> </> }
-            <FeedPersonIcon size={28} verticalAlign={"middle"}/> <span style={{marginLeft:6, fontSize:18}}>{user.friendly_name || user.id} </span>
+            {<div className="user-menu-notification-indicator"></div>}
+            <FeedPersonIcon size={28} verticalAlign={"middle"}/> <span style={{marginLeft:6, fontSize:18}}>{user} </span>
         </>
         )
     }
     return (
         <NavDropdown title={<NavBarTitle />} className="navbar-username" align="end">
-            {notifyNewVersion && <>
-            <NavDropdown.Item href={versionResponse.upgrade_url}>
-                    <>
-                    <div className="menu-item-notification-indicator"></div>
-                    New JiaoziFS version is available!
-                    </>
-            </NavDropdown.Item><NavDropdown.Divider/></>}
             <NavDropdown.Item
                 onClick={async()=> {
                     auth.clearCurrentUser();
@@ -45,9 +36,9 @@ const NavUserInfo = () => {
                 Logout
             </NavDropdown.Item>
             <NavDropdown.Divider/>
-            {!versionLoading && !versionError && <>
+            {<>
             <NavDropdown.Item disabled={true}>
-                <small>JiaoziFS {versionResponse.version}</small>
+                <small>JiaoziFS</small>
             </NavDropdown.Item></>}
         </NavDropdown>
     );

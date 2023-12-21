@@ -1,5 +1,5 @@
 // 编辑个人仓库页面，为仓库页面与项目详情页面提供路由
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import {Col,Form,InputGroup,ButtonToolbar,Container} from "react-bootstrap";
 
 import {SearchIcon} from "@primer/octicons-react";
@@ -9,7 +9,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Layout from "../../lib/components/layout";
 import {ActionsBar, useDebouncedState} from "../../lib/components/controls";
 import {config, repositories} from '../../lib/api';
-// import {useAPI} from "../../lib/hooks/api";
 import {useRouter} from "../../lib/hooks/router";
 
 import {Route, Routes} from "react-router-dom";
@@ -28,15 +27,14 @@ const RepositoriesPage = () => {
     const [createRepoError, setCreateRepoError] = useState(null);
     const [refresh, setRefresh] = useState(false);
     const [creatingRepo, setCreatingRepo] = useState(false);
-    const [showActionsBar, setShowActionsBar] = useState(false);
     const routerPfx = (router.query.prefix) ? router.query.prefix : "";
+    const amount = useRef(10)
     const [prefix, setPrefix] = useDebouncedState(
         routerPfx,
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix},params:{}})
     );
 
-    const {response,loading,error} = useAPI(() => repositories.listRepository());
-    console.log(response);
+    const {response} = useAPI(() => repositories.listRepository());
     
 
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
@@ -55,10 +53,6 @@ const RepositoriesPage = () => {
             return false;
         }
     };
-
-    // const toggleShowActionsBar = useCallback((show = true) => {
-    //     setShowActionsBar(show);
-    // }, [setShowActionsBar]);
 
     const createRepositoryButtonCallback = useCallback(() => {
         setSampleRepoChecked(false);
@@ -93,19 +87,18 @@ const RepositoriesPage = () => {
                 </ActionsBar> }
 
                 <RepositoryList
-                    // prefix={routerPfx}
-                    // refresh={refresh}
-                    // after={(router.query.after) ? router.query.after : ""}
-                    // onPaginate={after => {
-                    //     const query = {after,prefix};
-                    //     if (router.query.prefix) query.prefix = router.query.prefix;
-                    //     router.push({pathname: `/repositories`, query,params:{}});
-                    // }}
-                    // // onCreateSampleRepo={createSampleRepoButtonCallback}
-                    // onCreateEmptyRepo={createRepositoryButtonCallback}
-                    // toggleShowActionsBar={toggleShowActionsBar}
-                    // creatingRepo={creatingRepo}
-                    // createRepoError={createRepoError}
+                    prefix={routerPfx}
+                    refresh={refresh}
+                    amount={amount}
+                    after={(router.query.after) ? router.query.after : ""}
+                    onPaginate={after => {
+                        const query = {after,prefix};
+                        if (router.query.prefix) query.prefix = router.query.prefix;
+                        router.push({pathname: `/repositories`, query,params:{}});
+                    }}
+                    onCreateEmptyRepo={createRepositoryButtonCallback}
+                    creatingRepo={creatingRepo}
+                    createRepoError={createRepoError}
                     />
 
                 <CreateRepositoryModal
@@ -114,10 +107,13 @@ const RepositoriesPage = () => {
                         setCreateRepoError(null);
                     }}
                     show={showCreateRepositoryModal}
+                    setShow = {setShowCreateRepositoryModal}
                     error={createRepoError}
+                    setRefresh = {setRefresh}
                     onSubmit={(repo) => createRepo(repo, true)}
                     samlpleRepoChecked={sampleRepoChecked}
                     inProgress={creatingRepo}
+                    refresh = {refresh}
                     />
 
             </Container>
@@ -129,7 +125,7 @@ const RepositoriesIndex = () => {
     return (
         <Routes>
             <Route path="/" element={<RepositoriesPage/>} />
-            <Route path=":repoId/*" element={<RepositoryPage/>} />
+            <Route path=":user/*" element={<RepositoryPage/>} />
         </Routes>
     );
 };

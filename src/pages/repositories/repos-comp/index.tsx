@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button,Col,Card,Row,Alert,Modal,Spinner} from "react-bootstrap";
 
 import {RepoIcon} from "@primer/octicons-react";
@@ -6,13 +6,11 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import { AlertError, Loading} from "../../../lib/components/controls";
-import {config, repositories} from '../../../lib/api';
-import {RepositoryCreateForm} from "../../../lib/components/repositoryCreateForm";
+import {config, repositories, setup} from '../../../lib/api';
+import {RepositoryCreateForm} from "../../../lib/components/repoCreateForm";
 import {useAPI, useAPIWithPagination} from "../../../lib/hooks/api";
-import {Paginator} from "../../../lib/components/pagination";
 import {Link} from "../../../lib/components/nav";
 import { CreateRepositoryButtonProps, CreateRepositoryModalProps, GetStartedProps, GettingStartedCreateRepoButtonProps, RepositoryListProps } from "../interface/repos_interface";
-import { RepositoryParams } from "../../../lib/api/interface";
 
 dayjs.extend(relativeTime);
 
@@ -23,49 +21,22 @@ export const CreateRepositoryButton: React.FC<CreateRepositoryButtonProps> = ({v
         </Button>
     );
 }
-const GettingStartedCreateRepoButton: React.FC<GettingStartedCreateRepoButtonProps> = ({text, variant = "success", enabled = false, onClick, creatingRepo, style = {}}) => {
-    return (
-        <Button className="create-sample-repo-button" style={style} variant={variant} disabled={!enabled || creatingRepo} onClick={onClick}>
-            { creatingRepo && <><Spinner as="span" role="status" aria-hidden="true" animation="border" size="sm" className="me-2"/><span className="visually-hidden">Loading...</span></> }
-            {text}
-        </Button>
-    );
-}
 
-export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({show, error, onSubmit, onCancel, inProgress, samlpleRepoChecked = false }) => {
+export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({show,onSubmit, onCancel, inProgress,setShow,setRefresh,refresh}) => {
 
   const [formValid, setFormValid] = useState(false);
-
-//   const { response, error: err, loading } = useAPI(() => config.getStorageConfig());
-    const response  = {
-
-    };
-    const showError = (error) ? error : new Error;
-    // if (loading) {
-    //     return (
-    //         <Modal show={show} onHide={onCancel} size="lg">
-    //             <Modal.Body>
-    //                 <Loading/>
-    //             </Modal.Body>
-    //         </Modal>
-    //     );
-    // }
 
     return (
         <Modal show={show} onHide={onCancel} size="lg">
             <Modal.Body>
                 <RepositoryCreateForm
                   id="repository-create-form"
-                  config={response}
-                  error={showError}
-                  formValid={formValid}
-                  setFormValid={setFormValid}
                   onSubmit={onSubmit}
-                  samlpleRepoChecked={samlpleRepoChecked}
+                  setFormValid = {setFormValid}
                 />
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="success" type="submit" form="repository-create-form" className="me-2" disabled={!formValid || inProgress}>
+              <Button variant="success" type="submit" form="repository-create-form" className="me-2" disabled={!formValid || inProgress} onClick={()=>{setShow(false),setRefresh(refresh)}}>
                 { inProgress ? 'Creating...' : 'Create Repository' }
               </Button>
               <Button variant="secondary" onClick={(e) => {
@@ -77,53 +48,11 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
     );
 };
 
-export const GetStarted: React.FC<GetStartedProps> = ({onCreateEmptyRepo, creatingRepo, createRepoError }) => {
-    return (
-        <Card className="getting-started-card">
-            <h2 className="main-title">Welcome to Pando DataHub!</h2>
-            <Row className="text-container">
-                <Col>
-                    <p>{`To get started, create your first empty repository.`}<br />
-                    {`Let's dive in 🤿`}</p>
-                </Col>
-            </Row>
-            <Row className="button-container">
-                <Col>
-                    <GettingStartedCreateRepoButton text={
-                      <><span>Create Repository</span> </>
-                    } creatingRepo={creatingRepo} variant={"success"} enabled={true} onClick={onCreateEmptyRepo} />
-                </Col>
-            </Row>
-            {createRepoError &&
-                <Row>
-                    <Col sm={6}>
-                        <Alert className="mb-3" variant={"danger"}>{createRepoError.message}</Alert>
-                    </Col>
-                </Row>
-            }
-
-            <div className="d-flex flex-direction-row align-items-center">
-                <span className="learn-more">Already working with JiaoziFS and just need an empty repository?</span>
-                <GettingStartedCreateRepoButton style={{ padding: 0, width: "auto", marginLeft: "8px", display: "inline-block" }} text="Click here" variant={"link"} enabled={true} onClick={onCreateEmptyRepo} creatingRepo={false} />
-            </div>
-
-            <div>
-                <img
-                    src="/getting-started.png"
-                    alt="getting-started"
-                    className="getting-started-image"
-                    style={{ width: '30%', height: 'auto'}}
-                />
-            </div>
-        </Card>
-    );
-};
-
 // export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
-export const RepositoryList = () => {
+export const RepositoryList = ({refresh}) => {
 
     // const {results:Repo, loading, error, nextPage} = useAPIWithPagination(() => {
-    //     // return repositories.list(prefix, after);
+    //     // return repositories.list(prefix, after，amount);
     //     return repositories.listRepository();
     // }, [refresh, prefix, after]);
     // const results = Repo as RepositoryParams[];
@@ -136,7 +65,8 @@ export const RepositoryList = () => {
     //     return <GetStarted onCreateEmptyRepo={onCreateEmptyRepo} creatingRepo={creatingRepo} createRepoError={createRepoError}/>;
     // }
     // toggleShowActionsBar();
-    const {response,loading,error} = useAPI(() => repositories.listRepository());
+    const {response,loading,error} = useAPI(() => repositories.listRepository(),[refresh]);
+
     if (loading) return <Loading/>;
     if (error) { console.log('err') 
        return <AlertError error={error}/>;}

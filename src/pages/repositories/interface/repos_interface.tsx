@@ -25,6 +25,9 @@ export interface CreateRepositoryModalProps {
     onCancel:()=>void;
     inProgress: boolean;
     samlpleRepoChecked?: boolean;
+    setShow:React.Dispatch<React.SetStateAction<boolean>>;
+    setRefresh:React.Dispatch<React.SetStateAction<boolean>>
+    refresh: boolean
 }
 
 export interface GetStartedProps{

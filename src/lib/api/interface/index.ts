@@ -111,13 +111,4 @@ export interface  UserRegisterInfo{
     email:string;
     password:string;
     }
-export interface UserInfo{
-  username: string;
-  email:string;
-  currentSignInAt?: string;
-  lastSignInAt?:string;
-  currentSignInIP?:string;
-  lastSignInIP?: string;
-  createdAt?:string;
-  updateAt?:string;
-}
+
