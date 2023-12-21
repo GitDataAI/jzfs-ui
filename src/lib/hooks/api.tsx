@@ -85,7 +85,8 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
                     response,
                     responseHeaders:null,
                 });
-            } catch (error: unknown | Error | null) {                
+            } catch (error: unknown | Error | null) {         
+                       
                 if (error instanceof AuthenticationError) {
                     if (isMounted) {
                         setLogin(true);
