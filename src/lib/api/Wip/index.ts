@@ -1,4 +1,5 @@
-import { AuthenticationError, AuthorizationError, BadRequestError, apiRequest, extractError } from "..";
+import { AuthenticationError, AuthorizationError, BadRequestError, apiRequest, cache, extractError } from "..";
+import { Wip } from "../interface";
 
 export class Auth {
     // 获取正在进行中的工作，返回一个JSON
@@ -78,7 +79,7 @@ export class Auth {
         return response.json();
     }
     // 列出特定项目和用户的正在进行中的工作，返回一个JSON
-    async listWip(user: string, repoId: string) {
+    async listWip(user:string,repoId: string): Promise<Wip>{
         const response = await apiRequest(`/${user}/${repoId}/wip/list`, { method: 'GET' });
         if (!response.ok) {
             const errorBody = await extractError(response);

@@ -1,5 +1,5 @@
 import queryString from "query-string"
-import {AuthenticationError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs} from "../index"
+import {AuthenticationError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, cache, extractError, qs} from "../index"
 import { params } from "../interface";
 
 export class Commits {
@@ -58,7 +58,8 @@ export class Commits {
         return response.json();
     }
      // 列出特定提交中的条目，返回一个JSON
-     async getEntriesInCommit(user: string, repoId: string, commitHash: string, path: string = '') {
+     async getEntriesInCommit(repoId: string, commitHash: string, path: string = '') {
+        const user = cache.get('user')
         const response = await apiRequest(`/${user}/${repoId}/commit/ls/${commitHash}?path=${path}`, { method: 'GET' });
         if (!response.ok) {
             const errorBody = await extractError(response);
@@ -78,7 +79,8 @@ export class Commits {
         return response.json();
     }
     // 获取两个提交之间的差异，返回一个JSON
-    async getCommitDiff(user: string, repoId: string, baseCommit: string, toCommit: string, path: string = '') {
+    async getCommitDiff(repoId: string, baseCommit: string, toCommit: string, path: string = '') {
+        const user = cache.get('user')
         const response = await apiRequest(`/${user}/${repoId}/commit/diff/${baseCommit}/${toCommit}?path=${path}`, { method: 'GET' });
         if (!response.ok) {
             const errorBody = await extractError(response);
@@ -95,4 +97,18 @@ export class Commits {
         }
         return response.json();
     }
+    // 获取仓库的提交信息
+    async  getCommitsInRepository(repository: string, refName?: string) {
+        const user = cache.get('user')
+        let url = `/repos/${user}/${repository}/commits`;
+        if (refName) {
+            url += `?refName=${refName}`;
+        }
+        const response = await apiRequest(url);
+        if (response.status !== 200) {
+            throw new Error(`Could not get commits: ${await extractError(response)}`);
+        }
+        return response.json();
+    }
+    
 }

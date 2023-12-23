@@ -125,7 +125,7 @@ const RepositoriesIndex = () => {
     return (
         <Routes>
             <Route path="/" element={<RepositoriesPage/>} />
-            <Route path=":user/*" element={<RepositoryPage/>} />
+            <Route path=":user/:repoId/*" element={<RepositoryPage/>} />
         </Routes>
     );
 };

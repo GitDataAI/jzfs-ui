@@ -17,11 +17,11 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
         const fetchRefs = async () => {
             try {
                 let response;
-                if (refType === RefTypeTag && repo.id) {
+                if (refType === RefTypeTag && repo.Name) {
                     response = await tags.list(repo.id, pagination.prefix, pagination.after, pagination.amount);
                 } else {
-                    if(repo.id)
-                    response = await branches.list(repo.id, pagination.prefix, pagination.after, pagination.amount);
+                    if(repo.Name)
+                    response = await branches.listBranches(repo.Name);
                 }
                 setRefs({loading: false, payload: response, error: null});
             } catch (error) {
@@ -102,10 +102,8 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
                     <>
                         <ul className="list-group ref-list">
                             {results.map(namedRef => (
-                                <RefEntry key={namedRef.id} repo={repo} refType={refType} namedRef={namedRef.id?namedRef.id:''} selectRef={selectRef} selected={selected as ref} withCommits={refType !== RefTypeTag && withCommits} logCommits={async () => {
-                                    const data = await commits.log(repo.id?repo.id:'', namedRef.id?namedRef.id:'')
-                                    setCommitList({...commitList, branch: namedRef.id?namedRef.id:'', commits: data.results});
-                                }}/>
+                                <RefEntry namedRef={namedRef.Name} selectRef={selectRef} refType={refType}
+                                />
                             ))}
                         </ul>
                         <Paginator results={refList.payload? refList.payload.results : []} pagination={refList.payload? refList.payload.pagination:{}} from={pagination.after} onPaginate={(after) => {
@@ -165,22 +163,19 @@ const CommitList:React.FC<CommitListProps> = ({ commits, selectRef, reset, branc
     );
 };
 
-const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, selected, logCommits, withCommits}) => {
+const RefEntry = ({ namedRef, refType, selectRef}) => {
     return (
         <li className="list-group-item" key={namedRef}>
-            {(!!selected && namedRef === selected.id) ?
                 <strong>{namedRef}</strong> :
                 <Button variant="link" onClick={() => {
                     selectRef({id: namedRef, type: refType});
                 }}>{namedRef}</Button>
-            }
             <div className="actions">
-                {(refType === RefTypeBranch && namedRef === repo.default_branch) ? (<Badge variant="info">Default</Badge>) : <span/>}
-                {(withCommits) ? (
-                    <Button onClick={logCommits} size="sm" variant="link">
+               <Badge variant="info">Default</Badge>
+                    <Button size="sm" variant="link">
                         <ChevronRightIcon/>
                     </Button>
-                ) : (<span/>)}
+        
             </div>
         </li>
     );

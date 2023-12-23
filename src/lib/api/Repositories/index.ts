@@ -1,4 +1,4 @@
-import {AuthenticationError, AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, RepositoryDeletionError, apiRequest, extractError, qs} from "../index"
+import {AuthenticationError, AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, RepositoryDeletionError, apiRequest, cache, extractError, qs} from "../index"
 import { QueryParams, RepositoryParams } from "../interface";
 import { RepositoryProps } from "../interface/Api";
 
@@ -83,7 +83,8 @@ export class Repositories {
         return response.json();
     }
     // 获取仓库，返回一个JSON
-    async getRepository(user: string, repoId: string) {
+    async getRepository( repoId: string) {
+    const user =cache.get("user")
     const response = await apiRequest(`/repos/${user}/${repoId}`, { method: 'GET' });
     if (!response.ok) {
         const errorBody = await extractError(response);

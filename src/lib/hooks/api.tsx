@@ -1,5 +1,5 @@
 import {DependencyList, useEffect, useState} from 'react';
-import {AuthenticationError} from "../api";
+import { AuthorizationError} from "../api";
 import {useRouter} from "./router";
 import { APIState, InitialPaginationState, PromiseFunction,} from '../components/interface/comp_interface';
 
@@ -87,15 +87,14 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
                 });
             } catch (error: unknown | Error | null) {         
                        
-                if (error instanceof AuthenticationError) {
+                if (error instanceof AuthorizationError) {
                     if (isMounted) {
                         setLogin(true);
                     }
                     return;
                 }
                 if(error instanceof Error || error === null) {
-                    console.log('test');
-
+                    console.log(error);
                     setRequest({
                         loading: false,
                         error,

@@ -1,7 +1,7 @@
 import {Button,Modal,Form,Container,Row,Col,ProgressBar} from "react-bootstrap";
 import React, {useCallback, useEffect, useState } from "react";
 import {useDropzone} from "react-dropzone";
-import {objects, staging,uploadWithProgress} from "../../../../../lib/api";
+import {objects} from "../../../../../lib/api";
 import {CheckboxIcon, UploadIcon, XIcon} from "@primer/octicons-react";
 import {humanSize} from "../../../../../lib/components/repository/tree";
 import pMap from "p-map";
@@ -9,35 +9,15 @@ import {
     AlertError,
     Warnings
 } from "../../../../../lib/components/controls";
-import {RefTypeBranch} from "../../../../../constants";
 import { InitialState, UploadButtonProps, UploadCandidateProps, UploadFileProps, UploadResult, _File } from "../../../interface/repo_interface";
 
 const MAX_PARALLEL_UPLOADS = 5;
 
-function extractChecksumFromResponse(response:UploadResult){
-    if (response.contentMD5) {
-      // convert base64 to hex
-      const raw = atob(response.contentMD5)
-      let result = '';
-      for (let i = 0; i < raw.length; i++) {
-        const hex = raw.charCodeAt(i).toString(16);
-        result += (hex.length === 2 ? hex : '0' + hex);
-      }
-      return result;
-    }
-  
-    if (response.etag) {
-      // drop any quote and space
-      return response.etag.replace(/[" ]+/g, "");
-    }
-    return ""
-  }
-  
 const destinationPath = (path: string | undefined, file: _File) => {
     return `${path ? path : ""}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
   };
   
-  const UploadCandidate: React.FC<UploadCandidateProps> = ({ repo, reference, path, file, state, onRemove = null }) => {
+  const UploadCandidate = ({ repo, path, file, state, onRemove = null }) => {
     const fpath = destinationPath(path, file)
     let uploadIndicator = null;
     if (state && state.status === "uploading") {
@@ -59,7 +39,7 @@ const destinationPath = (path: string | undefined, file: _File) => {
         <Row className={`upload-item upload-item-${state ? state.status : "none"}`}>
           <Col>
             <span className="path">
-              jzfs://{repo.id}/{reference.id}/{fpath}
+              jzfs://{repo.id}/{fpath}
             </span>
           </Col>
           <Col xs md="2">
@@ -77,26 +57,12 @@ const destinationPath = (path: string | undefined, file: _File) => {
     )
   };
   
-const uploadFile:UploadFileProps = async (config, repo, reference, path, file, onProgress) => {
-    const fpath = destinationPath(path, file);
-    if (config.pre_sign_support_ui) {
-        let additionalHeaders;
-        if (config.blockstore_type === "azure") {
-            additionalHeaders = { "x-ms-blob-type": "BlockBlob" }
-        }
-      const getResp = await staging.get(repo.id, reference.id, fpath, config.pre_sign_support_ui);
-      const uploadResponse = await uploadWithProgress(getResp.presigned_url, file, 'PUT', onProgress, additionalHeaders)
-      if (uploadResponse.status >= 400) {
-        throw new Error(`Error uploading file: HTTP ${status}`)
-      }
-      const checksum = extractChecksumFromResponse(uploadResponse)
-      await staging.link(repo.id, reference.id, fpath, getResp, checksum, file.size, file.type);
-    } else {
-      await objects.upload(repo.id, reference.id, fpath, file, onProgress);
-    }
-  };
+  async function uploadFile( repository: string, branch: string, path: string, file: File, wipID: string) {
+    await objects.uploadObject(repository, branch, path, file, wipID);
+}
+
   
-export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, reference, path, onDone, onClick, onHide, show = false}) => {
+export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHide, show = false}) => {
     const initialState: InitialState = {
       inProgress: false,
       error : null,
@@ -113,7 +79,6 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
   
     const { getRootProps, getInputProps, isDragAccept } = useDropzone({onDrop})
   
-    if (!reference || reference.type !== RefTypeBranch) return <></>;
   
     const hide = () => {
       if (uploadState.inProgress) {
@@ -146,9 +111,8 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
       const mapper = async (file:_File) => {
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
-          await uploadFile(config, repo, reference, currentPath, file, progress => {
-            setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: progress}}))
-          })
+          await uploadFile( repoId, branch, path, file, wipID)
+          
         } catch (error: any | null) {
           setFileStates(next => ( {...next, [file.path]: {status: 'error'}}))
           setUploadState({ ...initialState, error });
@@ -200,12 +164,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
                 upload();
               }}
             >
-              {config?.warnings && (
-                <Form.Group controlId="warnings" className="mb-3">
-                  <Warnings warnings={config.warnings} />
-                </Form.Group>
-              )}
-  
+
               <Form.Group controlId="path" className="mb-3">
                 <Form.Text>Path</Form.Text>
                 <Form.Control disabled={uploadState.inProgress} defaultValue={currentPath} onChange={changeCurrentPath}/>
@@ -225,8 +184,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
                   {files && files.map(file =>
                       <UploadCandidate
                         key={file.path}
-                        repo={repo}
-                        reference={reference}
+                        repo={repoId}
                         file={file}
                         path={currentPath}
                         state={fileStates[file.path]}
@@ -252,7 +210,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
     </Modal>
   
       <Button
-        variant={!config.import_support ? "success" : "light"}
+        variant={"light"}
         onClick={onClick}
         >
         <UploadIcon /> Upload Object

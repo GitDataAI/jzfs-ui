@@ -111,4 +111,20 @@ export interface  UserRegisterInfo{
     email:string;
     password:string;
     }
-
+export interface Wip {
+        /** @format uuid */
+        ID?: string;
+        Name?: string;
+        CurrentTree?: string;
+        BaseCommit?: string;
+        /** @format uuid */
+        RepositoryID?: string;
+        /** @format int */
+        State?: number;
+        /** @format uuid */
+        CreatorID?: string;
+        /** @format date-time */
+        CreatedAt?: string;
+        /** @format date-time */
+        UpdatedAt?: string;
+      }

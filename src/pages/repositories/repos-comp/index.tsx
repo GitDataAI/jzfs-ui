@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import { AlertError, Loading} from "../../../lib/components/controls";
-import {config, repositories, setup} from '../../../lib/api';
+import {cache, config, repositories, setup} from '../../../lib/api';
 import {RepositoryCreateForm} from "../../../lib/components/repoCreateForm";
 import {useAPI, useAPIWithPagination} from "../../../lib/hooks/api";
 import {Link} from "../../../lib/components/nav";
@@ -76,6 +76,7 @@ export const RepositoryList = ({refresh}) => {
         <div>
             {
                 response.map((repo)=>{
+                    let user =  cache.get('user')
                     console.log(Date.parse(repo.CreatedAt));
                     return(
                 <Row key={repo.ID}>
@@ -84,8 +85,8 @@ export const RepositoryList = ({refresh}) => {
                             <Card.Body>
                                 <h5>
                                     <Link href={{
-                                        pathname: `/repositories/:repoId/objects`,
-                                        params: {repoId: repo.Name}
+                                        pathname: `/repositories/:user/:repoId/objects`,
+                                        params: {repoId: repo.Name,user},
                                     }}>
                                         {repo.Name}
                                     </Link>

@@ -1,50 +1,11 @@
-import React, {useEffect,useState } from "react";
+import React from "react";
 import { RepositoryPageLayout } from "../../../../../lib/components/repository/layout";
+import { ActiveTab } from "../../../../../lib/components/interface/comp_interface";
+import { ActionGroup, ActionsBar } from "../../../../../lib/components/controls";
 import RefDropdown from "../../../../../lib/components/repository/refDropdown";
-import {
-    ActionGroup,
-    ActionsBar,
-    Loading,
-    PrefixSearchWidget,
-    RefreshButton,
-} from "../../../../../lib/components/controls";
-import {useRefs} from "../../../../../lib/hooks/repo";
-import {useRouter} from "../../../../../lib/hooks/router";
-import { Box } from "@mui/material";
-import { RepoError } from "../error/error";
-import { useSearchParams } from "react-router-dom";
-import { UploadButton } from "./uplodaButton";
-import { ImportModal } from "./importModal";
-import { NoGCRulesWarning, ReadmeContainer, TreeContainer } from "./obj_comps";
-
 
 const ObjectsBrowser = () => {
-  const router = useRouter();
-  const { path, after, importDialog } = router.query;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { repo, reference, loading, error } = useRefs();  
-  const [showUpload, setShowUpload] = useState(false);
-  const [showImport, setShowImport] = useState(false);
-  const [refreshToken, setRefreshToken] = useState(false);
-
-  const refresh = () => setRefreshToken(!refreshToken);
-  const parts = (path && path.split("/")) || [];
-  const searchSuffix = parts.pop();
-  let searchPrefix = parts.join("/");
-  searchPrefix = searchPrefix && searchPrefix + "/";
-
-  useEffect(() => {
-    if (importDialog) {
-      setShowImport(true);
-      searchParams.delete("importDialog");
-      setSearchParams(searchParams);
-    }
-  }, [router.route, importDialog, searchParams, setSearchParams]);
-
-  if (loading) return <Loading />;
-  if (error) return <RepoError error={error} />;
-
-  return (
+return(
     <>
       <ActionsBar>
         <ActionGroup orientation="left">
@@ -85,22 +46,34 @@ const ObjectsBrowser = () => {
           />
           <RefreshButton onClick={refresh} />
           <UploadButton
-            branch={'main'}
             path={path}
-            repoId={repo}
+            repo={repo}
+            reference={reference}
             onDone={refresh}
             onClick={() => {
               setShowUpload(true);
-            } }
+            }}
             onHide={() => {
               setShowUpload(false);
-            } }
-            show={showUpload} 
-            wipID={undefined}          />
+            }}
+            show={showUpload}
+          />
+          <ImportButton onClick={() => setShowImport(true)}  />
+          <ImportModal
+            path={path}
+            repoId={repo.id}
+            referenceId={reference.id}
+            referenceType={reference.type}
+            onDone={refresh}
+            onHide={() => {
+              setShowImport(false);
+            }}
+            show={showImport}
+          />
         </ActionGroup>
       </ActionsBar>
 
-      <NoGCRulesWarning repoId={repo.Name} />
+      <NoGCRulesWarning repoId={repo.id} />
 
       <Box
         sx={{
@@ -113,7 +86,7 @@ const ObjectsBrowser = () => {
         <TreeContainer
           reference={reference}
           repo={repo}
-          path={path ? path : "/"}
+          path={path ? path : ""}
           after={after ? after : ""}
           onPaginate={(after:string) => {
             const query = { after,path:"",ref:""};
@@ -144,16 +117,16 @@ const ObjectsBrowser = () => {
         />
       </Box>
     </>
-  );
-};
-
+)
+}
 const RepositoryObjectsPage = () => {
 
-  return (
-    <RepositoryPageLayout activePage={"objects"}>
-      <ObjectsBrowser />
-    </RepositoryPageLayout>
-  );
-};
-
-export default RepositoryObjectsPage;
+    return (
+      <RepositoryPageLayout activePage={ActiveTab.Objects}>
+        <ObjectsBrowser />
+      </RepositoryPageLayout>
+    );
+  };
+  
+  export default RepositoryObjectsPage;
+  

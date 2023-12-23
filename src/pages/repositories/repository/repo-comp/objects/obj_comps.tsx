@@ -16,28 +16,6 @@ import { ImportButtonProps, NoGCRulesWarningProps, ReadmeContainerProps, TreeCon
 const README_FILE_NAME = "README.md";
 const REPOSITORY_AGE_BEFORE_GC = 14;
 
-export const ImportButton: React.FC<ImportButtonProps> = ({ variant = "success", onClick, config }) => {
-  const tip = config.import_support
-    ? "Import data from a remote source"
-    : config.blockstore_type === "local"
-    ? "Import is not enabled for local blockstore"
-    : "Unsupported for " + config.blockstore_type + " blockstore";
-
-  return (
-    <OverlayTrigger placement="bottom" overlay={<Tooltip>{tip}</Tooltip>}>
-      <span>
-        <Button
-          variant={variant}
-          disabled={!config.import_support}
-          onClick={onClick}
-        >
-          <BsCloudArrowUp /> Import
-        </Button>
-      </span>
-    </OverlayTrigger>
-  );
-};
-
 
 export const TreeContainer:React.FC<TreeContainerProps> = ({
   config,
@@ -51,15 +29,16 @@ export const TreeContainer:React.FC<TreeContainerProps> = ({
   onImport,
   refreshToken,
 }) => {
-  const { results, error, loading, nextPage } = useAPIWithPagination(() => {
-    const user = window.localStorage.getItem("user")
-    return objects.getObject(
-      user,
-      repo.id,
-      branch,
-      path,
-      );
-  }, [repo.id, reference.id, path, after, refreshToken]);
+  // const { results, error, loading, nextPage } = useAPIWithPagination(() => {
+  //   return objects.getEntriesInRef(
+  //     repo.Name,
+  //     ref,
+  //     path,
+  //     RefType
+  //     );
+  // }, [repo.id, reference.id, path, after, refreshToken]);
+  const type = 'branch'
+  const {response,loading,error} = useAPI(async()=>await objects.getEntriesInRef(repo.OwnerID,repo.Name,type))
   const initialState = {
     inProgress: false,
     error: null,
@@ -98,8 +77,7 @@ export const TreeContainer:React.FC<TreeContainerProps> = ({
     );
 }
 
-export const ReadmeContainer: React.FC<ReadmeContainerProps> = ({
-  config,
+export const ReadmeContainer = ({
   repo,
   reference,
   path = "",
@@ -136,12 +114,14 @@ export const ReadmeContainer: React.FC<ReadmeContainerProps> = ({
             error={error}
             loading={loading}
             showFullNavigator={false}
-            presign={config.pre_sign_support_ui}
+            presign={true}
         />
     );
 }
 
 export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) => {
+  console.log('warn',repoId);
+  
   const storageKey = `show_gc_warning_${repoId}`;
   const [show, setShow] = useState(
     window.localStorage.getItem(storageKey) !== "false"
@@ -152,8 +132,7 @@ export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) =>
   }, [repoId]);
 
   const { response } = useAPI(async () => {
-    const user = window.localStorage.getItem("user")
-    const repo = await repositories.getRepository(user,repoId);
+    const repo = await repositories.getRepository(repoId);
     if (
       !repo.storage_namespace.startsWith("s3:") &&
       !repo.storage_namespace.startsWith("http")

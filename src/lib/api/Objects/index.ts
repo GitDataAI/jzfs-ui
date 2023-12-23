@@ -1,4 +1,4 @@
-import {API_ENDPOINT, AuthenticationError, AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs, uploadWithProgress} from "../index"
+import {API_ENDPOINT, AuthenticationError, AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, cache, extractError, qs, uploadWithProgress} from "../index"
 import { Upload, apiResponse } from "../interface";
 
 export class Objects {
@@ -149,7 +149,8 @@ async headObject(user: string, repository: string, branch: string, path: string)
 }
 
     // 上传对象，（包含了上传的对象的元数据）
-    async uploadObject(user: string, repository: string, branch: string, path: string, file: File, wipID: string) {
+    async uploadObject(repository: string, branch: string, path: string, file: File, wipID: string) {
+        let user = cache.get('user')
         const formData = new FormData();
         formData.append('content', file);
         const headers = new Headers();
@@ -201,5 +202,18 @@ async headObject(user: string, repository: string, branch: string, path: string)
         }
         return response.json();
     }
+    // 获取目录内容
+    async  getEntriesInRef(owner:string,repository: string, type: string, path?:string, ref?:string) {
+        const query = qs({type});
+        const response: apiResponse = await apiRequest(`/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repository)}/contents?` + query ,{method: 'get'});
     
+        if (response.status === 404) {
+            throw new NotFoundError(response.message ?? "URL not found");
+        }
+    
+        if (response.status !== 200) {
+            throw new Error(await extractError(response));
+        }
+        return await response.json();
+    }
 }

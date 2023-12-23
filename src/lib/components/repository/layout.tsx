@@ -15,7 +15,7 @@ import { RepositoryPageLayoutProps, ResponseProps } from "../interface/comp_inte
 
 const RepoNav = () => {
     const { repo } = useRefs();
-    const repoId = (repo) ? repo.id : '#';
+    const repoId = (repo) ? repo.Name : '#';
     
     return (
         <Breadcrumb>
