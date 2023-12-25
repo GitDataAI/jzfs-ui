@@ -36,9 +36,9 @@ export const useAPIWithPagination = (promise: ()=> Promise<any>, deps: Dependenc
         // calculate current state on API response
         setPagination({
             error: null,
-            nextPage: (!!response.pagination && response.pagination.has_more) ? response.pagination.next_offset : null,
+            nextPage: (!!response.data.pagination && response.data.pagination.has_more) ? response.data.pagination.next_offset : null,
             loading: false,
-            results: response.results
+            results: response.data.results
         });
     }, [response, loading, error]);
 

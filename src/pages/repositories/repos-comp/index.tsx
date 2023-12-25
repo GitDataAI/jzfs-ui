@@ -11,6 +11,7 @@ import {RepositoryCreateForm} from "../../../lib/components/repoCreateForm";
 import {useAPI, useAPIWithPagination} from "../../../lib/hooks/api";
 import {Link} from "../../../lib/components/nav";
 import { CreateRepositoryButtonProps, CreateRepositoryModalProps, GetStartedProps, GettingStartedCreateRepoButtonProps, RepositoryListProps } from "../interface/repos_interface";
+import { Repository, users } from "../../../lib/api/interface/Api";
 
 dayjs.extend(relativeTime);
 
@@ -49,34 +50,29 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
 };
 
 // export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
-export const RepositoryList = ({refresh}) => {
+export const RepositoryList = ({refresh,prefix, after,amount}) => {
 
-    // const {results:Repo, loading, error, nextPage} = useAPIWithPagination(() => {
-    //     // return repositories.list(prefix, after，amount);
-    //     return repositories.listRepository();
-    // }, [refresh, prefix, after]);
-    // const results = Repo as RepositoryParams[];
-    // if (loading) return <Loading/>;
-    // if (error) { console.log('err') 
-    //    return <AlertError error={error}/>;}
-    // if (!after && !prefix && results && results.length === 0 ) {
-        
-    //     toggleShowActionsBar();
-    //     return <GetStarted onCreateEmptyRepo={onCreateEmptyRepo} creatingRepo={creatingRepo} createRepoError={createRepoError}/>;
-    // }
-    // toggleShowActionsBar();
-    const {response,loading,error} = useAPI(() => repositories.listRepository(),[refresh]);
+    const user = cache.get('user')
 
+    const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
+        if(prefix&&after&&amount)
+        {
+            return  await users.listRepository(user,{prefix, after,amount})
+        }else{
+            return  await users.listRepository(user)
+        }
+    }, [refresh, prefix, after]);
+    
     if (loading) return <Loading/>;
-    if (error) { console.log('err') 
+    if (error) { 
+        console.log('err') 
        return <AlertError error={error}/>;}
-    if(response){
-        console.log('list:' , response);
+    if(results){
+        console.log('list:' , results);
     return (
         <div>
             {
-                response.map((repo)=>{
-                    let user =  cache.get('user')
+                results.map((repo)=>{
                     console.log(Date.parse(repo.CreatedAt));
                     return(
                 <Row key={repo.ID}>
@@ -94,7 +90,7 @@ export const RepositoryList = ({refresh}) => {
                                 <p>
                                     <small>
                                         created at <code>{dayjs.unix( Math.floor(Date.parse(repo.CreatedAt)/1000)).toISOString()}</code> ({dayjs.unix( Math.floor(Date.parse(repo.CreatedAt)/1000)).fromNow()})<br/>
-                                        default branch: <code>{repo.HEAD}</code>,{' '}
+                                        default branch: <code>{repo.Head}</code>,{' '}
                                         storage namespace: <code>{repo.Name}</code>
                                     </small>
                                 </p>

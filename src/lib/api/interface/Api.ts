@@ -69,7 +69,7 @@ export enum RefType {
   Branch = "branch",
   Wip = "wip",
   Tag = "tag",
-  Test = "test",
+  Commit = "commit",
 }
 
 export interface Branch {
@@ -125,10 +125,44 @@ export interface BranchList {
 export interface CreateRepository {
   Description?: string;
   Name: string;
+  /** block storage config url encoded json */
+  BlockStoreConfig?: string;
 }
 
 export interface UpdateRepository {
   Description?: string;
+}
+
+export interface RepositoryList {
+  pagination: {
+    /** Next page is available */
+    has_more: boolean;
+    /** Token used to retrieve the next page */
+    next_offset: string;
+    /**
+     * Number of values found in the results
+     * @min 0
+     */
+    results: number;
+    /**
+     * Maximal number of entries per page
+     * @min 0
+     */
+    max_per_page: number;
+  };
+  results: {
+    /** @format uuid */
+    ID: string;
+    Name: string;
+    Head: string;
+    Description?: string;
+    /** @format uuid */
+    CreatorID: string;
+    /** @format date-time */
+    CreatedAt: string;
+    /** @format date-time */
+    UpdatedAt: string;
+  }[];
 }
 
 export interface Repository {
@@ -352,6 +386,67 @@ export interface ObjectStatsList {
   }[];
 }
 
+export interface BlockStoreConfig {
+  /** type of support storage type */
+  Type?: "local" | "gs" | "azure" | "s3";
+  DefaultNamespacePrefix?: string;
+  Local?: {
+    Path: string;
+  };
+  Azure?: {
+    StorageAccessKey: string;
+    StorageAccount: string;
+    /** @format int64 */
+    TryTimeout: number;
+  };
+  GS?: {
+    CredentialsJSON: string;
+    S3Endpoint: string;
+  };
+  S3?: {
+    Credentials: {
+      AccessKeyID?: string;
+      SecretAccessKey?: string;
+      SessionToken?: string;
+    };
+    WebIdentity?: {
+      /** @format int64 */
+      SessionDuration?: number;
+      /** @format int64 */
+      SessionExpiryWindow?: number;
+    };
+    DiscoverBucketRegion: boolean;
+    Endpoint: string;
+    ForcePathStyle?: boolean;
+    Region: string;
+  };
+}
+
+export interface WebIdentity {
+  /** @format int64 */
+  SessionDuration?: number;
+  /** @format int64 */
+  SessionExpiryWindow?: number;
+}
+
+/** S3AuthInfo holds S3-style authentication. */
+export interface S3AuthInfo {
+  Credentials?: {
+    AccessKeyID?: string;
+    SecretAccessKey?: string;
+    SessionToken?: string;
+  };
+  CredentialsFile?: string;
+}
+
+export interface Credential {
+  AccessKeyID?: string;
+  SecretAccessKey?: string;
+  SessionToken?: string;
+}
+
+export type SecureString = string;
+
 export interface Pagination {
   /** Next page is available */
   has_more: boolean;
@@ -420,7 +515,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "http://localhost:34913/api/v1";
+  public baseUrl: string = "http://localhost:3000/api/v1";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -684,7 +779,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** relative to the ref */
         path: string;
         /** type indicate to retrieve from wip/branch/tag, default branch */
-        type: "branch" | "wip" | "tag" | "test";
+        type: "branch" | "wip" | "tag" | "commit";
       },
       params: RequestParams = {},
     ) =>
@@ -714,7 +809,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** relative to the ref */
         path: string;
         /** type indicate to retrieve from wip/branch/tag, default branch */
-        type: "branch" | "wip" | "tag" | "test";
+        type: "branch" | "wip" | "tag" | "commit";
       },
       params: RequestParams = {},
     ) =>
@@ -1057,7 +1152,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags commit
      * @name GetEntriesInRef
      * @summary list entries in ref
-     * @request GET:/repos/{owner}/{repository}/contents/
+     * @request GET:/repos/{owner}/{repository}/contents
      * @secure
      */
     getEntriesInRef: (
@@ -1069,7 +1164,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** specific branch,  default to repostiory default branch(HEAD) */
         ref?: string;
         /** type indicate to retrieve from wip/branch/tag, default branch */
-        type: "branch" | "wip" | "tag" | "test";
+        type: "branch" | "wip" | "tag" | "commit";
       },
       params: RequestParams = {},
     ) =>
@@ -1081,7 +1176,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         }[],
         void
       >({
-        path: `/repos/${owner}/${repository}/contents/`,
+        path: `/repos/${owner}/${repository}/contents`,
         method: "GET",
         query: query,
         secure: true,
@@ -1266,7 +1361,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/repos/{owner}/{repository}/branches
      * @secure
      */
-    listBranches: (owner: string, repository: string, params: RequestParams = {}) =>
+    listBranches: (
+      owner: string,
+      repository: string,
+      query?: {
+        /** return items prefixed with this value */
+        prefix?: string;
+        /** return items after this value */
+        after?: string;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<
         {
           pagination: {
@@ -1305,6 +1417,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       >({
         path: `/repos/${owner}/${repository}/branches`,
         method: "GET",
+        query: query,
         secure: true,
         format: "json",
         ...params,
@@ -1425,24 +1538,55 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     listRepository: (
       owner: string,
       query?: {
-        repoPrefix?: string;
+        /** return items prefixed with this value */
+        prefix?: string;
+        /**
+         * return items after this value
+         * @format date-time
+         */
+        after?: string;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
       },
       params: RequestParams = {},
     ) =>
       this.request<
         {
-          /** @format uuid */
-          ID: string;
-          Name: string;
-          Head: string;
-          Description?: string;
-          /** @format uuid */
-          CreatorID: string;
-          /** @format date-time */
-          CreatedAt: string;
-          /** @format date-time */
-          UpdatedAt: string;
-        }[],
+          pagination: {
+            /** Next page is available */
+            has_more: boolean;
+            /** Token used to retrieve the next page */
+            next_offset: string;
+            /**
+             * Number of values found in the results
+             * @min 0
+             */
+            results: number;
+            /**
+             * Maximal number of entries per page
+             * @min 0
+             */
+            max_per_page: number;
+          };
+          results: {
+            /** @format uuid */
+            ID: string;
+            Name: string;
+            Head: string;
+            Description?: string;
+            /** @format uuid */
+            CreatorID: string;
+            /** @format date-time */
+            CreatedAt: string;
+            /** @format date-time */
+            UpdatedAt: string;
+          }[];
+        },
         void
       >({
         path: `/users/${owner}/repos`,
@@ -1462,25 +1606,62 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/users/repos
      * @secure
      */
-    listRepositoryOfAuthenticatedUser: (params: RequestParams = {}) =>
+    listRepositoryOfAuthenticatedUser: (
+      query?: {
+        /** return items prefixed with this value */
+        prefix?: string;
+        /**
+         * return items after this value
+         * @format date-time
+         */
+        after?: string;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<
         {
-          /** @format uuid */
-          ID: string;
-          Name: string;
-          Head: string;
-          Description?: string;
-          /** @format uuid */
-          CreatorID: string;
-          /** @format date-time */
-          CreatedAt: string;
-          /** @format date-time */
-          UpdatedAt: string;
-        }[],
+          pagination: {
+            /** Next page is available */
+            has_more: boolean;
+            /** Token used to retrieve the next page */
+            next_offset: string;
+            /**
+             * Number of values found in the results
+             * @min 0
+             */
+            results: number;
+            /**
+             * Maximal number of entries per page
+             * @min 0
+             */
+            max_per_page: number;
+          };
+          results: {
+            /** @format uuid */
+            ID: string;
+            Name: string;
+            Head: string;
+            Description?: string;
+            /** @format uuid */
+            CreatorID: string;
+            /** @format date-time */
+            CreatedAt: string;
+            /** @format date-time */
+            UpdatedAt: string;
+          }[];
+        },
         void
       >({
         path: `/users/repos`,
         method: "GET",
+        query: query,
         secure: true,
         format: "json",
         ...params,
@@ -1499,6 +1680,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: {
         Description?: string;
         Name: string;
+        /** block storage config url encoded json */
+        BlockStoreConfig?: string;
       },
       params: RequestParams = {},
     ) =>
@@ -1644,3 +1827,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   };
 }
+
+const api = new Api()
+export const version = api.version
+export const setup = api.setup
+export const object = api.object
+export const wip = api.wip
+export const repos = api.repos
+export const users = api.users
+export const auth = api.auth

@@ -1,7 +1,7 @@
 import {Button,Modal,Form,Container,Row,Col,ProgressBar} from "react-bootstrap";
 import React, {useCallback, useEffect, useState } from "react";
 import {useDropzone} from "react-dropzone";
-import {objects} from "../../../../../lib/api";
+import {cache, objects} from "../../../../../lib/api";
 import {CheckboxIcon, UploadIcon, XIcon} from "@primer/octicons-react";
 import {humanSize} from "../../../../../lib/components/repository/tree";
 import pMap from "p-map";
@@ -10,6 +10,7 @@ import {
     Warnings
 } from "../../../../../lib/components/controls";
 import { InitialState, UploadButtonProps, UploadCandidateProps, UploadFileProps, UploadResult, _File } from "../../../interface/repo_interface";
+import { object } from "../../../../../lib/api/interface/Api";
 
 const MAX_PARALLEL_UPLOADS = 5;
 
@@ -58,7 +59,8 @@ const destinationPath = (path: string | undefined, file: _File) => {
   };
   
   async function uploadFile( repository: string, branch: string, path: string, file: File, wipID: string) {
-    await objects.uploadObject(repository, branch, path, file, wipID);
+    const user = cache.get('user');
+    await object.uploadObject(user, repository,{refName:branch,path:path},{content:file});
 }
 
   

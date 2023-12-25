@@ -146,7 +146,7 @@ export interface DebouncedFormControlProps extends FormControlProps {
 export interface APIState {
     loading: boolean;
     error: Error | null;
-    response: ResponseProps | null; 
+    response: any; 
     responseHeaders: any | null; 
 }
 export interface ResponseProps extends Response {

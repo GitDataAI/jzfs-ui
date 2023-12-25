@@ -7,38 +7,36 @@ import {
 import {Alert, Button, OverlayTrigger, Tooltip} from "react-bootstrap";
 
 import {Tree} from "../../../../../lib/components/repository/tree";
-import {objects, retention, repositories, NotFoundError} from "../../../../../lib/api";
+import {objects, retention, repositories, NotFoundError, cache} from "../../../../../lib/api";
 import {useAPI, useAPIWithPagination} from "../../../../../lib/hooks/api";
 import { getContentType, getFileExtension, FileContents } from "./objectViewer";
 import { BsCloudArrowUp } from "react-icons/bs";
 import { ImportButtonProps, NoGCRulesWarningProps, ReadmeContainerProps, TreeContainerProps } from "../../../interface/repo_interface";
+import { object, repos } from "../../../../../lib/api/interface/Api";
 
 const README_FILE_NAME = "README.md";
 const REPOSITORY_AGE_BEFORE_GC = 14;
 
 
-export const TreeContainer:React.FC<TreeContainerProps> = ({
-  config,
+export const TreeContainer= ({
   repo,
-  reference,
+  branch,
   path,
   after,
   onPaginate,
   onRefresh,
   onUpload,
   onImport,
-  refreshToken,
+  refreshToken
 }) => {
-  // const { results, error, loading, nextPage } = useAPIWithPagination(() => {
-  //   return objects.getEntriesInRef(
-  //     repo.Name,
-  //     ref,
-  //     path,
-  //     RefType
-  //     );
-  // }, [repo.id, reference.id, path, after, refreshToken]);
+  const user = cache.get('user')
   const type = 'branch'
-  const {response,loading,error} = useAPI(async()=>await objects.getEntriesInRef(repo.OwnerID,repo.Name,type))
+  const { response, error, loading } = useAPI(async() =>
+    {return await repos.getEntriesInRef(user,repo.Name,{type})
+      }
+  , [repo.Name , refreshToken])
+  console.log('response:',response,'loading:',loading,'error:',error);
+  const results = response.data
   const initialState = {
     inProgress: false,
     error: null,
@@ -53,20 +51,18 @@ export const TreeContainer:React.FC<TreeContainerProps> = ({
         <>
             {deleteState.error && <AlertError error={deleteState.error} onDismiss={() => setDeleteState(initialState)}/>}
             <Tree
-                config={{config}}
                 repo={repo}
-                reference={reference}
+                reference={branch}
                 path={(path) ? path : ""}
                 showActions={true}
                 results={results}
                 after={after}
-                nextPage={nextPage}
                 onPaginate={onPaginate}
                 onUpload={onUpload}
                 onImport={onImport}
                 onDelete={(entry: { path: string }) => {
-                    objects
-                        .delete(repo.id, reference.id, entry.path)
+                    object
+                        .deleteObject(user, repo.Name, {refName:branch,path})
                         .catch(error => {
                             setDeleteState({...initialState, error: error})
                             throw error
@@ -77,47 +73,47 @@ export const TreeContainer:React.FC<TreeContainerProps> = ({
     );
 }
 
-export const ReadmeContainer = ({
-  repo,
-  reference,
-  path = "",
-  refreshDep = "",
-}) => {
-  let readmePath = "";
+// export const ReadmeContainer = ({
+//   repo,
+//   reference,
+//   path = "",
+//   refreshDep = "",
+// }) => {
+//   let readmePath = "";
 
-  if (path) {
-    readmePath = path.endsWith("/")
-      ? `${path}${README_FILE_NAME}`
-      : `${path}/${README_FILE_NAME}`;
-  } else {
-    readmePath = README_FILE_NAME;
-  }
-  const { response, error, loading } = useAPI(
-    () => objects.head(repo.id, reference.id, readmePath),
-    [path, refreshDep]
-  );
+//   if (path) {
+//     readmePath = path.endsWith("/")
+//       ? `${path}${README_FILE_NAME}`
+//       : `${path}/${README_FILE_NAME}`;
+//   } else {
+//     readmePath = README_FILE_NAME;
+//   }
+//   const { response, error, loading } = useAPI(
+//     () => object.headObject(repo.id, reference.id, readmePath),
+//     [path, refreshDep]
+//   );
 
-  if (loading || error) {
-    return <></>; // no file found.
-  }
+//   if (loading || error) {
+//     return <></>; // no file found.
+//   }
 
-  const fileExtension = getFileExtension(readmePath);
-  const contentType = getContentType(response?.headers);
+//   const fileExtension = getFileExtension(readmePath);
+//   const contentType = getContentType(response?.headers);
 
-    return (
-        <FileContents 
-            repoId={repo.id} 
-            reference={reference}
-            path={readmePath}
-            fileExtension={fileExtension}
-            contentType={contentType}
-            error={error}
-            loading={loading}
-            showFullNavigator={false}
-            presign={true}
-        />
-    );
-}
+//     return (
+//         <FileContents 
+//             repoId={repo.id} 
+//             reference={reference}
+//             path={readmePath}
+//             fileExtension={fileExtension}
+//             contentType={contentType}
+//             error={error}
+//             loading={loading}
+//             showFullNavigator={false}
+//             presign={true}
+//         />
+//     );
+// }
 
 export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) => {
   console.log('warn',repoId);

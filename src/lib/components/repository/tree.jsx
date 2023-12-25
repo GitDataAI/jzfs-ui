@@ -471,8 +471,8 @@ const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions 
         reference={reference}
         entry={entry}
         onDelete={onDelete}
-        presign={config.config.pre_sign_support}
-        presign_ui={config.config.pre_sign_support_ui}
+        presign={repo.name}
+        presign_ui={repo.name}
       />
     );
   }
@@ -612,8 +612,8 @@ export const URINavigator = ({
   );
 };
 
-const GetStarted = ({ config, onUpload, onImport }) => {
-  const importDisabled = !config.config.import_support;
+const GetStarted = ({ onUpload, onImport }) => {
+  const importDisabled = true;
   return (
     <Container className="m-4 mb-5">
       <h2 className="mt-2">To get started with this repository:</h2>
@@ -678,13 +678,12 @@ const GetStarted = ({ config, onUpload, onImport }) => {
 };
 
 export const Tree = ({
-  config,
   repo,
   reference,
   results,
   after,
   onPaginate,
-  nextPage,
+  nextPage='',
   onUpload,
   onImport,
   onDelete,
@@ -692,19 +691,19 @@ export const Tree = ({
   path = "",
 }) => {
   let body;
+  console.log('results:',results,'path:',path,'reference:',reference);
   if (results.length === 0 && path === "" && reference.type === RefTypeBranch) {
     // empty state!
     body = (
-      <GetStarted config={config} onUpload={onUpload} onImport={onImport} />
+      <GetStarted  onUpload={onUpload} onImport={onImport} />
     );
   } else {
     body = (
       <>
         <Table borderless size="sm">
           <tbody>
-            {results.map((entry) => (
+            { results? results.map((entry) => (
               <EntryRow
-                config={config}
                 key={entry.path}
                 entry={entry}
                 path={path}
@@ -713,7 +712,7 @@ export const Tree = ({
                 showActions={showActions}
                 onDelete={onDelete}
               />
-            ))}
+            )):<></>}
           </tbody>
         </Table>
       </>

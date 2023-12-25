@@ -8,7 +8,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import Layout from "../../lib/components/layout";
 import {ActionsBar, useDebouncedState} from "../../lib/components/controls";
-import {config, repositories} from '../../lib/api';
+import {cache, config, repositories} from '../../lib/api';
 import {useRouter} from "../../lib/hooks/router";
 
 import {Route, Routes} from "react-router-dom";
@@ -16,6 +16,7 @@ import RepositoryPage from './repository';
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
 import { RepositoryParams } from "../../lib/api/interface";
 import { useAPI } from "../../lib/hooks/api";
+import { users } from "../../lib/api/interface/Api";
 
 
 dayjs.extend(relativeTime);
@@ -33,8 +34,8 @@ const RepositoriesPage = () => {
         routerPfx,
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix},params:{}})
     );
-
-    const {response} = useAPI(() => repositories.listRepository());
+    const owner = cache.get('user')
+    const {response} = useAPI(() => users.listRepository(owner));
     
 
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {

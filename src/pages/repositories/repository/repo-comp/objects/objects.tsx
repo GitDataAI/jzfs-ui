@@ -26,7 +26,6 @@ const ObjectsBrowser = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [refreshToken, setRefreshToken] = useState(false);
-
   const refresh = () => setRefreshToken(!refreshToken);
   const parts = (path && path.split("/")) || [];
   const searchSuffix = parts.pop();
@@ -111,8 +110,8 @@ const ObjectsBrowser = () => {
         }}
       >
         <TreeContainer
-          reference={reference}
-          repo={repo}
+            branch={'main'}
+            repo={repo}
           path={path ? path : "/"}
           after={after ? after : ""}
           onPaginate={(after:string) => {
@@ -135,13 +134,13 @@ const ObjectsBrowser = () => {
           }}
           onRefresh={refresh}
         />
-
+{/* 
         <ReadmeContainer
           reference={reference}
           repo={repo}
           path={path}
           refreshDep={refreshToken}
-        />
+        /> */}
       </Box>
     </>
   );
