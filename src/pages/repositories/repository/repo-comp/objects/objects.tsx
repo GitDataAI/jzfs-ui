@@ -31,7 +31,7 @@ const ObjectsBrowser = () => {
   const searchSuffix = parts.pop();
   let searchPrefix = parts.join("/");
   searchPrefix = searchPrefix && searchPrefix + "/";
-
+  console.log(repo, reference,);
   useEffect(() => {
     if (importDialog) {
       setShowImport(true);
@@ -85,8 +85,8 @@ const ObjectsBrowser = () => {
           <RefreshButton onClick={refresh} />
           <UploadButton
             branch={'main'}
-            path={path}
-            repoId={repo}
+            path={path ? path : "/"}
+            repoId={repo.name}
             onDone={refresh}
             onClick={() => {
               setShowUpload(true);
@@ -99,7 +99,7 @@ const ObjectsBrowser = () => {
         </ActionGroup>
       </ActionsBar>
 
-      <NoGCRulesWarning repoId={repo.Name} />
+      <NoGCRulesWarning repoId={repo.name} />
 
       <Box
         sx={{

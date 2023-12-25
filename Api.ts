@@ -527,7 +527,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "http://localhost:3000/api/v1";
+  public baseUrl: string = "http://localhost:34913/api/v1";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -1865,12 +1865,3 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   };
 }
-
-const api = new Api()
-export const version = api.version
-export const setup = api.setup
-export const object = api.object
-export const wip = api.wip
-export const repos = api.repos
-export const users = api.users
-export const auth = api.auth

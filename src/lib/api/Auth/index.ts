@@ -304,12 +304,12 @@ export class Auth {
     async login(username: string, password: string) {
         await apiRequest(`/auth/login`, { 
             method: 'POST', 
-            body: JSON.stringify({ username, password }) 
+            body: JSON.stringify({ name:username, password }) 
         }).then(async(response)=>{
             this.clearCurrentUser()
             const logininfo  = await response.json()
             const user = await this.getUserInfo(logininfo.token)
-            cache.set('user', user.username)
+            cache.set('user', user.name)
             console.log(window.localStorage);
             return response.json()
         }).catch(async(err)=>{

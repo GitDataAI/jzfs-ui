@@ -50,13 +50,13 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
 };
 
 // export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
-export const RepositoryList = ({refresh,prefix, after,amount}) => {
+export const RepositoryList = (refresh,prefix, after,amount,onPaginate) => {
 
     const user = cache.get('user')
 
     const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
         if(prefix&&after&&amount)
-        {
+        {            
             return  await users.listRepository(user,{prefix, after,amount})
         }else{
             return  await users.listRepository(user)
@@ -73,25 +73,25 @@ export const RepositoryList = ({refresh,prefix, after,amount}) => {
         <div>
             {
                 results.map((repo)=>{
-                    console.log(Date.parse(repo.CreatedAt));
+                    console.log(Date.parse(repo.created_at));
                     return(
-                <Row key={repo.ID}>
+                <Row key={repo.id}>
                     <Col className={"mb-2 mt-2"}>
                         <Card>
                             <Card.Body>
                                 <h5>
                                     <Link href={{
                                         pathname: `/repositories/:user/:repoId/objects`,
-                                        params: {repoId: repo.Name,user},
+                                        params: {repoId: repo.name,user},
                                     }}>
-                                        {repo.Name}
+                                        {repo.name}
                                     </Link>
                                 </h5>
                                 <p>
                                     <small>
-                                        created at <code>{dayjs.unix( Math.floor(Date.parse(repo.CreatedAt)/1000)).toISOString()}</code> ({dayjs.unix( Math.floor(Date.parse(repo.CreatedAt)/1000)).fromNow()})<br/>
-                                        default branch: <code>{repo.Head}</code>,{' '}
-                                        storage namespace: <code>{repo.Name}</code>
+                                        created at <code>{dayjs.unix( Math.floor(Date.parse(repo.created_at)/1000)).toISOString()}</code> ({dayjs.unix( Math.floor(Date.parse(repo.created_at)/1000)).fromNow()})<br/>
+                                        default branch: <code>{repo.head}</code>,{' '}
+                                        storage namespace: <code>{repo.name}</code>
                                     </small>
                                 </p>
                             </Card.Body>

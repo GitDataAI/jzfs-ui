@@ -32,11 +32,11 @@ export const TreeContainer= ({
   const user = cache.get('user')
   const type = 'branch'
   const { response, error, loading } = useAPI(async() =>
-    {return await repos.getEntriesInRef(user,repo.Name,{type})
+    {return await repos.getEntriesInRef(user,repo.name,{type})
       }
   , [repo.Name , refreshToken])
   console.log('response:',response,'loading:',loading,'error:',error);
-  const results = response.data
+  
   const initialState = {
     inProgress: false,
     error: null,
@@ -55,14 +55,14 @@ export const TreeContainer= ({
                 reference={branch}
                 path={(path) ? path : ""}
                 showActions={true}
-                results={results}
+                results={response.data}
                 after={after}
                 onPaginate={onPaginate}
                 onUpload={onUpload}
                 onImport={onImport}
                 onDelete={(entry: { path: string }) => {
                     object
-                        .deleteObject(user, repo.Name, {refName:branch,path})
+                        .deleteObject(user, repo.name, {refName:branch,path})
                         .catch(error => {
                             setDeleteState({...initialState, error: error})
                             throw error
@@ -117,7 +117,7 @@ export const TreeContainer= ({
 
 export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) => {
   console.log('warn',repoId);
-  
+  const user = cache.get('user')
   const storageKey = `show_gc_warning_${repoId}`;
   const [show, setShow] = useState(
     window.localStorage.getItem(storageKey) !== "false"
@@ -128,7 +128,7 @@ export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) =>
   }, [repoId]);
 
   const { response } = useAPI(async () => {
-    const repo = await repositories.getRepository(repoId);
+    const repo = await repos.getRepository(user,repoId);
     if (
       !repo.storage_namespace.startsWith("s3:") &&
       !repo.storage_namespace.startsWith("http")

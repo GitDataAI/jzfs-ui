@@ -30,7 +30,7 @@ const RegisterForm = () => {
                         const password = form.elements.namedItem('password') as HTMLInputElement;
                         const email = form.elements.namedItem('email') as HTMLInputElement;
                         try {
-                            auth.register({username: username.value,password:password.value,email:email.value})
+                            auth.register({name: username.value,password:password.value,email:email.value})
                             setRegisterError(null);
                             router.push(next ? next : '/auth/login');
                         } catch(err) {

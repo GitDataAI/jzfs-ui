@@ -35,7 +35,7 @@ export const RepositoryCreateForm = ( {id, onSubmit,setFormValid} ) => {
         <Form id={id} onSubmit={(e) => {
             e.preventDefault();
             onSubmit({
-                Name: repoNameField.current? repoNameField.current.value :'',
+                name: repoNameField.current? repoNameField.current.value :'',
                 Description: DescriptionField.current ?DescriptionField.current.value : '',
               });
         }}>

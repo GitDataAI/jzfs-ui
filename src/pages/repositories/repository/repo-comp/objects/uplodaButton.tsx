@@ -113,6 +113,8 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
       const mapper = async (file:_File) => {
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
+          console.log('upload');
+          
           await uploadFile( repoId, branch, path, file, wipID)
           
         } catch (error: any | null) {

@@ -42,10 +42,10 @@ const RepositoriesPage = () => {
         try {
             setCreatingRepo(true);
             setCreateRepoError(null);
-            await repositories.createRepository(repo);
+            await users.createRepository(repo);
             setRefresh(!refresh);
             if (presentRepo) {
-                router.push({pathname: `/repositories/:repoId/objects`, params: {repoId: repo.name},query:{}});
+                router.push({pathname: `/repositories/:user/:repoId/objects`, params: {repoId: repo.Name,user:owner},query:{}});
             }
             return true;
         } catch (error: any) {
