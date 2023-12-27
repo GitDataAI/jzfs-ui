@@ -172,12 +172,12 @@ async function useTreeItemType({entry, repo, leftDiffRefID, rightDiffRefID, isDe
  * @param onRevert to be called when an object/prefix is requested to be reverted
  */
 
-export const ChangesTreeContainer:React.FC<ChangesTreeContainerProps> = ({results, delimiter, uriNavigator,
+export const ChangesTreeContainer= ({results, delimiter, uriNavigator,
                                          leftDiffRefID, rightDiffRefID, repo, reference, internalRefresh, prefix,
                                          getMore, loading, nextPage, setAfterUpdated, onNavigate, onRevert, setIsTableMerge,
                                          changesTreeMessage= ""}) => {
     const [tableDiffState, setTableDiffState] = useState({isShown: false, expandedTablePath: "", expandedTableName: ""});
-    const isDeltaDiffEnabled = useAPI(() => otfUtils.isDeltaLakeDiffEnabled(), []);
+    // const isDeltaDiffEnabled = useAPI(() => otfUtils.isDeltaLakeDiffEnabled(), []);
     const compareTipStorageKey = "show_compare_tip";
     const [showCompareTip, setShowCompareTip] = useState(window.localStorage.getItem(compareTipStorageKey) !== "false");
     const closeAndRememberCompareTip = useCallback(() => {
@@ -185,9 +185,9 @@ export const ChangesTreeContainer:React.FC<ChangesTreeContainerProps> = ({result
         setShowCompareTip(false);
     },[]);
 
-    if (isDeltaDiffEnabled.loading) {
-        return <Loading />
-    }
+    // if (isDeltaDiffEnabled.loading) {
+    //     return <Loading />
+    // }
     if (results.length === 0) {
         return <div className="tree-container">
             <Alert variant="info">No changes</Alert>
@@ -228,7 +228,7 @@ export const ChangesTreeContainer:React.FC<ChangesTreeContainerProps> = ({result
                                 <tbody>
                                 {results.map(entry => {
                                     return (
-                                        <TreeItemRow key={entry.path + "-item"} entry={entry} repo={repo}
+                                        <TreeItemRow key={repo.name + "-item"} entry={entry} repo={repo}
                                                      reference={reference}
                                                      internalReferesh={internalRefresh} leftDiffRefID={leftDiffRefID}
                                                      rightDiffRefID={rightDiffRefID} delimiter={delimiter}
@@ -239,8 +239,10 @@ export const ChangesTreeContainer:React.FC<ChangesTreeContainerProps> = ({result
                                                      setTableDiffExpanded={onTableDiffExpansion(entry, setTableDiffState, setIsTableMerge)}
                                                      setTableDiffState={setTableDiffState}
                                                      setIsTableMerge={setIsTableMerge}
-                                                     deltaDiffEnabled={isDeltaDiffEnabled.response}
-                                                 />);
+                                                     deltaDiffEnabled={false}
+                                                 />
+                                        // <></>
+                                                 );
                                 })}
                                 {!!nextPage &&
                                 <TreeEntryPaginator path={""} loading={loading} nextPage={nextPage}

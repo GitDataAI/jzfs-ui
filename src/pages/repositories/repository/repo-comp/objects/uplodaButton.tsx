@@ -40,7 +40,7 @@ const destinationPath = (path: string | undefined, file: _File) => {
         <Row className={`upload-item upload-item-${state ? state.status : "none"}`}>
           <Col>
             <span className="path">
-              jzfs://{repo.id}/{fpath}
+              jzfs://{repo.name}/{fpath}
             </span>
           </Col>
           <Col xs md="2">
@@ -60,7 +60,7 @@ const destinationPath = (path: string | undefined, file: _File) => {
   
   async function uploadFile( repository: string, branch: string, path: string, file: File, wipID: string) {
     const user = cache.get('user');
-    await object.uploadObject(user, repository,{refName:branch,path:path},{content:file});
+    await object.uploadObject(user, repository,{refName:branch,path},{content:file});
 }
 
   
@@ -113,9 +113,8 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
       const mapper = async (file:_File) => {
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
-          console.log('upload');
           
-          await uploadFile( repoId, branch, path, file, wipID)
+          await uploadFile( repoId, branch, currentPath, file, wipID)
           
         } catch (error: any | null) {
           setFileStates(next => ( {...next, [file.path]: {status: 'error'}}))

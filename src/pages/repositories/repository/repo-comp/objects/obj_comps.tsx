@@ -34,8 +34,7 @@ export const TreeContainer= ({
   const { response, error, loading } = useAPI(async() =>
     {return await repos.getEntriesInRef(user,repo.name,{type})
       }
-  , [repo.Name , refreshToken])
-  console.log('response:',response,'loading:',loading,'error:',error);
+  , [repo.name , refreshToken])
   
   const initialState = {
     inProgress: false,
@@ -116,7 +115,6 @@ export const TreeContainer= ({
 // }
 
 export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) => {
-  console.log('warn',repoId);
   const user = cache.get('user')
   const storageKey = `show_gc_warning_${repoId}`;
   const [show, setShow] = useState(
@@ -129,9 +127,10 @@ export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) =>
 
   const { response } = useAPI(async () => {
     const repo = await repos.getRepository(user,repoId);
+    
     if (
-      !repo.storage_namespace.startsWith("s3:") &&
-      !repo.storage_namespace.startsWith("http")
+      !repo.data.storage_namespace.startsWith("s3:") &&
+      !repo.data.storage_namespace.startsWith("http")
     ) {
       return false;
     }

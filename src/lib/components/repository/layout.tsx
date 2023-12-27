@@ -12,17 +12,18 @@ import {Link} from "../nav";
 // import { useAPI } from "../../hooks/api";
 // import RepoOnboardingChecklistSlider from "./repoOnboardingChecklistSlider";
 import { RepositoryPageLayoutProps, ResponseProps } from "../interface/comp_interface";
+import { cache } from "../../api";
 
 const RepoNav = () => {
     const { repo } = useRefs();
     const repoId = (repo) ? repo.name : '#';
-    
+    const user = cache.get('user')
     return (
         <Breadcrumb>
             <Link href={{pathname: '/repositories'}} component={Breadcrumb.Item}>
                 Repositories
             </Link>
-            <Link href={{pathname: '/repositories/:repoId/objects', params: {repoId}}} component={Breadcrumb.Item}>
+            <Link href={{pathname: '/repositories/:user/:repoId/objects', params: {repoId,user}}} component={Breadcrumb.Item}>
                 {repoId}
             </Link>
         </Breadcrumb>

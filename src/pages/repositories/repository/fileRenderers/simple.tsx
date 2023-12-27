@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import Alert from "react-bootstrap/Alert";
 import { humanSize } from "../../../../lib/components/repository/tree";
 import { useAPI } from "../../../../lib/hooks/api";
-import { objects, qs } from "../../../../lib/api";
+import { cache, objects, qs } from "../../../../lib/api";
 import { AlertError, Loading } from "../../../../lib/components/controls";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -19,6 +19,8 @@ import {
   RendererComponentWithTextCallback,
 } from "./types";
 import imageUriReplacer from "../../../../lib/remark-plugins/imageUriReplacer";
+import { object } from "../../../../lib/api/interface/Api";
+
 
 export const ObjectTooLarge: FC<RendererComponent> = ({ path, sizeBytes }) => {
   return (
@@ -46,18 +48,22 @@ export const UnsupportedFileType: FC<RendererComponent> = ({
   );
 };
 
-export const TextDownloader: FC<RendererComponentWithTextCallback> = ({
+export const TextDownloader= ({
   repoId,
-  refId,
+  branch,
   path,
+  type,
   presign,
   onReady,
 }) => {
-  let user =  window.localStorage.getItem('user')
-  const { response, error, loading } = useAPI(
-    async () => await objects.getObject(user, repoId,branch,path),
-    [repoId, refId, path]
+const user = cache.get('user') 
+
+const { response, error, loading } = useAPI(
+     () =>  object.getObject(user, repoId,{refName:branch,path,type:type}),
+    [repoId, branch, path]
   );
+  console.log('response', response);
+  
   if (loading) {
     return <Loading />;
   }
@@ -66,7 +72,7 @@ export const TextDownloader: FC<RendererComponentWithTextCallback> = ({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const component = onReady(response as any);
+  const component = onReady(response.data);
   return <>{component}</>;
 };
 

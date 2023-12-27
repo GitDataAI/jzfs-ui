@@ -13,9 +13,11 @@ import {useRouter} from "../../../../../lib/hooks/router";
 import { Box } from "@mui/material";
 import { RepoError } from "../error/error";
 import { useSearchParams } from "react-router-dom";
-import { UploadButton } from "./uplodaButton";
-import { ImportModal } from "./importModal";
-import { NoGCRulesWarning, ReadmeContainer, TreeContainer } from "./obj_comps";
+import { NoGCRulesWarning, TreeContainer } from "./obj_comps";
+import { Button } from "react-bootstrap";
+import { UploadIcon } from "@primer/octicons-react";
+import { Link } from "../../../../../lib/components/nav";
+import { cache } from "../../../../../lib/api";
 
 
 const ObjectsBrowser = () => {
@@ -30,8 +32,9 @@ const ObjectsBrowser = () => {
   const parts = (path && path.split("/")) || [];
   const searchSuffix = parts.pop();
   let searchPrefix = parts.join("/");
+  const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";
-  console.log(repo, reference,);
+ 
   useEffect(() => {
     if (importDialog) {
       setShowImport(true);
@@ -54,9 +57,10 @@ const ObjectsBrowser = () => {
             withCommits={true}
             withWorkspace={true}
             selectRef={(ref: { id: string }) => router.push({
-              pathname: `/repositories/:repoId/objects`,
+              pathname: `/repositories/:user/:repoId/objects`,
               params: {
-                repoId: repo.id,
+                repoId: repo.name,
+                user,
                 path: path === undefined ? "" : path,
               },
               query: { ref: ref.id, path: path === undefined ? "" : path },
@@ -75,27 +79,25 @@ const ObjectsBrowser = () => {
               if (prefix) query.path += prefix;
               if (reference) query.ref = reference.id;
               const url = {
-                pathname: `/repositories/:repoId/objects`,
+                pathname: `/repositories/:user/:repoId/objects`,
                 query,
-                params: { repoId: repo.id },
+                params: { repoId: repo.name,user },
               };
               router.push(url);
             }}
           />
           <RefreshButton onClick={refresh} />
-          <UploadButton
-            branch={'main'}
-            path={path ? path : "/"}
-            repoId={repo.name}
-            onDone={refresh}
-            onClick={() => {
-              setShowUpload(true);
-            } }
-            onHide={() => {
-              setShowUpload(false);
-            } }
-            show={showUpload} 
-            wipID={undefined}          />
+        <Button
+        variant={"light"}
+        >
+           <Link href={{
+            pathname: `/repositories/:user/:repoId/changes`,
+            params: {repoId: repo.name,user},
+            }}>
+        <UploadIcon />Edit
+          </Link>
+        </Button>
+          
         </ActionGroup>
       </ActionsBar>
 
@@ -110,7 +112,7 @@ const ObjectsBrowser = () => {
         }}
       >
         <TreeContainer
-            branch={'main'}
+            branch={reference}
             repo={repo}
           path={path ? path : "/"}
           after={after ? after : ""}
@@ -119,9 +121,9 @@ const ObjectsBrowser = () => {
             if (path) query.path = path;
             if (reference) query.ref = reference.id;
             const url = {
-              pathname: `/repositories/:repoId/objects`,
+              pathname: `/repositories/:user/:repoId/objects`,
               query,
-              params: { repoId: repo.id },
+              params: { repoId: repo.name,user },
             };
             router.push(url);
           }}

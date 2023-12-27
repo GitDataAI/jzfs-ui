@@ -1249,6 +1249,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       owner: string,
       repository: string,
       query?: {
+        /**
+         * return items after this value
+         * @format date-time-ns
+         */
+        after?: string;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
         /** ref(branch/tag) name */
         refName?: string;
       },

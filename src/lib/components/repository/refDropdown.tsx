@@ -17,11 +17,11 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
         const fetchRefs = async () => {
             try {
                 let response;
-                if (refType === RefTypeTag && repo.Name) {
+                if (refType === RefTypeTag && repo.name) {
                     response = await tags.list(repo.id, pagination.prefix, pagination.after, pagination.amount);
                 } else {
-                    if(repo.Name)
-                    response = await branches.listBranches(repo.Name);
+                    if(repo.name)
+                    response = await branches.listBranches(repo.name);
                 }
                 setRefs({loading: false, payload: response, error: null});
             } catch (error) {
@@ -33,6 +33,7 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
 
     // used for commit listing
     const initialCommitList = {branch: selected, commits: null, loading: false};
+    
     const [commitList, setCommitList] = useState(initialCommitList);
 
 
@@ -83,7 +84,7 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
             <CommitList
                 withWorkspace={withWorkspace}
                 commits={commitList.commits}
-                branch={commitList.branch as string}
+                branch={commitList.branch.id as string}
                 selectRef={selectRef}
                 reset={() => {
                     setCommitList(initialCommitList);
@@ -92,7 +93,7 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
 
 
     const results = refList.payload? refList.payload.results: '';
-
+                
     return (
         <div className="ref-selector">
             {form}
@@ -102,7 +103,7 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
                     <>
                         <ul className="list-group ref-list">
                             {results.map(namedRef => (
-                                <RefEntry namedRef={namedRef.Name} selectRef={selectRef} refType={refType}
+                                <RefEntry namedRef={namedRef.name} selectRef={selectRef} refType={refType}
                                 />
                             ))}
                         </ul>
@@ -243,19 +244,12 @@ const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onC
         );
     }
 
-    const showId = (ref:ref) => {
-        if (!ref)
-            return ''
-        if (ref.type === RefTypeCommit)
-            return ref.id.substr(0, 12)
-        return ref.id
-    }
 
-    const title = prefix + (!!selected) ? `${prefix} ${selected.type}: ` : '';
+    const title = prefix + (!!selected) ? `${prefix} ${selected.type}: ` : '';    
     return (
         <>
             <Button ref={target} variant={variant} onClick={()=> { setShow(!show) }}>
-                {title} <strong>{showId(selected)}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
+                {title} <strong>{repo.head}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
             </Button>
             {cancelButton}
             {popover}

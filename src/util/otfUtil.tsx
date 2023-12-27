@@ -1,5 +1,6 @@
 import {objects, otfDiffs} from "../lib/api";
 import { RepositoryParams } from "../lib/api/interface";
+import { users } from "../lib/api/interface/Api";
 
 /**
  * Checks whether a path is a delta table root.
@@ -20,7 +21,7 @@ export async function isDeltaLakeTable(entry:Entry, repo:RepositoryParams, ref:a
     if (entry.path_type === "object") {
         return
     }
-    let response = repo.id? await objects.list(repo.id, ref, entry.path + "_delta_log/"):''
+    let response = repo.id ? await users.listRepository(repo.name):''
     return response !== null && response.results.length !== 0;
 }
 

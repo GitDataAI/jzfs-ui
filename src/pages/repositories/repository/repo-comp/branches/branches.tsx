@@ -11,7 +11,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 
-import {branches} from "../../../../../lib/api";
+import {branches, cache} from "../../../../../lib/api";
 
 import {
     ActionGroup,
@@ -34,6 +34,7 @@ import {useRouter} from "../../../../../lib/hooks/router";
 import {RepoError} from "../error/error";
 import { BranchListProps, BranchWidgetParms, CreateBranchButtonProps } from "../../../interface/repo_interface";
 import { Branch } from "../../../../../lib/api/interface";
+import { repos } from "../../../../../lib/api/interface/Api";
 
 const ImportBranchName = 'import-from-inventory';
 
@@ -42,12 +43,13 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
 
     const buttonVariant = "outline-dark";
     const isDefault = repo.default_branch === branch.id;
+    const user = cache.get("user")
     let deleteMsg = (
         <>
-            Are you sure you wish to delete branch <strong>{branch.id}</strong> ?
+            Are you sure you wish to delete branch <strong>{branch.name}</strong> ?
         </>
     );
-    if (branch.id === ImportBranchName) {
+    if (branch.name === ImportBranchName) {
         deleteMsg = (
             <>
                 <p>{deleteMsg}</p>
@@ -62,11 +64,11 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
                 <div className="float-start">
                     <h6>
                         <Link href={{
-                            pathname: '/repositories/:repoId/objects',
-                            params: {repoId: repo.id},
-                            query: {ref: branch.id}
+                            pathname: '/repositories/:user/:repoId/objects',
+                            params: {repoId: repo.name,user},
+                            query: {ref: branch.name}
                         }}>
-                            {branch.id}
+                            {branch.name}
                         </Link>
 
                         {isDefault &&
@@ -87,9 +89,9 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
                                 msg={deleteMsg}
                                 tooltip="delete branch"
                                 onConfirm={() => {
-                                    branches.delete(repo.id, branch.id)
+                                    repos.deleteBranch(user, repo.name,{refName:repo.head})
                                         .catch(err => alert(err))
-                                        .then(() => onDelete(branch.id));
+                                        .then(() => onDelete(branch.name));
                                 } } 
                                 modalVariant={""} 
                                 size={"sm"}                        >
@@ -101,16 +103,16 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
                     <ButtonGroup className="branch-actions ms-2">
                         <LinkButton
                             href={{
-                                pathname: '/repositories/:repoId/commits/:commitId',
-                                params:{repoId: repo.id, commitId: branch.commit_id},
+                                pathname: '/repositories/:user/:repoId/commits/:commitId',
+                                params:{repoId: repo.name, commitId: branch.name,user},
                             }}
                             buttonVariant="outline-dark"
                             tooltip="View referenced commit">
-                            {branch.commit_id.substr(0, 12)}
+                            {branch.name.substr(0, 12)}
                         </LinkButton>
-                        <ClipboardButton variant={buttonVariant} text={branch.id} tooltip="Copy ID to clipboard" onSuccess={undefined} onError={undefined}/>
-                        <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.id}/${branch.id}`} tooltip="Copy URI to clipboard" icon={<LinkIcon />} onSuccess={undefined} onError={undefined}/>
-                        <ClipboardButton variant={buttonVariant} text={`s3://${repo.id}/${branch.id}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon />} onSuccess={undefined} onError={undefined}/>
+                        <ClipboardButton variant={buttonVariant} text={branch.name} tooltip="Copy ID to clipboard" onSuccess={undefined} onError={undefined}/>
+                        <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.name}/${branch.name}`} tooltip="Copy URI to clipboard" icon={<LinkIcon />} onSuccess={undefined} onError={undefined}/>
+                        <ClipboardButton variant={buttonVariant} text={`s3://${repo.name}/${branch.name}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon />} onSuccess={undefined} onError={undefined}/>
                     </ButtonGroup>
                 </div>
             </div>
@@ -125,9 +127,10 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
     const [error, setError] = useState<Error | boolean | null>(null);
     const textRef = useRef<HTMLInputElement>(null);
     const defaultBranch = useMemo(
-        () => ({ id: repo.default_branch, type: "branch"}),
-        [repo.default_branch]);
+        () => ({ id: repo.head, type: "branch"}),
+        [repo.head]);
     const [selectedBranch, setSelectedBranch] = useState(defaultBranch);
+    const user = cache.get('user');
 
 
     const hide = () => {
@@ -145,7 +148,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
         const sourceRef = selectedBranch.id;
 
         try {
-            await branches.create(repo.id, branchId, sourceRef);
+            await repos.createBranch(user, repo.name, {name:branchId,source:sourceRef});
             setError(false);
             setDisabled(false);
             setShow(false);
@@ -206,8 +209,16 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
 const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate }) => {
     const router = useRouter()
     const [refresh, setRefresh] = useState(true);
+    const user = cache.get('user');
+    const amount = useRef(5)
     const { results, error, loading, nextPage } = useAPIWithPagination(async () => {
-        return branches.list(repo.id, prefix, after);
+        return repos.listBranches(user, repo.name
+        //     ,{
+        //     prefix,
+        //     after,
+        //     amount:amount.current,
+        // }
+        );
     }, [repo.id, refresh, prefix, after]);
 
     const doRefresh = () =>  setRefresh(!refresh);
@@ -260,6 +271,7 @@ const BranchesContainer:React.FC = () => {
     const { repo, loading, error } = useRefs();
     const { after } = router.query;
     const routerPfx = (router.query.prefix) ? router.query.prefix : "";
+    const user = cache.get('user');
 
     if (loading) return <Loading/>;
     if (error) return <RepoError error={error}/>;
@@ -272,7 +284,7 @@ const BranchesContainer:React.FC = () => {
             onPaginate={after => {
                 const query = {after,prefix:''};
                 if (router.query.prefix) query.prefix = router.query.prefix;
-                router.push({pathname: '/repositories/:repoId/branches', params: {repoId: repo.id}, query});
+                router.push({pathname: '/repositories/:user/:repoId/branches', params: {repoId: repo.name,user}, query});
             }}/>
     );
 };

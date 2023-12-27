@@ -152,7 +152,9 @@ const TableRow:React.FC<TableRowProps> = ({className,diffIndicator, depth, loadi
 }
 
 function extractPathText(entry:Entry, relativeTo:string) {
-    let pathText = entry.path;
+    console.log('entry:',entry);
+
+    let pathText = entry.id;
     if (pathText.startsWith(relativeTo)) {
         pathText = pathText.substr(relativeTo.length);
     }
@@ -176,7 +178,9 @@ function diffType(entry:Entry) {
 }
 
 function extractTableName(entry:Entry, relativeTo:string) {
-    let pathText = entry.path;
+    console.log('entry:',entry);
+    
+    let pathText:string = entry.id;
     if (pathText.startsWith(relativeTo)) {
         pathText = pathText.substr(relativeTo.length);
     }

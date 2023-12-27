@@ -25,7 +25,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 
-import { commits, linkToPath, objects } from "../../api";
+import { cache, commits, linkToPath, objects } from "../../api";
 import { ConfirmationModal } from "../modals";
 import { Paginator } from "../pagination";
 import { Link } from "../nav";
@@ -301,8 +301,8 @@ const OriginModal = ({ show, onHide, entry, repo, reference }) => {
             <Link
               className="me-2"
               href={{
-                pathname: "/repositories/:repoId/changes",
-                params: { repoId: repo.id },
+                pathname: "/repositories/:name/:repoId/changes",
+                params: { repoId: repo.name },
                 query: { ref: reference.id },
               }}
             >
@@ -339,33 +339,33 @@ const PathLink = ({ repoId, reference, path, children, presign = false, as = nul
   return React.createElement(as, { href: link, download: name }, children);
 };
 
-const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions }) => {
+const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
   let rowClass = "change-entry-row ";
-  switch (entry.diff_type) {
-    case "changed":
-      rowClass += "diff-changed";
-      break;
-    case "added":
-      rowClass += "diff-added";
-      break;
-    case "removed":
-      rowClass += "diff-removed";
-      break;
-    default:
-      break;
-  }
+  // switch (entry.diff_type) {
+  //   case "changed":
+  //     rowClass += "diff-changed";
+  //     break;
+  //   case "added":
+  //     rowClass += "diff-added";
+  //     break;
+  //   case "removed":
+  //     rowClass += "diff-removed";
+  //     break;
+  //   default:
+  //     break;
+  // }
 
   const subPath = path.lastIndexOf("/") !== -1 ? path.substr(0, path.lastIndexOf("/")) : "";
   const buttonText =
-      subPath.length > 0 ? entry.path.substr(subPath.length + 1) : entry.path;
-
-  const params = { repoId: repo.id };
-  const query = { ref: reference.id, path: entry.path };
+      subPath.length > 0 ? entry.path.substr(subPath.length + 1) : entry.name;
+  const user = cache.get('user')
+  const params = { repoId: repo.name,user };
+  const query = { ref: reference.name, path: entry.name,type:reference.type};
 
   let button;
   if (entry.path_type === "common_prefix") {
     button = (
-      <Link href={{ pathname: "/repositories/:repoId/objects", query, params }}>
+      <Link href={{ pathname: "/repositories/:user/:repoId/object", query, params }}>
         {buttonText}
       </Link>
     );
@@ -375,11 +375,12 @@ const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions 
     const filePathQuery = {
       ref: query.ref,
       path: query.path,
+      type: query.type
     };
     button = (
       <Link
         href={{
-          pathname: "/repositories/:repoId/object",
+          pathname: "/repositories/:user/:repoId/object",
           query: filePathQuery,
           params: params,
         }}
@@ -524,7 +525,7 @@ function pathParts(path, isPathToFile) {
 }
 
 const buildPathURL = (params, query) => {
-  return { pathname: "/repositories/:repoId/objects", params, query };
+  return { pathname: "/repositories/:user/:repoId/objects", params, query };
 };
 
 export const URINavigator = ({
@@ -538,7 +539,8 @@ export const URINavigator = ({
   hasCopyButton = false
 }) => {
   const parts = pathParts(path, isPathToFile);
-  const params = { repoId: repo.id };
+  const user = cache.get('user')
+  const params = { repoId: repo.name?repo.name:repo,user };
 
   return (
     <div className="d-flex">
@@ -546,20 +548,20 @@ export const URINavigator = ({
         {relativeTo === "" ? (
           <>
             <strong>{"jzfs://"}</strong>
-            <Link href={{ pathname: "/repositories/:repoId/objects", params }}>
-              {repo.id}
+            <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
+              {repo.name}
             </Link>
             <strong>{"/"}</strong>
             <Link
               href={{
-                pathname: "/repositories/:repoId/objects",
+                pathname: "/repositories/:user/:repoId/objects",
                 params,
-                query: { ref: reference.id },
+                query: { ref: reference.name, type:reference.type },
               }}
             >
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
-                : reference.id}
+                : reference.name}
             </Link>
             <strong>{"/"}</strong>
           </>
@@ -576,7 +578,7 @@ export const URINavigator = ({
               .slice(0, i + 1)
               .map((p) => p.name)
               .join("/") + "/";
-          const query = { path, ref: reference.id };
+          const query = { path, ref: reference };
           const edgeElement =
             isPathToFile && i === parts.length - 1 ? (
               <span>{part.name}</span>
@@ -592,14 +594,14 @@ export const URINavigator = ({
       <div className="object-viewer-buttons">
         {hasCopyButton &&
         <ClipboardButton
-            text={`jzfs://${repo.id}/${reference.id}/${path}`}
+            text={`jzfs://${repo.name}/${reference.id}/${path}`}
             variant="link"
             size="sm"
             onSuccess={noop}
             onError={noop}
             className={"me-1"}
             tooltip={"copy URI to clipboard"}/>}
-        {(downloadUrl) && (
+        {(
           <a
               href={downloadUrl}
               download={path.split('/').pop()}
@@ -629,7 +631,7 @@ const GetStarted = ({ onUpload, onImport }) => {
           >
             Import
           </Button>
-          &nbsp;data from {config.config.blockstore_type}. Or, see the&nbsp;
+          &nbsp;data from {repo.name}. Or, see the&nbsp;
           <a
             href="https://docs.pando.network/howto/import.html"
             target="_blank"
@@ -691,7 +693,8 @@ export const Tree = ({
   path = "",
 }) => {
   let body;
-  console.log('results:',results,'path:',path,'reference:',reference);
+  console.log('repo:',repo,'branch:',reference,'data:',results);
+
   if (results.length === 0 && path === "" && reference.type === RefTypeBranch) {
     // empty state!
     body = (
@@ -704,9 +707,9 @@ export const Tree = ({
           <tbody>
             { results? results.map((entry) => (
               <EntryRow
-                key={entry.path}
+                key={entry.hash}
                 entry={entry}
-                path={path}
+                path={entry.name}
                 repo={repo}
                 reference={reference}
                 showActions={showActions}

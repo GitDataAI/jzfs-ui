@@ -1,6 +1,11 @@
+import { Branch, RefType, Repository } from "../../../../lib/api/interface/Api";
+
+export interface Ref extends Branch{
+    type:RefType.Branch;
+}
 export interface RendererComponent {
-    repoId: string;
-    refId: string;
+    repo: Repository ;
+    branch: Ref ;
     path: string;
     fileExtension: string | null;
     contentType: string | null;

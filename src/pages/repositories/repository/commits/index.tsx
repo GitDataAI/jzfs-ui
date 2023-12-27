@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import dayjs from "dayjs";
 import {BrowserIcon, LinkIcon, PackageIcon, PlayIcon} from "@primer/octicons-react";
 
-import {commits} from "../../../../lib/api";
+import {cache, commits} from "../../../../lib/api";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -27,6 +27,7 @@ import {Route, Routes} from "react-router-dom";
 import RepositoryCommitPage from "./commit";
 import {RepoError} from "../repo-comp/error/error";
 import { Commit, CommitWidgetProps, CommitsBrowserProps } from "../../interface/repo_interface";
+import { repos } from "../../../../lib/api/interface/Api";
 
 
 const CommitWidget:React.FC<CommitWidgetProps> = ({ repo, commit }) => {
@@ -40,7 +41,7 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo, commit }) => {
                     <h6>
                         <Link href={{
                             pathname: '/repositories/:repoId/commits/:commitId',
-                            params: {repoId: repo.id, commitId: commit.id}
+                            params: {repoId: repo.name, commitId: commit.id}
                         }}>
                             {commit.message}
                         </Link>
@@ -88,9 +89,10 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo, commit }) => {
 const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, onPaginate, onSelectRef }) => {
 
     const [refresh, setRefresh] = useState(true)
+    const user = cache.get('user')
     const { results: rawResults, error, loading, nextPage } = useAPIWithPagination(async () => {
-        return commits.log(repo.id, reference.id, after)
-    }, [repo.id, reference.id, refresh, after])
+        return repos.getCommitsInRepository(user, repo.name)
+    }, [repo.name, reference.id, refresh, after])
     const results =  rawResults as Commit[];
     if (loading) return <Loading/>
     if (error) return <AlertError error={error}/>

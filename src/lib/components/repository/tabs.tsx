@@ -14,7 +14,10 @@ import { ActiveTab } from "../interface/comp_interface";
 export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
     const { reference } = useRefs();
     const router = useRouter();
-    const { repoId } = router.params;
+    const { repoId,user } = router.params;
+    
+    
+
 
     const withRefContext = (url: string) => {
         const params = new URLSearchParams();
@@ -27,8 +30,8 @@ export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
     const withRefAndCompareContext = (url: string) => {
         const params = new URLSearchParams();
         if (reference) {
-            params.append('ref', reference.id)
-            params.append('compare', reference.id);
+            params.append('ref', reference.name)
+            params.append('compare', reference.name);
         }
         if (params.toString())
             return `${url}?${params.toString()}`;
@@ -37,7 +40,7 @@ export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
 
     const withBranchContext = (url: string) => {
         const params = new URLSearchParams();
-        if (!!reference && reference.type === RefTypeBranch) params.append('ref', reference.id);
+        if (!!reference && reference.type === RefTypeBranch) params.append('ref', reference.name);
         if (params.toString())
             return `${url}?${params.toString()}`;
         return url;
@@ -45,28 +48,28 @@ export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
 
     return (
         <Nav variant="tabs" >
-            <Link active={active === 'objects'} href={withRefContext(`/repositories/${repoId}/objects`)} component={NavItem}>
+            <Link active={active === 'objects'} href={withRefContext(`/repositories/${user}/${repoId}/objects`)} component={NavItem}>
                 <DatabaseIcon/> Objects
             </Link>
-            <Link active={active === 'changes'} href={withBranchContext(`/repositories/${repoId}/changes`)} component={NavItem}>
+            <Link active={active === 'changes'} href={withBranchContext(`/repositories/${user}/${repoId}/changes`)} component={NavItem}>
                 <FileDiffIcon/> Uncommitted Changes
             </Link>
-            <Link active={active === 'commits'} href={withRefContext(`/repositories/${repoId}/commits`)} component={NavItem}>
+            <Link active={active === 'commits'} href={withRefContext(`/repositories/${user}/${repoId}/commits`)} component={NavItem}>
                 <GitCommitIcon/> Commits
             </Link>
-            <Link active={active === 'branches'} href={`/repositories/${repoId}/branches`} component={NavItem}>
+            <Link active={active === 'branches'} href={`/repositories/${user}/${repoId}/branches`}  component={NavItem}>
                 <GitBranchIcon/> Branches
             </Link>
-            <Link active={active === 'tags'} href={`/repositories/${repoId}/tags`} component={NavItem}>
+            {/* <Link active={active === 'tags'} href={`/repositories/${user}/${repoId}/tags`} component={NavItem}>
                 <TagIcon/> Tags
             </Link>
-            <Link active={active === 'compare'} href={withRefAndCompareContext(`/repositories/${repoId}/compare`)} component={NavItem}>
+            <Link active={active === 'compare'} href={withRefAndCompareContext(`/repositories/${user}/${repoId}/compare`)} component={NavItem}>
                 <GitCompareIcon/> Compare
-            </Link>
-            <Link active={active === 'actions'} href={`/repositories/${repoId}/actions`} component={NavItem}>
+            </Link> */}
+            {/* <Link active={active === 'actions'} href={`/repositories/${repoId}/actions`} component={NavItem}>
                 <PlayIcon/> Actions
-            </Link>
-            <Link active={active === 'settings'} href={`/repositories/${repoId}/settings`} component={NavItem}>
+            </Link> */}
+            <Link active={active === 'settings'} href={`/repositories/${user}/${repoId}/settings`} component={NavItem}>
                 <GearIcon/> Settings
             </Link>
         </Nav>

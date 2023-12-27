@@ -9,7 +9,8 @@ export const resolveRef = async (repoId:string, refId:string) => {
     // try branch
     try {
         const branch = await branches.getBranch(repoId, refId);
-        return {id: branch.id, type: RefTypeBranch};
+        
+        return {...branch,type: RefTypeBranch};
     } catch(error) {
         if (!(error instanceof NotFoundError) && !(error instanceof BadRequestError)) {
             throw error;
@@ -61,8 +62,6 @@ export const RefContextProvider = ({ children }) => {
     const router = useRouter();
     const { repoId } = router.params;
     const {ref, compare} = router.query;
-    console.log('router:',router, 'refId',repoId,'ref',ref);
-
     const [refState, setRefState] = useState(refContextInitialState);
 
     useEffect(() => {
@@ -74,7 +73,6 @@ export const RefContextProvider = ({ children }) => {
                 const reference = await resolveRef(repoId, 'main');
                 const comparedRef = await resolveRef(repoId, 'main');
                 setRefState({...refContextInitialState, loading: false, repo, reference, compare: comparedRef});
-                console.log('objects:',repoId,ref);
             } catch (err) {
                 setRefState({...refContextInitialState, loading: false, error: err});
             }
