@@ -1,14 +1,14 @@
 import React, {createContext, useContext, useMemo} from "react";
 
 import {useAPI} from "./api";
-import {setup} from "../api";
 import { LoginConfigProviderProps } from "../components/interface/comp_interface";
+import { setup } from "../api/interface/Api";
 
 
 export const LoginConfigContext = createContext({});
 
 export const WithLoginConfigContext:React.FC<LoginConfigProviderProps> = ({children}) => {
-    const { response, error, loading } = useAPI(() => setup.getState());
+    const { response, error, loading } = useAPI(() => setup.getSetupState());
     const lc = useMemo(() => (error || loading) ? {} : response?.login_config || {}, [response]);
     return <LoginConfigContext.Provider value={lc}>
              {children}

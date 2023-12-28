@@ -53,7 +53,7 @@ const ChangeRowActions = ({actions}:{actions:RowAction[]}) => <>
                 </Button>
             </OverlayTrigger>&#160;&#160;</>
         ))}
-</>;
+</>
 
 export const ObjectTreeEntryRow:React.FC<ObjectTreeEntryRowProps> = ({entry, relativeTo = "", diffExpanded, depth = 0, loading = false, onRevert, onClickExpandDiff = null}) => {
     const [showRevertConfirm, setShowRevertConfirm] = useState(false)
@@ -154,7 +154,7 @@ const TableRow:React.FC<TableRowProps> = ({className,diffIndicator, depth, loadi
 function extractPathText(entry:Entry, relativeTo:string) {
     console.log('entry:',entry);
 
-    let pathText = entry.id;
+    let pathText = entry.to_hash? entry.to_hash:entry.base_hash;
     if (pathText.startsWith(relativeTo)) {
         pathText = pathText.substr(relativeTo.length);
     }
@@ -162,16 +162,13 @@ function extractPathText(entry:Entry, relativeTo:string) {
 }
 
 function diffType(entry:Entry) {
-    switch (entry.type) {
-        case 'changed':
-        case 'prefix_changed':
-            return 'diff-changed';
-        case 'added':
+    switch (entry.action) {
+        case '1':
             return 'diff-added';
-        case 'removed':
+        case '2':
+            return 'diff-changed';
+        case '3':
             return 'diff-removed';
-        case 'conflict':
-            return 'diff-conflict';
         default:
             return '';
     }
@@ -180,7 +177,7 @@ function diffType(entry:Entry) {
 function extractTableName(entry:Entry, relativeTo:string) {
     console.log('entry:',entry);
     
-    let pathText:string = entry.id;
+    let pathText:string = entry.to_hash;
     if (pathText.startsWith(relativeTo)) {
         pathText = pathText.substr(relativeTo.length);
     }
@@ -203,26 +200,21 @@ export const DiffIndicationIcon = ({entry, rowType}:{entry:Entry, rowType:number
         tooltipId = "tooltip-table";
         tooltipText = "Table changed"
     } else {
-        switch (entry.type) {
-            case 'removed':
+        switch (entry.action) {
+            case '1':
                 diffIcon = <TrashIcon/>;
                 tooltipId = "tooltip-removed";
                 tooltipText = "Removed";
                 break;
-            case 'added':
+            case '2':
                 diffIcon = <FileIcon/>;
                 tooltipId = "tooltip-added";
                 tooltipText = "Added";
                 break;
-            case 'changed':
+            case '3':
                 diffIcon = <PencilIcon/>;
                 tooltipId = "tooltip-changed";
                 tooltipText = "Changed";
-                break;
-            case 'conflict':
-                diffIcon = <CircleSlashIcon/>;
-                tooltipId = "tooltip-conflict";
-                tooltipText = "Conflict";
                 break;
             default:
         }

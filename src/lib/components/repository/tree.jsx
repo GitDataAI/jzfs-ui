@@ -631,7 +631,7 @@ const GetStarted = ({ onUpload, onImport }) => {
           >
             Import
           </Button>
-          &nbsp;data from {repo.name}. Or, see the&nbsp;
+          &nbsp;data from jzfs. Or, see the&nbsp;
           <a
             href="https://docs.pando.network/howto/import.html"
             target="_blank"

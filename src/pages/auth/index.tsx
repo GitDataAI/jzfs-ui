@@ -14,6 +14,7 @@ const Auth = () => {
         <Routes>
             <Route path="" element={<Navigate to="CredentialsPage"/>} />
             <Route path="login" element={<LoginPage/>} />
+            <Route path="api" element={<LoginPage/>} />
             <Route path="register" element={<RegisterPage/>} />
             <Route path="credentials" element={<CredentialsPage/>} />
             <Route path="users/create" element={<ActivateInvitedUserPage/>} />

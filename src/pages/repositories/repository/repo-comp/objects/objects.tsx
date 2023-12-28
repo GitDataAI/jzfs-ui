@@ -112,7 +112,7 @@ const ObjectsBrowser = () => {
         }}
       >
         <TreeContainer
-            branch={reference}
+            reference={reference}
             repo={repo}
           path={path ? path : "/"}
           after={after ? after : ""}

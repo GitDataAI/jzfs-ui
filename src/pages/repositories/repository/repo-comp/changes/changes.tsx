@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import {GitCommitIcon, HistoryIcon,} from "@primer/octicons-react";
 
@@ -18,15 +18,19 @@ import {RepositoryPageLayout} from "../../../../../lib/components/repository/lay
 import {formatAlertText} from "../../../../../lib/components/repository/errors";
 import {ChangesTreeContainer, MetadataFields} from "../../../../../lib/components/repository/changes";
 import {useRouter} from "../../../../../lib/hooks/router";
-import {URINavigator} from "../../../../../lib/components/repository/tree";
+import {Tree, URINavigator} from "../../../../../lib/components/repository/tree";
 import {RepoError} from "../error/error";
 import { ChangesBrowserProps, CommitButtonProps, GetMore, GetMoreUncommittedChanges, Pair, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
-import { wip } from "../../../../../lib/api/interface/Api";
+import { object, repos, wip } from "../../../../../lib/api/interface/Api";
 import { UploadButton } from "../objects/uplodaButton";
 
 
 const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
-
+    const [msg, setMsg] = useState('');
+    const handleDescriptionChange = (e) => {
+        setMsg(e.target.value);
+      };
+      
     const textRef = useRef<HTMLInputElement>(null);
 
     const [committing, setCommitting] = useState(false)
@@ -49,6 +53,13 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
     };
 
     const alertText = formatAlertText(repo.id, null);
+    useEffect(() => {
+        if (msg) {
+            setCommitting(false);
+        } else  {
+            setCommitting(true);
+        }
+      }, [msg]);
     return (
         <>
             <Modal show={show} onHide={hide} size="lg">
@@ -61,7 +72,7 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
                         e.preventDefault();
                     }}>
                         <Form.Group controlId="message" className="mb-3">
-                            <Form.Control type="text" placeholder="Commit Message" ref={textRef}/>
+                            <Form.Control type="text" placeholder="Commit Message" ref={textRef} onChange={handleDescriptionChange}/>
                         </Form.Group>
 
                         <MetadataFields metadataFields={metadataFields} setMetadataFields={setMetadataFields}/>
@@ -142,19 +153,30 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     const router = useRouter();
     const { path, after, importDialog } = router.query;
     const [showUpload, setShowUpload] = useState(false);
-    const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
-        return refs.changes(repo.id, reference.id, afterUpdated, path, useDelimiter ? delimiter : "", amount > 0 ? amount : undefined)
-    }
+    const [showImport, setShowImport] = useState(false);
 
-    const { error , loading } = useAPI(async () => {
+    const initialState = {
+        inProgress: false,
+        error: null,
+        done: false,
+      };
+      const [deleteState, setDeleteState] = useState(initialState);
+    const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
+        return wip.getWipChanges(user,repo.name,{refName:reference.name})
+    }
+    const { response,error , loading} = useAPI(async() =>
+    {return await repos.getEntriesInRef(user,repo.name,{type:reference.type})
+      }
+  , [repo.name , internalRefresh])
+    const {  } = useAPI(async () => {
         if (!repo) return
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
-           () => wip.listWip(user,repo.name) );
+           () => wip.getWipChanges(user,repo.name,{refName:reference.name}) );
     }, [repo.id, reference.id, internalRefresh, afterUpdated, delimiter, prefix])
 
     const results = resultsState.results
     let nextPage = ''
-    console.log('results:',results, 'referrer:',reference);
+    console.log('results:',results, 'referrer:',reference,'res:',response);
     
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
@@ -218,7 +240,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                     <RefreshButton onClick={refresh}/>
 
                     <RevertButton enabled={results.length > 0} onRevert={() => {
-                        branches.reset(repo.id, reference.id, {type: 'reset'})
+                        wip.deleteWip(repo.name, user,{refName:reference.name})
                             .then(refresh)
                             .catch(error => setActionError(error))
                     }}/>
@@ -250,8 +272,43 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                     }}/>
                 </ActionGroup>
             </ActionsBar>
-
+           
             {actionErrorDisplay}
+            {deleteState.error && <AlertError error={deleteState.error} onDismiss={() => setDeleteState(initialState)}/>}
+            <Tree
+                repo={repo}
+                reference={reference}
+                path={(path) ? path : ""}
+                showActions={true}
+                results={response.data?response.data:[null]}
+                after={after}
+                onPaginate={(after:string) => {
+                    const query = { after,path:"",ref:""};
+                    if (path) query.path = path;
+                    if (reference) query.ref = reference.id;
+                    const url = {
+                      pathname: `/repositories/:user/:repoId/objects`,
+                      query,
+                      params: { repoId: repo.name,user },
+                    };
+                    router.push(url);
+                  }}
+                onUpload={() => {
+                    setShowUpload(true);
+                  }}
+                onImport={() => {
+                    setShowImport(true)}
+                }
+                onDelete={(entry) => {
+                    object
+                        .deleteObject(user, repo.name, {refName:reference.name,path:entry.name})
+                        .catch(error => {
+                            setDeleteState({...initialState, error: error})
+                            throw error
+                        })
+                        .then(refresh)
+                }}
+            />
             <ChangesTreeContainer results={results} delimiter={delimiter}
             uriNavigator={uriNavigator} leftDiffRefID={committedRef} rightDiffRefID={uncommittedRef}
             repo={repo} reference={reference} internalRefresh={internalRefresh} prefix={prefix}

@@ -20,7 +20,7 @@ const REPOSITORY_AGE_BEFORE_GC = 14;
 
 export const TreeContainer= ({
   repo,
-  branch,
+  reference,
   path,
   after,
   onPaginate,
@@ -30,12 +30,11 @@ export const TreeContainer= ({
   refreshToken
 }) => {
   const user = cache.get('user')
-  const type = 'branch'
   const { response, error, loading } = useAPI(async() =>
-    {return await repos.getEntriesInRef(user,repo.name,{type})
+    {return await repos.getEntriesInRef(user,repo.name,{type:reference.type})
       }
   , [repo.name , refreshToken])
-  console.log(branch);
+  console.log(reference);
   
   const initialState = {
     inProgress: false,
@@ -52,7 +51,7 @@ export const TreeContainer= ({
             {deleteState.error && <AlertError error={deleteState.error} onDismiss={() => setDeleteState(initialState)}/>}
             <Tree
                 repo={repo}
-                reference={branch}
+                reference={reference}
                 path={(path) ? path : ""}
                 showActions={true}
                 results={response.data}
@@ -62,7 +61,7 @@ export const TreeContainer= ({
                 onImport={onImport}
                 onDelete={(entry) => {
                     object
-                        .deleteObject(user, repo.name, {refName:branch.name,path:entry.name})
+                        .deleteObject(user, repo.name, {refName:reference.name,path:entry.name})
                         .catch(error => {
                             setDeleteState({...initialState, error: error})
                             throw error

@@ -12,7 +12,7 @@ import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
-import {refs} from "../../api";
+import {cache, refs} from "../../api";
 import {DeltaLakeDiff} from "./TableDiff";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
@@ -20,6 +20,7 @@ import Col from "react-bootstrap/Col";
 import { ChangesTreeContainerProps } from "../../../pages/repositories/interface/repo_interface";
 import { GetMoreChanges, MetadataFieldsProps, Pagination, SetIsTableMerge, SetTableDiffState, TreeEntryPaginatorProps, TreeItemRowProps, UseTreeItemTypeProps } from "../interface/comp_interface";
 import { Entry } from "../../../util/otfUtil";
+import { wip } from "../../api/interface/Api";
 
 /**
  * Tree item is a node in the tree view. It can be expanded to multiple TreeEntryRow:
@@ -41,34 +42,25 @@ export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference,
                                 depth=0, setTableDiffExpanded, setTableDiffState, setIsTableMerge, deltaDiffEnabled}) => {
     const [dirExpanded, setDirExpanded] = useState(false); // state of a non-leaf item expansion
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
-    const [resultsState, setResultsState] = useState<{results: Entry[], pagination: Pagination}>({results:[], pagination:{}});    const [diffExpanded, setDiffExpanded] = useState(false); // state of a leaf item expansion
-
+    const [diffExpanded, setDiffExpanded] = useState(false); // state
+    const user = cache.get("user")
     const itemType = useAPI(() => useTreeItemType({entry, repo, leftDiffRefID, rightDiffRefID, isDeltaEnabled:deltaDiffEnabled}), []);
 
-    const { error, loading, nextPage } = useAPIWithPagination(async () => {
-        if (!dirExpanded) return
-        if (!repo) return
-
-        if (resultsState.results.length > 0 && resultsState.results.at(-1).path > afterUpdated) {
-            // results already cached
-            return {results:resultsState.results, pagination: resultsState.pagination}
-        }
-
-        const { results, pagination } =  await getMore(afterUpdated, entry.path)
-        setResultsState({results: resultsState.results.concat(results), pagination: pagination})
-        return {results:resultsState.results, pagination: pagination}
-    }, [repo.id, reference.id, internalRefresh, afterUpdated, entry.path, delimiter, dirExpanded])
-
-    const results = resultsState.results
+    const {response,loading,error} = useAPI(async ()=>{
+        return await wip.getWipChanges(user, repo.name, { refName: reference.name });
+    })
+    
+    console.log('response:', response);
+    
     if (error)
         return <tr><td><AlertError error={error}/></td></tr>
 
-    if (itemType.loading || (loading && results.length === 0)) {
+    if (loading) {
         return <ObjectTreeEntryRow key={entry.path + "entry-row"} entry={entry} loading={true} relativeTo={relativeTo}
                                    depth={depth} onRevert={onRevert} 
                                   />
     }
-    if (itemType.response === TreeItemType.Object) {
+    if (response.data) {
         return <>
             <ObjectTreeEntryRow key={entry.path + "entry-row"} entry={entry} relativeTo={relativeTo}
                                 depth={depth === 0 ? 0 : depth + 1} onRevert={onRevert}
@@ -76,11 +68,7 @@ export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference,
             {diffExpanded && <tr key={"row-" + entry.path} className={"leaf-entry-row"}>
                 <td className="objects-diff" colSpan={4}>
                     <ObjectsDiff
-                        diffType={entry.path_type}
-                        repoId={repo.id}
-                        leftRef={leftDiffRefID}
-                        rightRef={rightDiffRefID}
-                        path={entry.path}
+                        entry={entry}
                     />
                     {loading && <ClockIcon/>}
                 </td>
@@ -91,15 +79,15 @@ export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference,
     } else if (itemType.response === TreeItemType.Prefix) {
         return <>
             <PrefixTreeEntryRow key={entry.path + "entry-row"} entry={entry} dirExpanded={dirExpanded} relativeTo={relativeTo} depth={depth} onClick={() => setDirExpanded(!dirExpanded)} onRevert={onRevert} onNavigate={onNavigate} getMore={getMore} repo={repo} reference={reference}/>
-            {dirExpanded && results &&
-            results.map(child =>
-                (<TreeItemRow key={child.path + "-item"} entry={child} repo={repo} reference={reference} leftDiffRefID={leftDiffRefID} rightDiffRefID={rightDiffRefID} onRevert={onRevert} onNavigate={onNavigate}
+            {dirExpanded && response &&
+            response.data.map(child =>
+                (<TreeItemRow key={child.path + "-item"} entry={child} repo={repo} reference={reference} rightDiffRefID={rightDiffRefID} onRevert={onRevert} onNavigate={onNavigate}
                               internalRefresh={internalRefresh} delimiter={delimiter} depth={depth + 1}
                               relativeTo={entry.path} getMore={getMore} setTableDiffExpanded={onTableDiffExpansion(child, setTableDiffState, setIsTableMerge)} setTableDiffState={setTableDiffState}
                               setIsTableMerge={setIsTableMerge}
                               deltaDiffEnabled={deltaDiffEnabled}/>))}
-            {(!!nextPage || loading) &&
-            <TreeEntryPaginator path={entry.path} depth={depth} loading={loading} nextPage={nextPage}
+            {(loading) &&
+            <TreeEntryPaginator path={entry.path} depth={depth} loading={loading} nextPage={''}
                                 setAfterUpdated={setAfterUpdated}/>
         }
     </>
@@ -241,7 +229,6 @@ export const ChangesTreeContainer= ({results, delimiter, uriNavigator,
                                                      setIsTableMerge={setIsTableMerge}
                                                      deltaDiffEnabled={false}
                                                  />
-                                        // <></>
                                                  );
                                 })}
                                 {!!nextPage &&

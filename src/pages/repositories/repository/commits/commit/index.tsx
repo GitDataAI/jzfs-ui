@@ -90,8 +90,9 @@ const CommitContainer = () => {
     const router = useRouter();
     const { repo, loading, error } = useRefs();
     const { prefix } = router.query;
-    const { commitId } = router.params;
-    const user = cache.get('user')
+    const { commitId ,user} = router.params;
+    console.log('router:',router);
+    
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
 
