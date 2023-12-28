@@ -228,7 +228,7 @@ export const ChangesTreeContainer= ({results, delimiter, uriNavigator,
                                 <tbody>
                                 {results.map(entry => {
                                     return (
-                                        <TreeItemRow key={repo.name + "-item"} entry={entry} repo={repo}
+                                        <TreeItemRow key={reference.id + "-item"} entry={entry} repo={repo}
                                                      reference={reference}
                                                      internalReferesh={internalRefresh} leftDiffRefID={leftDiffRefID}
                                                      rightDiffRefID={rightDiffRefID} delimiter={delimiter}

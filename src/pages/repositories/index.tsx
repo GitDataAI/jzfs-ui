@@ -34,8 +34,7 @@ const RepositoriesPage = () => {
         routerPfx,
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix},params:{}})
     );
-    const owner = cache.get('user')
-    const {response} = useAPI(() => users.listRepository(owner));
+    const {response} = useAPI(() => users.listRepositoryOfAuthenticatedUser());
     
 
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {

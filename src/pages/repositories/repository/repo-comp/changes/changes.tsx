@@ -166,8 +166,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     if (loading) return <Loading/>
 
     let onReset = async (entry: { path_type: string; path: string; }) => {
-        branches
-            .reset(repo.id, reference.id, {type: entry.path_type, path: entry.path})
+        wip.deleteWip(repo.name, user, {refName:reference.name})
             .then(refresh)
             .catch(error => {
                 setActionError(error)
@@ -179,7 +178,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
             pathname: `/repositories/:user/:repoId/changes`,
             params: {repoId: repo.name,user},
             query: {
-                ref: reference.id,
+                ref: reference.name,
                 prefix: entry.path,
             }
         }
@@ -190,10 +189,10 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
         return {
             pathname: '/repositories/:user/:repoId/changes',
             params: params,
-            query: { ref: reference.id, prefix: query.path ?? "" },
+            query: { ref: reference.name, prefix: query.path ?? "" },
         };
     } } downloadUrl={undefined}/>
-    const changesTreeMessage = <p>Showing changes for branch <strong>{repo.head}</strong></p>
+    const changesTreeMessage = <p>Showing changes for branch <strong>{reference.name}</strong></p>
     const committedRef = reference.id + "@"
     const uncommittedRef = reference.id
 
@@ -269,7 +268,6 @@ const ChangesContainer = () => {
     const router = useRouter();
     const {repo, reference, loading, error} = useRefs()    
     const {prefix} = router.query
-    console.log('repo:',repo,'ref:',reference,'prefix:',prefix);
     const user = cache.get('user')
     const {response} = useAPI(()=>wip.createWip(repo.name,user,{refName:repo.head})
 )   

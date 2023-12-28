@@ -3,12 +3,13 @@ import {RepositoryPageLayout} from "../../../../../lib/components/repository/lay
 import {AlertError, Loading} from "../../../../../lib/components/controls";
 import {useRefs} from "../../../../../lib/hooks/repo";
 import {useAPI, useAPIWithPagination} from "../../../../../lib/hooks/api";
-import {commits, refs} from "../../../../../lib/api";
+import {cache, commits, refs} from "../../../../../lib/api";
 import {ChangesTreeContainer, defaultGetMoreChanges} from "../../../../../lib/components/repository/changes";
 import {useRouter} from "../../../../../lib/hooks/router";
 import {URINavigator} from "../../../../../lib/components/repository/tree";
 import {appendMoreResults} from "../../repo-comp/changes/changes";
 import {CommitInfoCard} from "../../../../../lib/components/repository/commits";
+import { repos } from "../../../../../lib/api/interface/Api";
 
 
 
@@ -16,7 +17,7 @@ const ChangeList = ({ repo, commit, prefix, onNavigate }) => {
     const [actionError, setActionError] = useState(null);
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
     const [resultsState, setResultsState] = useState({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
-
+    const user = cache.get('user')
     const delimiter = "/"
 
     const { error, loading, nextPage } = useAPIWithPagination(async () => {
@@ -24,7 +25,7 @@ const ChangeList = ({ repo, commit, prefix, onNavigate }) => {
         if (!commit.parents || commit.parents.length === 0) return {results: [], pagination: {has_more: false}};
 
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
-            () => refs.diff(repo.id, commit.parents[0], commit.id, afterUpdated, prefix, delimiter));
+            () => repos.getCommitDiff(user,repo.name, repo.head));
     }, [repo.id, commit.id, afterUpdated, prefix])
 
     const results = resultsState.results
@@ -61,7 +62,7 @@ const ChangeList = ({ repo, commit, prefix, onNavigate }) => {
 const CommitView = ({ repo, commitId, onNavigate, view, prefix }) => {
     // pull commit itself
     const {response, loading, error} = useAPI(async () => {
-        return await commits.get(repo.id, commitId);
+        return await repos.getCommitsInRepository(repo.name, commitId);
     }, [repo.id, commitId]);
 
     if (loading) return <Loading/>;
@@ -90,7 +91,7 @@ const CommitContainer = () => {
     const { repo, loading, error } = useRefs();
     const { prefix } = router.query;
     const { commitId } = router.params;
-
+    const user = cache.get('user')
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
 
@@ -101,8 +102,8 @@ const CommitContainer = () => {
             commitId={commitId}
             onNavigate={(entry) => {
                 return {
-                    pathname: '/repositories/:repoId/commits/:commitId',
-                    params: {repoId: repo.id, commitId: commitId},
+                    pathname: '/repositories/:user/:repoId/commits/:commitId',
+                    params: {repoId: repo.name, commitId: commitId,user},
                     query: {
                         prefix: entry.path,
                     }

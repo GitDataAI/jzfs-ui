@@ -51,7 +51,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const handleCloseDeleteConfirmation = () => setShowDeleteConfirmation(false);
   const handleShowDeleteConfirmation = () => setShowDeleteConfirmation(true);
-  const deleteConfirmMsg = `are you sure you wish to delete object "${entry.path}"?`;
+  const deleteConfirmMsg = `are you sure you wish to delete object "${entry.name}"?`;
   const onSubmitDeletion = () => {
     onDelete(entry);
     setShowDeleteConfirmation(false);
@@ -76,7 +76,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          {entry.path_type === "object" && presign && (
+          {!entry.is_dir && presign && (
                <Dropdown.Item
                 onClick={async e => {
                   try {
@@ -91,18 +91,18 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
                 <LinkIcon /> Copy Presigned URL
               </Dropdown.Item>
           )}
-          {entry.path_type === "object" && (
+          {!entry.is_dir && (
             <PathLink
-              path={entry.path}
+              path={entry.name}
               reference={reference}
-              repoId={repo.id}
+              repoId={repo.name}
               as={Dropdown.Item}
               presign={presign_ui}
             >
               <DownloadIcon /> Download
             </PathLink>
           )}
-          {entry.path_type === "object" && (
+          {!entry.is_dir && (
             <Dropdown.Item
               onClick={(e) => {
                 e.preventDefault();
@@ -127,7 +127,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
           >
             <PasteIcon /> Copy URI
           </Dropdown.Item>
-          {entry.path_type === "object" && reference.type === RefTypeBranch && (
+          {!entry.is_dir && reference.type === RefTypeBranch && (
             <>
               <Dropdown.Divider />
               <Dropdown.Item
@@ -181,7 +181,7 @@ const StatModal = ({ show, onHide, entry }) => {
                 <strong>Path</strong>
               </td>
               <td>
-                <code>{entry.path}</code>
+                <code>{entry.name}</code>
               </td>
             </tr>
             <tr>
@@ -189,7 +189,7 @@ const StatModal = ({ show, onHide, entry }) => {
                 <strong>Physical Address</strong>
               </td>
               <td>
-                <code>{entry.physical_address}</code>
+                <code>{entry.hash}</code>
               </td>
             </tr>
             <tr>
@@ -214,13 +214,13 @@ const StatModal = ({ show, onHide, entry }) => {
                 .unix(entry.mtime)
                 .format("MM/DD/YYYY HH:mm:ss")})`}</td>
             </tr>
-            {entry.content_type && (
+            {!entry.is_dir && (
               <tr>
                 <td>
                   <strong>Content-Type</strong>
                 </td>
                 <td>
-                  <code>{entry.content_type}</code>
+                  <code>{entry.is_dir}</code>
                 </td>
               </tr>
             )}

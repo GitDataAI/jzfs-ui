@@ -42,7 +42,7 @@ const ImportBranchName = 'import-from-inventory';
 const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
 
     const buttonVariant = "outline-dark";
-    const isDefault = repo.default_branch === branch.id;
+    const isDefault = repo.head === branch.name;
     const user = cache.get("user")
     let deleteMsg = (
         <>
@@ -89,7 +89,7 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
                                 msg={deleteMsg}
                                 tooltip="delete branch"
                                 onConfirm={() => {
-                                    repos.deleteBranch(user, repo.name,{refName:repo.head})
+                                    repos.deleteBranch(user, repo.name,{refName:branch.name})
                                         .catch(err => alert(err))
                                         .then(() => onDelete(branch.name));
                                 } } 
@@ -250,7 +250,7 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
                         text="Find branch"
                         onFilter={prefix => {
                             const query = {prefix};
-                            router.push({pathname: '/repositories/:repoId/branches', params: {repoId: repo.id}, query});
+                            router.push({pathname: '/repositories/:user/:repoId/branches', params: {repoId: repo.name,user}, query});
                         }}/>
 
                     <RefreshButton onClick={doRefresh}/>

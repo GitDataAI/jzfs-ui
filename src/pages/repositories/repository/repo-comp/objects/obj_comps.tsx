@@ -35,6 +35,7 @@ export const TreeContainer= ({
     {return await repos.getEntriesInRef(user,repo.name,{type})
       }
   , [repo.name , refreshToken])
+  console.log(branch);
   
   const initialState = {
     inProgress: false,
@@ -59,9 +60,9 @@ export const TreeContainer= ({
                 onPaginate={onPaginate}
                 onUpload={onUpload}
                 onImport={onImport}
-                onDelete={(entry: { path: string }) => {
+                onDelete={(entry) => {
                     object
-                        .deleteObject(user, repo.name, {refName:branch,path})
+                        .deleteObject(user, repo.name, {refName:branch.name,path:entry.name})
                         .catch(error => {
                             setDeleteState({...initialState, error: error})
                             throw error
