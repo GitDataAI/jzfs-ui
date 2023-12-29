@@ -21,7 +21,7 @@ export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
 
     const withRefContext = (url: string) => {
         const params = new URLSearchParams();
-        if (reference) params.append('ref', reference.id);
+        if (reference) params.append('ref', reference.name);
         if (params.toString())
             return `${url}?${params.toString()}`;
         return url;
@@ -57,7 +57,7 @@ export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
             <Link active={active === 'commits'} href={withRefContext(`/repositories/${user}/${repoId}/commits`)} component={NavItem}>
                 <GitCommitIcon/> Commits
             </Link>
-            <Link active={active === 'branches'} href={`/repositories/${user}/${repoId}/branches`}  component={NavItem}>
+            <Link active={active === 'branches'} href={withRefContext(`/repositories/${user}/${repoId}/branches`)}  component={NavItem}>
                 <GitBranchIcon/> Branches
             </Link>
             {/* <Link active={active === 'tags'} href={`/repositories/${user}/${repoId}/tags`} component={NavItem}>
@@ -69,7 +69,7 @@ export const RepositoryNavTabs = ({ active }:{active:ActiveTab}) => {
             {/* <Link active={active === 'actions'} href={`/repositories/${repoId}/actions`} component={NavItem}>
                 <PlayIcon/> Actions
             </Link> */}
-            <Link active={active === 'settings'} href={`/repositories/${user}/${repoId}/settings`} component={NavItem}>
+            <Link active={active === 'settings'} href={withRefContext(`/repositories/${user}/${repoId}/settings`)} component={NavItem}>
                 <GearIcon/> Settings
             </Link>
         </Nav>

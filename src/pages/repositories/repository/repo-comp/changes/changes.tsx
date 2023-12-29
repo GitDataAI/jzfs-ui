@@ -37,7 +37,6 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
     const [show, setShow] = useState(false)
     const [metadataFields, setMetadataFields] = useState<Pair[]>([])
     const hide = () => {
-        if (committing) return;
         setShow(false)
     }
 
@@ -80,7 +79,7 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
                     {(alertText) ? (<Alert variant="danger">{alertText}</Alert>) : (<span/>)}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" disabled={committing} onClick={hide}>
+                    <Button variant="secondary" onClick={hide}>
                         Cancel
                     </Button>
                     <Button variant="success" disabled={committing} onClick={onSubmit}>

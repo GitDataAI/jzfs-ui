@@ -50,17 +50,14 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
 };
 
 // export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
-export const RepositoryList = (refresh,prefix, after,amount,onPaginate) => {
+export const RepositoryList = (refresh,prefix, after,amount=5,onPaginate) => {
 
     const user = cache.get('user')
-
+    let query = {}
     const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
-        if(prefix&&after&&amount)
-        {            
-            return  await users.listRepository(user,{prefix, after,amount})
-        }else{
-            return  await users.listRepository(user)
-        }
+            // query={prefix, after,amount}
+            return  await users.listRepository(user,{...query})
+ 
     }, [refresh, prefix, after]);
     
     if (loading) return <Loading/>;

@@ -87,7 +87,7 @@ const RepositoriesPage = () => {
                 </ActionsBar> }
 
                 <RepositoryList
-                    prefix={routerPfx}
+                    prefix={prefix}
                     refresh={refresh}
                     amount={amount}
                     after={(router.query.after) ? router.query.after : ""}

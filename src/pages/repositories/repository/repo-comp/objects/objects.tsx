@@ -56,14 +56,14 @@ const ObjectsBrowser = () => {
             selected={reference}
             withCommits={true}
             withWorkspace={true}
-            selectRef={(ref: { id: string }) => router.push({
+            selectRef={(ref) => router.push({
               pathname: `/repositories/:user/:repoId/objects`,
               params: {
                 repoId: repo.name,
                 user,
                 path: path === undefined ? "" : path,
               },
-              query: { ref: ref.id, path: path === undefined ? "" : path },
+              query: { ref:ref.id, path: path === undefined ? "" : path },
             })} onCancel={undefined}          
             />
         </ActionGroup>

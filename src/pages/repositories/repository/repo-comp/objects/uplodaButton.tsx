@@ -18,8 +18,12 @@ const destinationPath = (path: string | undefined, file: _File) => {
     return `${path ? path : ""}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
   };
   
-  const UploadCandidate = ({ repo, path, file, state, onRemove = null }) => {
+  const UploadCandidate = ({ repoId, path, file, state,setUploadPath,onRemove = null }) => {
     const fpath = destinationPath(path, file)
+  useEffect(()=>{
+    setUploadPath(fpath)
+  },[path])
+
     let uploadIndicator = null;
     if (state && state.status === "uploading") {
       uploadIndicator = <ProgressBar variant="success" now={state.percent}/>
@@ -40,7 +44,7 @@ const destinationPath = (path: string | undefined, file: _File) => {
         <Row className={`upload-item upload-item-${state ? state.status : "none"}`}>
           <Col>
             <span className="path">
-              jzfs://{repo.name}/{fpath}
+              jzfs:/{repoId}{fpath}
             </span>
           </Col>
           <Col xs md="2">
@@ -75,6 +79,8 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
     const [files, setFiles] = useState<_File[]>([]);
     const [fileStates, setFileStates] = useState<{[key: string]: any}>({});
     const [abortController, setAbortController] = useState<AbortController | null>(null)
+    const [uploadpath, setUploadPath] = useState('/')
+
     const onDrop = useCallback((acceptedFiles:_File[]) => {
       setFiles([...acceptedFiles])
     }, [files])
@@ -170,7 +176,7 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
 
               <Form.Group controlId="path" className="mb-3">
                 <Form.Text>Path</Form.Text>
-                <Form.Control disabled={uploadState.inProgress} defaultValue={currentPath} onChange={changeCurrentPath}/>
+                <Form.Control disabled={uploadState.inProgress} value={uploadpath} onChange={changeCurrentPath}/>
               </Form.Group>
   
               <Form.Group controlId="content" className="mb-3">
@@ -187,9 +193,10 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
                   {files && files.map(file =>
                       <UploadCandidate
                         key={file.path}
-                        repo={repoId}
+                        repoId={repoId}
                         file={file}
                         path={currentPath}
+                        setUploadPath={setUploadPath}
                         state={fileStates[file.path]}
                         onRemove={!uploadState.inProgress ? onRemoveCandidate(file) : null}
                       />

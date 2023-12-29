@@ -24,13 +24,13 @@ export const SettingsLayout = ({ children, activeTab }) => {
                             <Card.Header>
                                 <Card.Title>Settings</Card.Title>
                             </Card.Header>
-                            <Card.Body>
-                                <Nav variant="pills" className="flex-column">
+                            {/* <Card.Body> */}
+                                {/* <Nav variant="pills" className="flex-column">
                                     <Link component={Nav.Link} href={{pathname: '/repositories/:repoId/settings/general', params: {repoId}}} active={activeTab === 'general'}>
                                         General
                                     </Link>
-                                </Nav>
-                                <Nav variant="pills" className="flex-column">
+                                </Nav> */}
+                                {/* <Nav variant="pills" className="flex-column">
                                     <Link component={Nav.Link} href={{pathname: '/repositories/:repoId/settings/retention', params: {repoId }}} active={activeTab === 'retention'}>
                                         Garbage Collection
                                     </Link>
@@ -39,8 +39,8 @@ export const SettingsLayout = ({ children, activeTab }) => {
                                     <Link component={Nav.Link} href={{pathname: '/repositories/:repoId/settings/branches', params: {repoId }}} active={activeTab === 'branches'}>
                                         Branch Protection
                                     </Link>
-                                </Nav>
-                            </Card.Body>
+                                </Nav> */}
+                            {/* </Card.Body> */}
                         </Card>
                     </Col>
                     <Col md={{span: 9}}>

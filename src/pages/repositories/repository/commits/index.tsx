@@ -30,10 +30,10 @@ import {  CommitWidgetProps, CommitsBrowserProps } from "../../interface/repo_in
 import { repos } from "../../../../lib/api/interface/Api";
 
 
-const CommitWidget:React.FC<CommitWidgetProps> = ({ repo, commit }) => {
+const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) => {
 
     const buttonVariant = "outline-dark";
-    const user = cache.get("user");
+    const user = commit.committer.name;
     return (
         <ListGroup.Item>
             <div className="clearfix">
@@ -58,22 +58,23 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo, commit }) => {
                             buttonVariant="outline-dark"
                             href={{
                                 pathname: '/repositories/:user/:repoId/commits/:commitId',
-                                params: {repoId: repo.name, commitId: commit.hash,user}
+                                params: {repoId: repo.name, commitId: commit.hash,user},
+                                query:{ref:reference.name}
                             }}>
                             <code>{commit.hash.substr(0, 16)}</code>
                         </LinkButton>
-                        <LinkButton
+                        {/* <LinkButton
                             buttonVariant={buttonVariant}
                             href={{pathname: '/repositories/:user/:repoId/actions', query: {commit:{}}, params: {repoId: repo.name,user}}}
                             tooltip="View Commit Action runs">
                             <PlayIcon/>
-                        </LinkButton>
+                        </LinkButton> */}
                         <ClipboardButton variant={buttonVariant} text={commit.hash} tooltip="Copy ID to clipboard"/>
                         <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.name}/${commit.hash}`} tooltip="Copy URI to clipboard" icon={<LinkIcon/>}/>
                         <ClipboardButton variant={buttonVariant} text={`s3://${repo.name}/${commit.hash}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon/>}/>
                         <LinkButton
                             buttonVariant="outline-dark"
-                            href={{pathname: '/repositories/:user/:repoId/objects', params: {repoId: repo.name,user}, query: {ref: commit.hash}}}
+                            href={{pathname: '/repositories/:user/:repoId/objects', params: {repoId: repo.name,user}, query: {ref: reference.name}}}
                             tooltip="Browse objects at this commit">
                             <BrowserIcon/>
                         </LinkButton>
@@ -121,7 +122,7 @@ const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, 
             <Card>
                 <ListGroup variant="flush">
                 {results.data.map(commit => (
-                    <CommitWidget key={commit.hash} repo={repo} commit={commit}/>
+                    <CommitWidget key={commit.hash} reference={reference} repo={repo} commit={commit}/>
                 ))}
                 </ListGroup>
             </Card>

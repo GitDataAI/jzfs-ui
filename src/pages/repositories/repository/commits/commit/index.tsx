@@ -22,11 +22,11 @@ const ChangeList = ({ repo, commit, prefix, onNavigate }) => {
 
     const { error, loading, nextPage } = useAPIWithPagination(async () => {
         if (!repo) return
-        if (!commit.parents || commit.parents.length === 0) return {results: [], pagination: {has_more: false}};
+        if (!commit || commit.length === 0) return {results: [], pagination: {has_more: false}};
 
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
             () => repos.getCommitDiff(user,repo.name, repo.head));
-    }, [repo.id, commit.id, afterUpdated, prefix])
+    }, [repo.id, commit.hash, afterUpdated, prefix])
 
     const results = resultsState.results
 
@@ -36,34 +36,36 @@ const ChangeList = ({ repo, commit, prefix, onNavigate }) => {
     const actionErrorDisplay = (actionError) ?
         <AlertError error={actionError} onDismiss={() => setActionError(null)}/> : <></>
 
-    const commitSha = commit.id.substring(0, 12);
-    const uriNavigator = <URINavigator path={prefix} reference={commit} repo={repo}
-                                       relativeTo={`${commitSha}`}
-                                       pathURLBuilder={(params, query) => {
-                                           return {
-                                               pathname: '/repositories/:repoId/commits/:commitId',
-                                               params: {repoId: repo.id, commitId: commit.id},
-                                               query: {prefix: query.path}
-                                           }
-                                       }}/>
+    const commitSha = commit.hash.substring(0, 12);
+
+    // const uriNavigator = <URINavigator path={prefix} reference={commit} repo={repo}
+    //                                    relativeTo={`${commitSha}`}
+    //                                    pathURLBuilder={(params, query) => {
+    //                                        return {
+    //                                            pathname: '/repositories/:repoId/commits/:commitId',
+    //                                            params: {repoId: repo.name, commitId: commit.hash},
+    //                                            query: {prefix: query.path}
+    //                                        }
+    //                                    }}/>
     const changesTreeMessage = <p>Showing changes for commit <strong>{commitSha}</strong></p>
     return (
         <>
             {actionErrorDisplay}
-            <ChangesTreeContainer results={results} delimiter={delimiter} uriNavigator={uriNavigator} leftDiffRefID={commit.parents[0]}
+            {/* <ChangesTreeContainer results={results} delimiter={delimiter} uriNavigator={uriNavigator} leftDiffRefID={commit.parents[0]}
                                   rightDiffRefID={commit.id} repo={repo} reference={commit} prefix={prefix}
                                   getMore={defaultGetMoreChanges(repo, commit.parents[0], commit.id, delimiter)}
                                   loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated} onNavigate={onNavigate}
-                                  changesTreeMessage={changesTreeMessage}/>
+                                  changesTreeMessage={changesTreeMessage}/> */}
         </>
     )
 };
 
 const CommitView = ({ repo, commitId, onNavigate, view, prefix }) => {
     // pull commit itself
+    const user = cache.get('user')
     const {response, loading, error} = useAPI(async () => {
-        return await repos.getCommitsInRepository(repo.name, commitId);
-    }, [repo.id, commitId]);
+        return await repos.getCommitsInRepository(user,repo.name);
+    }, [repo.name, commitId]);
 
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
@@ -79,7 +81,7 @@ const CommitView = ({ repo, commitId, onNavigate, view, prefix }) => {
                     view={(view) ? view : ""}
                     repo={repo}
                     commit={commit}
-                    onNavigate={onNavigate}
+                    // onNavigate={onNavigate}
                 />
             </div>
         </div>
@@ -89,12 +91,13 @@ const CommitView = ({ repo, commitId, onNavigate, view, prefix }) => {
 const CommitContainer = () => {
     const router = useRouter();
     const { repo, loading, error } = useRefs();
-    const { prefix } = router.query;
+    const { prefix,ref} = router.query;
     const { commitId ,user} = router.params;
     console.log('router:',router);
     
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
+    console.log('----------------------------------------------------------------');
 
     return (
         <CommitView
@@ -107,6 +110,7 @@ const CommitContainer = () => {
                     params: {repoId: repo.name, commitId: commitId,user},
                     query: {
                         prefix: entry.path,
+                        ref:ref
                     }
                 }
             }}

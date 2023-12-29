@@ -70,8 +70,8 @@ export const RefContextProvider = ({ children }) => {
             if (!repoId) return;
             try {
                 const repo = await repositories.getRepository(repoId);
-                const reference = await resolveRef(repoId, 'main');
-                const comparedRef = await resolveRef(repoId, 'main');
+                const reference = await resolveRef(repoId, ref?ref:'main');
+                const comparedRef = await resolveRef(repoId, ref?ref:'main');
                 setRefState({...refContextInitialState, loading: false, repo, reference, compare: comparedRef});
             } catch (err) {
                 setRefState({...refContextInitialState, loading: false, error: err});
