@@ -88,7 +88,7 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) =>
 
 
 const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, onPaginate, onSelectRef }) => {
-
+    const router = useRouter()
     const [refresh, setRefresh] = useState(true)
     const user = cache.get('user')
     const { response, error, loading,  } = useAPI(async () => {
@@ -107,10 +107,17 @@ const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, 
                 <ActionGroup orientation="left">
                     <RefDropdown
                         repo={repo}
-                        selected={(reference) ? reference : null}
+                        selected={reference}                        
                         withCommits={true}
-                        withWorkspace={false}
-                        selectRef={onSelectRef} 
+                        withWorkspace={true}
+                        selectRef={(ref) => router.push({
+                            pathname: `/repositories/:user/:repoId/commits`,
+                            params: {
+                              repoId: repo.name,
+                              user,
+                            },
+                            query: { ref:ref.id }
+                          })} 
                         onCancel={undefined}                    />
                 </ActionGroup>
 

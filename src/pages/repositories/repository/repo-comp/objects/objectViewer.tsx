@@ -59,15 +59,13 @@ export const getContentType = (headers: Headers): string | null => {
 };
 
 const FileObjectsViewerPage =  () => {
-  const router = useRouter()  
-  console.log(router);
-  
+  const router = useRouter()    
   const {repoId,user} = router.params;  
-  console.log(repoId,user);
-  
   const {path,ref,type} = router.query 
+  console.log('file router:',router);
+  
   const { response,loading,error} = useAPI( () => {
-    return  object.headObject(user,repoId,{ refName: ref,path,type:type});
+    return  object.headObject(user,repoId,{ refName: ref,path,type});
   }, [repoId, ref, path]);
   let content;
   if (loading) {
@@ -126,7 +124,11 @@ export const FileContents: FC<FileContentsProps> = ({
   showFullNavigator = true,
   presign = false,
 }) => {
-  const objectUrl = linkToPath({ repoId, branchId:reference, path, presign});
+  const user = cache.get('user')
+  const urllinkToPath = ({ repoId,reference, path}) => {
+    return `/api/v1/object/${repoId}/${user}?refName=${reference}&path=${path}&type=${type}`;
+  };
+  const objectUrl = urllinkToPath({ repoId, reference, path});
 
   if (loading || error) {
     return <></>;

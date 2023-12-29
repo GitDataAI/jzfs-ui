@@ -120,7 +120,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
           <Dropdown.Item
             onClick={(e) => {
               copyTextToClipboard(
-                `jzfs://${repo.id}/${reference.id}/${entry.path}`
+                `jzfs://${repo.name}/${reference.name}/${entry.name}`
               );
               e.preventDefault();
             }}
@@ -303,7 +303,7 @@ const OriginModal = ({ show, onHide, entry, repo, reference }) => {
               href={{
                 pathname: "/repositories/:name/:repoId/changes",
                 params: { repoId: repo.name },
-                query: { ref: reference.id },
+                query: { ref: reference.name },
               }}
             >
               uncommitted change
@@ -328,8 +328,12 @@ const OriginModal = ({ show, onHide, entry, repo, reference }) => {
 };
 
 const PathLink = ({ repoId, reference, path, children, presign = false, as = null }) => {
+  const user = cache.get('user')
+ const urllinkToPath = ({ repoId,reference, path}) => {
+  return `/api/v1/object/${repoId}/${user}?refName=${reference.name}&path=${path}&type=${reference.type}`;
+};
   const name = path.split("/").pop();
-  const link = linkToPath(repoId, reference.id, path, presign);
+  const link = urllinkToPath({repoId, reference, path});
   if (as === null)
     return (
       <a href={link} download={name}>
@@ -542,7 +546,7 @@ export const URINavigator = ({
   const parts = pathParts(path, isPathToFile);
   const user = cache.get('user')
   const params = { repoId: repo.name?repo.name:repo,user };
-
+ 
   return (
     <div className="d-flex">
       <div className="lakefs-uri flex-grow-1">

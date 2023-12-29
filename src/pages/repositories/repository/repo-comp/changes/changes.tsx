@@ -338,13 +338,15 @@ const ChangesContainer = () => {
             prefix={(prefix) ? prefix : ""}
             repo={repo}
             reference={reference}
-            onSelectRef={ref => router.push({
+            onSelectRef={ref => 
+               { console.log('ref:',ref)
+                router.push({
                 pathname: `/repositories/:user/:repoId/changes`,
                 params: {repoId: repo.name,user},
                 query: {
                     ref: ref.id,
                 }
-            })}
+            })}}
         />
     )
 }
