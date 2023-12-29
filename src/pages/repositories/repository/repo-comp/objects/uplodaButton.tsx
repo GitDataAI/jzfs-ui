@@ -96,6 +96,7 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
           return
         }
       }
+      setUploadPath(path)
       setUploadState(initialState);
       setFileStates({});
       setFiles([]);
@@ -120,7 +121,7 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
           
-          await uploadFile( repoId, branch, currentPath, file, wipID)
+          await uploadFile( repoId, branch, uploadpath, file, wipID)
           
         } catch (error: any | null) {
           setFileStates(next => ( {...next, [file.path]: {status: 'error'}}))
@@ -152,8 +153,8 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
     };
   
     const changeCurrentPath = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-      setCurrentPath(e.target.value)
-    }, [setCurrentPath])
+      setUploadPath(e.target.value)
+    }, [setUploadPath])
   
     const onRemoveCandidate = useCallback((file: _File) => {
       return () => setFiles(current => current.filter(f => f !== file))
@@ -176,7 +177,7 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
 
               <Form.Group controlId="path" className="mb-3">
                 <Form.Text>Path</Form.Text>
-                <Form.Control disabled={uploadState.inProgress} value={uploadpath} onChange={changeCurrentPath}/>
+                <Form.Control disabled={uploadState.inProgress} value={uploadpath}  onChange={changeCurrentPath}/>
               </Form.Group>
   
               <Form.Group controlId="content" className="mb-3">

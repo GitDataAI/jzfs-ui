@@ -284,7 +284,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                 onPaginate={(after:string) => {
                     const query = { after,path:"",ref:""};
                     if (path) query.path = path;
-                    if (reference) query.ref = reference.id;
+                    if (reference) query.ref = reference.name;
                     const url = {
                       pathname: `/repositories/:user/:repoId/objects`,
                       query,
