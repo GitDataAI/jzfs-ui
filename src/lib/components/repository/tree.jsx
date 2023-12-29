@@ -356,8 +356,9 @@ const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
   // }
 
   const subPath = path.lastIndexOf("/") !== -1 ? path.substr(0, path.lastIndexOf("/")) : "";
+  console.log('Entry:',entry);
   const buttonText =
-      subPath.length > 0 ? entry.path.substr(subPath.length + 1) : entry.name;
+      subPath.length > 0 ? entry.name.substr(subPath.length + 1) : entry.name;
   const user = cache.get('user')
   const params = { repoId: repo.name,user };
   const query = { ref: reference.name, path: entry.name,type:reference.type};

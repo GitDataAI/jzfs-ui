@@ -171,7 +171,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
         if (!repo) return
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
            () => wip.getWipChanges(user,repo.name,{refName:reference.name}) );
-    }, [repo.id, reference.id, internalRefresh, afterUpdated, delimiter, prefix])
+    }, [repo.name, reference.name, internalRefresh, afterUpdated, delimiter, prefix])
 
     const results = resultsState.results
     let nextPage = ''
@@ -244,7 +244,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                             .catch(error => setActionError(error))
                     }}/>
                     <UploadButton
-                        branch={'main'}
+                        reference={reference}
                         path={path ? path : "/"}
                         repoId={repo.name}
                         onDone={refresh}
@@ -325,7 +325,8 @@ const ChangesContainer = () => {
     const {repo, reference, loading, error} = useRefs()    
     const {prefix} = router.query
     const user = cache.get('user')
-    const {response} = useAPI(()=>wip.createWip(repo.name,user,{refName:repo.head})
+
+    const {response} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name})
 )   
     console.log(response);
     

@@ -68,7 +68,7 @@ const destinationPath = (path: string | undefined, file: _File) => {
 }
 
   
-export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHide, show = false}) => {
+export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, onHide, show = false}) => {
     const initialState: InitialState = {
       inProgress: false,
       error : null,
@@ -121,7 +121,7 @@ export const UploadButton = ({repoId, branch, path,wipID, onDone, onClick, onHid
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
           
-          await uploadFile( repoId, branch, uploadpath, file, wipID)
+          await uploadFile( repoId, reference.name, uploadpath, file, wipID)
           
         } catch (error: any | null) {
           setFileStates(next => ( {...next, [file.path]: {status: 'error'}}))
