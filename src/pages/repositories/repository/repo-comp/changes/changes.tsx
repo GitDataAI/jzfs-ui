@@ -260,7 +260,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                     <CommitButton repo={repo} enabled={results.length > 0} onCommit={async (commitDetails, done) => {
                         try {
                             const user = cache.get('user')
-                            await wip.commitWip(user, repo.name, {refName:repo.head ,msg:commitDetails.message}, commitDetails.metadata);
+                            await wip.commitWip(user, repo.name, {refName:reference.name ,msg:commitDetails.message}, commitDetails.metadata);
                             setActionError(null);
                             refresh();
                         } catch (err) {
