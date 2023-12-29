@@ -164,7 +164,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
         return wip.getWipChanges(user,repo.name,{refName:reference.name})
     }
     const { response,error , loading} = useAPI(async() =>
-    {return await repos.getEntriesInRef(user,repo.name,{type:reference.type})
+    {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:reference.type})
       }
   , [repo.name , internalRefresh])
     const {  } = useAPI(async () => {

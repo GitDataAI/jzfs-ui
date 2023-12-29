@@ -31,8 +31,8 @@ export const TreeContainer= ({
 }) => {
   const user = cache.get('user')
   const { response, error, loading } = useAPI(async() =>
-    {return await repos.getEntriesInRef(user,repo.name,{type:reference.type})
-      }
+  {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:reference.type})
+}
   , [repo.name , refreshToken])
   console.log(reference);
   
