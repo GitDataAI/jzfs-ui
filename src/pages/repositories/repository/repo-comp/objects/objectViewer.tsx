@@ -126,7 +126,7 @@ export const FileContents: FC<FileContentsProps> = ({
 }) => {
   const user = cache.get('user')
   const urllinkToPath = ({ repoId,reference, path}) => {
-    return `/api/v1/object/${repoId}/${user}?refName=${reference}&path=${path}&type=${type}`;
+    return `/api/v1/object/${user}/${repoId}?refName=${reference}&path=${path}&type=${type}`;
   };
   const objectUrl = urllinkToPath({ repoId, reference, path});
 

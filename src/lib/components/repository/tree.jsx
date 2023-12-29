@@ -330,7 +330,7 @@ const OriginModal = ({ show, onHide, entry, repo, reference }) => {
 const PathLink = ({ repoId, reference, path, children, presign = false, as = null }) => {
   const user = cache.get('user')
  const urllinkToPath = ({ repoId,reference, path}) => {
-  return `/api/v1/object/${repoId}/${user}?refName=${reference.name}&path=${path}&type=${reference.type}`;
+  return `/api/v1/object/${user}/${repoId}?refName=${reference.name}&path=${path}&type=${reference.type}`;
 };
   const name = path.split("/").pop();
   const link = urllinkToPath({repoId, reference, path});
@@ -360,9 +360,10 @@ const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
   // }
 
   const subPath = path.lastIndexOf("/") !== -1 ? path.substr(0, path.lastIndexOf("/")) : "";
-  console.log('Entry:',entry);
   const buttonText =
-      subPath.length > 0 ? entry.name.substr(subPath.length + 1) : entry.name;
+      subPath.length > 0 ? subPath : entry.name;
+      console.log('Entry:',buttonText);
+
   const user = cache.get('user')
   const params = { repoId: repo.name,user };
   const query = { ref: reference.name, path: entry.name,type:reference.type};
@@ -402,9 +403,9 @@ const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
     size = (
       <OverlayTrigger
         placement="bottom"
-        overlay={<Tooltip>{entry.size_bytes} bytes</Tooltip>}
+        overlay={<Tooltip>{entry.size} bytes</Tooltip>}
       >
-        <span>{humanSize(entry.size_bytes)}</span>
+        <span>{humanSize(entry.size)}</span>
       </OverlayTrigger>
     );
   }
@@ -418,11 +419,11 @@ const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
         placement="bottom"
         overlay={
           <Tooltip>
-            {dayjs.unix(entry.mtime).format("MM/DD/YYYY HH:mm:ss")}
+            {dayjs.unix(Date.parse(entry.updated_at)/1000).format("MM/DD/YYYY HH:mm:ss")}
           </Tooltip>
         }
       >
-        <span>{dayjs.unix(entry.mtime).fromNow()}</span>
+        <span>{dayjs.unix(Date.parse(entry.updated_at)/1000).fromNow()}</span>
       </OverlayTrigger>
     );
   }
