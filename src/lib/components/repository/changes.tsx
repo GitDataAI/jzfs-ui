@@ -49,9 +49,7 @@ export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference,
     const {response,loading,error} = useAPI(async ()=>{
         return await wip.getWipChanges(user, repo.name, { refName: reference.name });
     })
-    
-    console.log('response:', response);
-    
+        
     if (error)
         return <tr><td><AlertError error={error}/></td></tr>
 

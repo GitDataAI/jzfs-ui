@@ -186,8 +186,8 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     if (error) return <AlertError error={error}/>
     if (loading) return <Loading/>
 
-    let onReset = async (entry: { path_type: string; path: string; }) => {
-        wip.deleteWip(repo.name, user, {refName:reference.name})
+    let onReset = async (entry) => {
+        wip.revertWipChanges(repo.name, user,{refName:reference.name,pathPrefix:entry.path})
             .then(refresh)
             .catch(error => {
                 setActionError(error)
@@ -239,7 +239,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                     <RefreshButton onClick={refresh}/>
 
                     <RevertButton enabled={results.length > 0} onRevert={() => {
-                        wip.deleteWip(repo.name, user,{refName:reference.name})
+                        wip.revertWipChanges(repo.name, user,{refName:reference.name})
                             .then(refresh)
                             .catch(error => setActionError(error))
                     }}/>

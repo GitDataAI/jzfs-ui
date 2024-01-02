@@ -175,7 +175,6 @@ function diffType(entry:Entry) {
 }
 
 function extractTableName(entry:Entry, relativeTo:string) {
-    console.log('entry:',entry);
     
     let pathText:string = entry.to_hash;
     if (pathText.startsWith(relativeTo)) {
