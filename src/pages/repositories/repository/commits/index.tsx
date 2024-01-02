@@ -34,15 +34,19 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) =>
 
     const buttonVariant = "outline-dark";
     const user = commit.committer.name;
+    
     return (
         <ListGroup.Item>
             <div className="clearfix">
                 <div className="float-start">
                     <h6>
-                        <Link href={{
-                            pathname: '/repositories/:user/:repoId/commits/:commitId',
-                            params: {repoId: repo.name, commitId: commit.hash,user}
-                        }}>
+                        <Link 
+                        // href={{
+                        //     pathname: '/repositories/:user/:repoId/commits/:commitId',
+                        //     params: {repoId: repo.name, commitId: commit.hash,user},
+                        //     query:{basedhash:commit.parent_hashes[0]}
+                        // }}
+                        >
                             {commit.message}
                         </Link>
                     </h6>
@@ -56,11 +60,14 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) =>
                     <ButtonGroup className="commit-actions">
                         <LinkButton
                             buttonVariant="outline-dark"
-                            href={{
-                                pathname: '/repositories/:user/:repoId/commits/:commitId',
-                                params: {repoId: repo.name, commitId: commit.hash,user},
-                                query:{ref:reference.name}
-                            }}>
+                            // href={
+                            //     {
+                            //     pathname: '/repositories/:user/:repoId/commits/:commitId',
+                            //     params: {repoId: repo.name, commitId: commit.hash,user},
+                            //     query:{ref:reference.name,basedhash:commit.parent_hashes[0]
+                            //     }
+                            // }}
+                            >
                             <code>{commit.hash.substr(0, 16)}</code>
                         </LinkButton>
                         {/* <LinkButton
@@ -93,7 +100,7 @@ const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, 
     const user = cache.get('user')
     const { response, error, loading,  } = useAPI(async () => {
         return await repos.getCommitsInRepository(user, repo.name,{refName:reference.name})
-    }, [repo.name, reference.id, refresh, after])
+    }, [repo.name, reference.name, refresh, after])
     const results =  response;
     console.log('commit:', results);
     

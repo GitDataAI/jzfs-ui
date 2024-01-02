@@ -22,11 +22,14 @@ import { cache } from "../../../../../lib/api";
 
 const ObjectsBrowser = () => {
   const router = useRouter();
-  const { path, after, importDialog } = router.query;
+  const { path, after, importDialog } = router.query ;
   const [searchParams, setSearchParams] = useSearchParams();
+  console.log('objrouter:',router);
+  
   const { repo, reference, loading, error } = useRefs();  
   const [showUpload, setShowUpload] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [filepath,setFilepath] = useState(path);
   const [refreshToken, setRefreshToken] = useState(false);
   const refresh = () => setRefreshToken(!refreshToken);
   const parts = (path && path.split("/")) || [];
@@ -34,6 +37,7 @@ const ObjectsBrowser = () => {
   let searchPrefix = parts.join("/");
   const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";
+ console.log('path:',path);
  
   useEffect(() => {
     if (importDialog) {
@@ -41,7 +45,8 @@ const ObjectsBrowser = () => {
       searchParams.delete("importDialog");
       setSearchParams(searchParams);
     }
-  }, [router.route, importDialog, searchParams, setSearchParams]);
+    setFilepath(path)
+  }, [router.route, importDialog, searchParams, setSearchParams,path]);
 
   if (loading) return <Loading />;
   if (error) return <RepoError error={error} />;
@@ -71,7 +76,7 @@ const ObjectsBrowser = () => {
         <ActionGroup orientation="right">
           <PrefixSearchWidget
             text="Search by Prefix"
-            key={path}
+            key={filepath}
             defaultValue={searchSuffix}
             onFilter={(prefix: string) => {
               const query = { path: "",ref:"" };
@@ -114,7 +119,7 @@ const ObjectsBrowser = () => {
         <TreeContainer
             reference={reference}
             repo={repo}
-          path={path ? path : "/"}
+          path={filepath ? filepath : "/"}
           after={after ? after : ""}
           onPaginate={(after:string) => {
             const query = { after,path:"",ref:""};

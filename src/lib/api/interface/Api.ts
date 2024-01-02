@@ -131,6 +131,7 @@ export interface CreateRepository {
 
 export interface UpdateRepository {
   description?: string;
+  head?: string;
 }
 
 export interface RepositoryList {
@@ -245,6 +246,18 @@ export interface TreeEntry {
   name: string;
   hash: string;
   is_dir: boolean;
+}
+
+export interface FullTreeEntry {
+  name: string;
+  hash: string;
+  is_dir: boolean;
+  /** @format int64 */
+  size: number;
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
 }
 
 export interface TreeNode {
@@ -994,46 +1007,27 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags wip
-     * @name CreateWip
-     * @summary create working in process
-     * @request POST:/wip/{owner}/{repository}
+     * @name RevertWipChanges
+     * @summary revert changes in working in process, empty path will revert all
+     * @request POST:/wip/{owner}/{repository}/revert
      * @secure
      */
-    createWip: (
+    revertWipChanges: (
       repository: string,
       owner: string,
       query: {
         /** ref name */
         refName: string;
+        /** prefix of path */
+        pathPrefix?: string;
       },
       params: RequestParams = {},
     ) =>
-      this.request<
-        {
-          /** @format uuid */
-          id: string;
-          current_tree: string;
-          base_commit: string;
-          /** @format uuid */
-          repository_id: string;
-          /** @format uuid */
-          ref_id: string;
-          /** @format int */
-          state: number;
-          /** @format uuid */
-          creator_id: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
-        },
-        void
-      >({
-        path: `/wip/${owner}/${repository}`,
+      this.request<void, void>({
+        path: `/wip/${owner}/${repository}/revert`,
         method: "POST",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -1189,6 +1183,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           name: string;
           hash: string;
           is_dir: boolean;
+          /** @format int64 */
+          size: number;
+          /** @format date-time */
+          created_at: string;
+          /** @format date-time */
+          updated_at: string;
         }[],
         void
       >({
@@ -1204,12 +1204,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags commit
-     * @name GetCommitDiff
-     * @summary get commit differences
+     * @name CompareCommit
+     * @summary compare two commit
      * @request GET:/repos/{owner}/{repository}/compare/{basehead}
      * @secure
      */
-    getCommitDiff: (
+    compareCommit: (
       owner: string,
       repository: string,
       basehead: string,
@@ -1229,6 +1229,42 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         void
       >({
         path: `/repos/${owner}/${repository}/compare/${basehead}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags commit
+     * @name GetCommitChanges
+     * @summary get changes in commit
+     * @request GET:/repos/{owner}/{repository}/changes/{commit_id}
+     * @secure
+     */
+    getCommitChanges: (
+      owner: string,
+      repository: string,
+      commitId: string,
+      query?: {
+        /** specific path, if not specific return entries in root */
+        path?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          path: string;
+          action: 1 | 2 | 3;
+          base_hash?: string;
+          to_hash?: string;
+        }[],
+        void
+      >({
+        path: `/repos/${owner}/${repository}/changes/${commitId}`,
         method: "GET",
         query: query,
         secure: true,
@@ -1373,6 +1409,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       repository: string,
       data: {
         description?: string;
+        head?: string;
       },
       params: RequestParams = {},
     ) =>
@@ -1877,6 +1914,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   };
 }
+
 
 const api = new Api()
 export const version = api.version

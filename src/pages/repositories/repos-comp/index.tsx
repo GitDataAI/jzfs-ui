@@ -53,10 +53,9 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
 export const RepositoryList = (refresh,prefix, after,amount=5,onPaginate) => {
 
     const user = cache.get('user')
-    let query = {}
     const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
             // query={prefix, after,amount}
-            return  await users.listRepository(user,{...query})
+            return  await users.listRepository(user)
  
     }, [refresh, prefix, after]);
     

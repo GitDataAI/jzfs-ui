@@ -35,6 +35,7 @@ const RepositoriesPage = () => {
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix},params:{}})
     );
     const {response} = useAPI(() => users.listRepositoryOfAuthenticatedUser());
+    console.log(response);
     
 
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {

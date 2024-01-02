@@ -56,7 +56,7 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
     const router = useRouter();
     const [request, setRequest] = useState(initialAPIState);
     const [login, setLogin] = useState(false);
-
+    
     useEffect(() => {
         if (login) {
             const loginPathname = '/auth/login';
@@ -87,8 +87,7 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
                 });
             } catch (error: unknown | Error | null) {         
                        
-                if (error instanceof AuthenticationError) {
-                    console.log('err:',error);
+                if (error.status == 401) {
                     
                     if (isMounted) {
                         setLogin(true);
@@ -96,7 +95,6 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
                     return;
                 }
                 if(error instanceof Error || error === null) {
-                    console.log('err:',error);
                     setRequest({
                         loading: false,
                         error,

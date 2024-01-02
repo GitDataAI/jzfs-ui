@@ -29,12 +29,13 @@ export const TreeContainer= ({
   onImport,
   refreshToken
 }) => {
+  console.log('path:',path);
+  
   const user = cache.get('user')
   const { response, error, loading } = useAPI(async() =>
-  {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:reference.type})
+  {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:reference.type,path})
 }
   , [repo.name , refreshToken])
-  console.log(reference);
   
   const initialState = {
     inProgress: false,

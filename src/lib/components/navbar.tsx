@@ -1,6 +1,6 @@
 import React from "react";
 import useUser from '../hooks/user'
-import {auth, config} from "../api";
+import {auth, cache, config} from "../api";
 import {useRouter} from "../hooks/router";
 import {Link} from "./nav";
 import {Navbar, Nav, NavDropdown, Col, Button} from "react-bootstrap";
@@ -12,12 +12,10 @@ import { AiFillGithub,AiFillRedditSquare,AiOutlineStar } from "react-icons/ai";
 
 
 const NavUserInfo = () => {
-    const { user, loading, error } = useUser();
+    const user = cache.get("user")
     const logoutUrl = "/auth/login"
 
 
-    if (loading) return <Navbar.Text>Loading...</Navbar.Text>;
-    if (!user || !!error) return (<></>);
     const NavBarTitle = () => {
         return (
         <>

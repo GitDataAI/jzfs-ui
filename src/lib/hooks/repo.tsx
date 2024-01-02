@@ -63,7 +63,8 @@ export const RefContextProvider = ({ children }) => {
     const { repoId } = router.params;
     const {ref, compare} = router.query;
     const [refState, setRefState] = useState(refContextInitialState);
-
+    console.log('repoId:',repoId,'ref:',ref);
+    
     useEffect(() => {
         const fetch = async () => {
             setRefState(refContextInitialState);

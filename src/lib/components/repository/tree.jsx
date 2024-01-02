@@ -36,6 +36,7 @@ import { useAPI } from "../../hooks/api";
 import noop from "lodash/noop";
 import {FaDownload} from "react-icons/fa";
 import {CommitInfoCard} from "./commits";
+import { useRouter } from "../../hooks/router";
 
 export const humanSize = (bytes) => {
   if (!bytes) return "0.0 B";
@@ -343,42 +344,58 @@ const PathLink = ({ repoId, reference, path, children, presign = false, as = nul
   return React.createElement(as, { href: link, download: name }, children);
 };
 
-const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
+export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
+  const {is_dir,path:dirpath} = useRouter().query
   let rowClass = "change-entry-row ";
-  // switch (entry.diff_type) {
-  //   case "changed":
-  //     rowClass += "diff-changed";
-  //     break;
-  //   case "added":
-  //     rowClass += "diff-added";
-  //     break;
-  //   case "removed":
-  //     rowClass += "diff-removed";
-  //     break;
-  //   default:
-  //     break;
-  // }
-
   const subPath = path.lastIndexOf("/") !== -1 ? path.substr(0, path.lastIndexOf("/")) : "";
   const buttonText =
-      subPath.length > 0 ? subPath : entry.name;
-      console.log('Entry:',buttonText);
+      subPath.length > 0 ? entry.name.substr(subPath.length + 1) : entry.name;
 
   const user = cache.get('user')
   const params = { repoId: repo.name,user };
   const query = { ref: reference.name, path: entry.name,type:reference.type};
-
+  console.log('text:',buttonText,'params:', params,'query:', query);
   let button;
-  if (entry.path_type === "common_prefix") {
+  if(entry.is_dir){
+    const filePathQuery = {
+      ref: query.ref,
+      path: query.path,
+      type: query.type,
+      is_dir: entry.is_dir
+    }
     button = (
-      <Link href={{ pathname: "/repositories/:user/:repoId/object", query, params }}>
+      <Link
+        href={{
+          pathname: "/repositories/:user/:repoId/objects",
+          query: filePathQuery,
+          params: params,
+        }}
+      >
+        {buttonText}
+      </Link>
+    )
+  } else if(!entry.is_dir && is_dir) {
+    const filePathQuery = {
+      ref: query.ref,
+      path:dirpath +'/'+ query.path,
+      type: query.type,
+      filepath : query.path
+    };
+    button = (
+      <Link
+        href={{
+          pathname: "/repositories/:user/:repoId/object",
+          query: filePathQuery,
+          params: params,
+        }}
+      >
         {buttonText}
       </Link>
     );
-  } else if (entry.diff_type === "removed") {
-    button = <span>{buttonText}</span>;
-  } else {
-    const filePathQuery = {
+  } else if(!entry.is_dir && subPath.length>0)  {
+    return
+  }else {
+  const filePathQuery = {
       ref: query.ref,
       path: query.path,
       type: query.type
@@ -489,7 +506,7 @@ const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
       <tr className={rowClass}>
         <td className="diff-indicator">{diffIndicator}</td>
         <td className="tree-path">
-          {entry.path_type === "common_prefix" ? (
+          {entry.is_dir === true ? (
             <FileDirectoryIcon />
           ) : (
             <FileIcon />
@@ -542,12 +559,14 @@ export const URINavigator = ({
   relativeTo = "",
   pathURLBuilder = buildPathURL,
   isPathToFile = false,
-  hasCopyButton = false
+  hasCopyButton = false,
+  filepath
 }) => {
   const parts = pathParts(path, isPathToFile);
   const user = cache.get('user')
-  const params = { repoId: repo.name?repo.name:repo,user };
- 
+  const params = {repoId: repo.name?repo.name:repo,user};
+  const query = {type:reference.type,path:filepath?filepath:path,is_dir:true,ref:reference.name}
+  console.log('repo:',repo,'query:',query);
   return (
     <div className="d-flex">
       <div className="lakefs-uri flex-grow-1">
@@ -559,21 +578,23 @@ export const URINavigator = ({
             </Link>
             <strong>{"/"}</strong>
             <Link
-              href={{
-                pathname: "/repositories/:user/:repoId/objects",
-                params,
-                query: { ref: reference.name, type:reference.type },
-              }}
-            >
+              href={{pathname: "/repositories/:user/:repoId/objects",params}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
                 : reference.name}
             </Link>
             <strong>{"/"}</strong>
+            <Link  href={{
+                pathname: "/repositories/:user/:repoId/objects",
+                params,
+                query
+              }}>
+            {filepath?filepath:path==='/'? '':path}
+            </Link>
           </>
         ) : (
           <>
-            <Link href={pathURLBuilder(params, { path: "" })}>{relativeTo}</Link>
+            <Link href={pathURLBuilder(params, {path})}>{relativeTo}</Link>
             <strong>{"/"}</strong>
           </>
         )}

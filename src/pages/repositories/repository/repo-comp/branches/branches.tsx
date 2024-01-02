@@ -63,11 +63,13 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
             <div className="clearfix">
                 <div className="float-start">
                     <h6>
-                        <Link href={{
+                        <Link 
+                        href={{
                             pathname: '/repositories/:user/:repoId/objects',
                             params: {repoId: repo.name,user},
                             query: {ref: branch.name}
-                        }}>
+                        }}
+                        >
                             {branch.name}
                         </Link>
 
@@ -101,13 +103,13 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
                     }
 
                     <ButtonGroup className="branch-actions ms-2">
-                        <LinkButton
-                            href={{
-                                pathname: '/repositories/:user/:repoId/commits/:commitId',
-                                params:{repoId: repo.name, commitId: branch.name,user},
-                            }}
+                        <LinkButton                           // href={{
+                            //     pathname: '/repositories/:user/:repoId/commits/:commitId',
+                            //     params:{repoId: repo.name, commitId: branch.name,user},
+                            // }}
                             buttonVariant="outline-dark"
-                            tooltip="View referenced commit">
+                            // tooltip="View referenced commit"
+                            >
                             {branch.name.substr(0, 12)}
                         </LinkButton>
                         <ClipboardButton variant={buttonVariant} text={branch.name} tooltip="Copy ID to clipboard" onSuccess={undefined} onError={undefined}/>

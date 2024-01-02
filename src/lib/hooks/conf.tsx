@@ -9,6 +9,7 @@ export const LoginConfigContext = createContext({});
 
 export const WithLoginConfigContext:React.FC<LoginConfigProviderProps> = ({children}) => {
     const { response, error, loading } = useAPI(() => setup.getSetupState());
+    
     const lc = useMemo(() => (error || loading) ? {} : response?.login_config || {}, [response]);
     return <LoginConfigContext.Provider value={lc}>
              {children}
