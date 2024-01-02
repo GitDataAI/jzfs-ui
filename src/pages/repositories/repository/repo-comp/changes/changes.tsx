@@ -298,9 +298,9 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                 onImport={() => {
                     setShowImport(true)}
                 }
-                onDelete={(entry) => {
+                onDelete={(entry,dirname) => {
                     object
-                        .deleteObject(user, repo.name, {refName:reference.name,path:entry.name})
+                        .deleteObject(user, repo.name, {refName:reference.name,path:dirname?dirname+'/'+entry.name:entry.name})
                         .catch(error => {
                             setDeleteState({...initialState, error: error})
                             throw error

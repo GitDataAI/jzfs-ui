@@ -49,12 +49,13 @@ export const humanSize = (bytes) => {
 const Na = () => <span>&mdash;</span>;
 
 const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui = false }) => {
+  const {path,is_dir}= useRouter().query
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const handleCloseDeleteConfirmation = () => setShowDeleteConfirmation(false);
   const handleShowDeleteConfirmation = () => setShowDeleteConfirmation(true);
   const deleteConfirmMsg = `are you sure you wish to delete object "${entry.name}"?`;
   const onSubmitDeletion = () => {
-    onDelete(entry);
+    is_dir?onDelete(entry,path):onDelete(entry);
     setShowDeleteConfirmation(false);
   };
 

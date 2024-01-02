@@ -60,15 +60,15 @@ export const TreeContainer= ({
                 onPaginate={onPaginate}
                 onUpload={onUpload}
                 onImport={onImport}
-                onDelete={(entry) => {
-                    object
-                        .deleteObject(user, repo.name, {refName:reference.name,path:entry.name})
-                        .catch(error => {
-                            setDeleteState({...initialState, error: error})
-                            throw error
-                        })
-                        .then(onRefresh)
-                }}
+                onDelete={(entry,dirname) => {
+                  object
+                      .deleteObject(user, repo.name, {refName:reference.name,path:dirname?dirname+'/'+entry.name:entry.name})
+                      .catch(error => {
+                          setDeleteState({...initialState, error: error})
+                          throw error
+                      })
+                      .then(refresh)
+              }}
             /></>
     );
 }
