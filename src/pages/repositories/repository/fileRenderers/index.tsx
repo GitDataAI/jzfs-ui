@@ -150,6 +150,7 @@ export function guessType(contentType: string | null, fileExtension: string | nu
 
 export const ObjectRenderer: FC<RendererComponent> = (props: RendererComponent) => {
    const fileType = guessType(props.contentType, props.fileExtension)
+   console.log(props);
     if (fileType !== FileType.DATA && props.sizeBytes > MAX_FILE_SIZE)
         return Renderers[FileType.TOO_LARGE](props)
     return Renderers[fileType](props)

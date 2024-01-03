@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { humanSize } from "../../../../lib/components/repository/tree";
 import { useAPI } from "../../../../lib/hooks/api";
@@ -57,13 +57,16 @@ export const TextDownloader= ({
   onReady,
 }) => {
 const user = cache.get('user') 
-
+const [body,setBody] = useState()
 const { response, error, loading } = useAPI(
-     () =>  object.getObject(user, repoId,{refName:branch,path,type:type}),
+      () =>  object.getObject(user, repoId,{refName:branch,path,type:type}),
     [repoId, branch, path]
   );
-  console.log('response', response);
+  useEffect(() => {
+   response? response.text().then(text => setBody(text)):response;
+  }, [response]);
   
+    
   if (loading) {
     return <Loading />;
   }
@@ -72,7 +75,7 @@ const { response, error, loading } = useAPI(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const component = onReady(response.data);
+  const component =body? body :'loading';
   return <>{component}</>;
 };
 
@@ -136,17 +139,22 @@ export const IpynbRenderer: FC<RendererComponentWithText> = ({ text }) => {
 
 export const ImageRenderer: FC<RendererComponent> = ({
   repoId,
-  refId,
+  branch,
   path,
+  type,
   presign,
 }) => {
-  const query = qs({ path, presign });
+  const refName = branch
+  const query = qs({refName,path,type});
+  const user = cache.get('user') 
+
   return (
+    // http://localhost:3000/api/v1/object/test1/aaa?refName=main&path=logo192.png&type=branch
     <p className="image-container">
       <img
-        src={`/api/v1/repositories/${encodeURIComponent(
+        src={`/api/v1/object/${user}/${encodeURIComponent(
           repoId
-        )}/refs/${encodeURIComponent(refId)}/objects?${query}`}
+        )}?${query}`}
         alt={path}
       />
     </p>
