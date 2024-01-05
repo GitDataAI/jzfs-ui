@@ -18,7 +18,8 @@ import {RepositoryPageLayout} from "../../../../../lib/components/repository/lay
 import {formatAlertText} from "../../../../../lib/components/repository/errors";
 import {ChangesTreeContainer, MetadataFields} from "../../../../../lib/components/repository/changes";
 import {useRouter} from "../../../../../lib/hooks/router";
-import {Tree, URINavigator} from "../../../../../lib/components/repository/tree";
+import {URINavigator} from "../../../../../lib/components/repository/tree";
+import {Tree} from "../../../../../lib/components/repository/changestree";
 import {RepoError} from "../error/error";
 import { ChangesBrowserProps, CommitButtonProps, GetMore, GetMoreUncommittedChanges, Pair, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
 import { object, repos, wip } from "../../../../../lib/api/interface/Api";
@@ -134,7 +135,6 @@ export async function appendMoreResults(
         return {prefix: prefix, results: resultsFiltered, pagination: resultsState.pagination}
       }
     const response = await getMore()
-    console.log('wip:', response);
     
     let pagination = {}
     const results = response.data
@@ -175,7 +175,6 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
 
     const results = resultsState.results
     let nextPage = ''
-    console.log('results:',results, 'referrer:',reference,'res:',response);
     
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
@@ -328,7 +327,6 @@ const ChangesContainer = () => {
 
     const {response} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name})
 )   
-    console.log(response);
     
     if (loading) return <Loading/>
     if (error) return <RepoError error={error}/>
@@ -339,7 +337,7 @@ const ChangesContainer = () => {
             repo={repo}
             reference={reference}
             onSelectRef={ref => 
-               { console.log('ref:',ref)
+               {
                 router.push({
                 pathname: `/repositories/:user/:repoId/changes`,
                 params: {repoId: repo.name,user},

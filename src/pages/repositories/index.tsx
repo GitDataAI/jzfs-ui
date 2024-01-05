@@ -92,14 +92,6 @@ const RepositoriesPage = () => {
                     refresh={refresh}
                     amount={amount}
                     after={(router.query.after) ? router.query.after : ""}
-                    onPaginate={after => {
-                        const query = {after,prefix};
-                        if (router.query.prefix) query.prefix = router.query.prefix;
-                        router.push({pathname: `/repositories`, query,params:{}});
-                    }}
-                    onCreateEmptyRepo={createRepositoryButtonCallback}
-                    creatingRepo={creatingRepo}
-                    createRepoError={createRepoError}
                     />
 
                 <CreateRepositoryModal

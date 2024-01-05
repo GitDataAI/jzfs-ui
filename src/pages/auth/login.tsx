@@ -6,6 +6,8 @@ import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
 import {useAPI} from "../../lib/hooks/api";
 import { auth, users } from "../../lib/api/interface/Api";
+import {AiOutlineGithub,AiFillGitlab,AiFillGoogleCircle,AiFillTwitterCircle} from "react-icons/ai";
+
 
 interface LoginConfig {
     login_url: string;
@@ -30,8 +32,16 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     }
     return (
         <Row className="justify-content-center align-items-center">
-            <Col md={{offset: 5, span: 8}} >
-                <Card className="login-widget jiaozi-login">
+            <Col md={{offset: 5, span: 10}} className="login-box" >
+            <Card className="login-display">
+                    <Card.Body>
+                        <div className="tittle">
+                            <h1><img src="/pub/logo.png" alt="" /> JiaoziFS</h1>
+                            <p><h1>企业级 dataspace 研发管理平台</h1></p>
+                        </div>
+                    </Card.Body>
+            </Card>
+            <Card className="login-widget jiaozi-login">
                 <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>
                         <Form onSubmit={async (e) => {
@@ -44,14 +54,12 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                     Auth.clearCurrentUser()
                                     await users.getUserInfo().then((response)=>{
                                         cache.set('user', response.data.name)
-                                        console.log(window.localStorage);
                                         setLoginError(null);
                                         router.push(next ? next : '/repositories');
                                     })
-                                   
                             } catch(err) {
-                                if (err instanceof AuthenticationError && err.status === 401) {
-                                    const contents = {__html: `${loginConfig.login_failed_message}` ||
+                                if (err && err.status === 401) {
+                                    const contents = {__html: `${err.error.message}` ||
                                         "Credentials don't match."};
                                     setLoginError(<span dangerouslySetInnerHTML={contents}/>);
                                 }
@@ -65,29 +73,29 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                 <Form.Control type="password" placeholder={"Secret Access Key"}/>
                             </Form.Group>
 
-                            {(!!loginError) && <AlertError error={loginError}/>}
+                            {(loginError) && <AlertError error={loginError}/>}
 
                             <Button variant="primary" type="submit">Login</Button>
+                            <div className="waytologin">
+                                <p>————Try another way to login————</p>
+                                <div className="ways">
+                                <div className="item">
+                                <a href="#"><AiOutlineGithub /></a>
+                                </div>
+                                <div className="item">
+                                <a href="#"><AiFillGitlab /></a>
+                                </div>
+                                <div className="item">
+                                <a href="#"><AiFillGoogleCircle /></a>
+                                </div>
+                                <div className="item">
+                                <a href="#"><AiFillTwitterCircle /></a>
+                                </div>
+                                </div>
+                            </div>
                         </Form>
-                        <div className={"mt-2 mb-1"}>
-                            { loginConfig.fallback_login_url ?
-                                <Button variant="link" className="text-secondary mt-2" onClick={async ()=> {
-                                    loginConfig.login_cookie_names?.forEach(
-                                        cookie => {
-                                            document.cookie = `${cookie}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-                                        }
-                                    );
-                        if (loginConfig.fallback_login_url) 
-                        {
-                            window.location = loginConfig.fallback_login_url;
-                        }                                }}>
-                        {loginConfig.fallback_login_label || 'Try another way to login'}
-                            </Button>
-                                : ""
-                            }
-                        </div>
                     </Card.Body>
-                </Card>
+            </Card>
             </Col>
         </Row>
     )

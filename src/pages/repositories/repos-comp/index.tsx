@@ -15,16 +15,15 @@ import { Repository, users } from "../../../lib/api/interface/Api";
 
 dayjs.extend(relativeTime);
 
-export const CreateRepositoryButton: React.FC<CreateRepositoryButtonProps> = ({variant = "success", enabled = false, onClick}) => {
+export const CreateRepositoryButton: React.FC<CreateRepositoryButtonProps> = ({variant = "success", enabled = false, onClick,word= 'Create Repository',style={}}) => {
     return (
-        <Button variant={variant} disabled={!enabled} onClick={onClick}>
-            <RepoIcon/> Create Repository
+        <Button variant={variant} disabled={!enabled} onClick={onClick} style={style}>
+            <RepoIcon/> {word}
         </Button>
     );
 }
 
 export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({show,onSubmit, onCancel, inProgress,setShow,setRefresh,refresh}) => {
-
   const [formValid, setFormValid] = useState(false);
 
     return (
@@ -51,10 +50,11 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
 
 // export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
 export const RepositoryList = (refresh,prefix, after,amount=5,onPaginate) => {
-
+    console.log('prefix:',prefix);
+    
     const user = cache.get('user')
     const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
-            // query={prefix, after,amount}
+            // let query={prefix, after,amount}
             return  await users.listRepository(user)
  
     }, [refresh, prefix, after]);
