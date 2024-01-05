@@ -50,6 +50,7 @@ const Na = () => <span>&mdash;</span>;
 
 const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui = false }) => {
   const {path,is_dir}= useRouter().query
+  const {user} = useRouter().params
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const handleCloseDeleteConfirmation = () => setShowDeleteConfirmation(false);
   const handleShowDeleteConfirmation = () => setShowDeleteConfirmation(true);
@@ -78,21 +79,6 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          {!entry.is_dir && presign && (
-               <Dropdown.Item
-                onClick={async e => {
-                  try {
-                    const resp = await objects.getStat(repo.id, reference.id, entry.path, true);
-                    copyTextToClipboard(resp.physical_address);
-                  } catch (err) {
-                    alert(err);
-                  }
-                  e.preventDefault();
-                }}
-              >
-                <LinkIcon /> Copy Presigned URL
-              </Dropdown.Item>
-          )}
           {!entry.is_dir && (
             <PathLink
               path={entry.name}
@@ -104,7 +90,6 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
               <DownloadIcon /> Download
             </PathLink>
           )}
-          {!entry.is_dir && (
             <Dropdown.Item
               onClick={(e) => {
                 e.preventDefault();
@@ -113,23 +98,22 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
             >
               <InfoIcon /> Object Info
             </Dropdown.Item>
-          )}
-
-          <Dropdown.Item onClick={handleShowObjectOrigin}>
-            <LogIcon /> Blame
-          </Dropdown.Item>
 
           <Dropdown.Item
             onClick={(e) => {
               copyTextToClipboard(
-                `jzfs://${repo.name}/${reference.name}/${entry.name}`
+                `http://localhost:3000/api/v1/object/${user}/${repo.name}?refName=${reference.name}&path=${entry.name}&type=${reference.type}`
+                ,
+                ()=>{
+                  console.log(e);
+                }
               );
               e.preventDefault();
             }}
           >
             <PasteIcon /> Copy URI
           </Dropdown.Item>
-          {!entry.is_dir && reference.type === RefTypeBranch && (
+          {/* {!entry.is_dir && reference.type === RefTypeBranch && (
             <>
               <Dropdown.Divider />
               <Dropdown.Item
@@ -141,7 +125,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
                 <TrashIcon /> Delete
               </Dropdown.Item>
             </>
-          )}
+          )} */}
         </Dropdown.Menu>
       </Dropdown>
 
@@ -170,6 +154,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
 };
 
 const StatModal = ({ show, onHide, entry }) => {
+  console.log(entry);
   return (
     <Modal show={show} onHide={onHide} size={"xl"}>
       <Modal.Header closeButton>
@@ -198,44 +183,32 @@ const StatModal = ({ show, onHide, entry }) => {
               <td>
                 <strong>Size (Bytes)</strong>
               </td>
-              <td>{`${entry.size_bytes}  (${humanSize(entry.size_bytes)})`}</td>
+              <td>{`${entry.size}  (${humanSize(entry.size)})`}</td>
             </tr>
             <tr>
               <td>
-                <strong>Checksum</strong>
+                <strong>Created at</strong>
               </td>
               <td>
-                <code>{entry.checksum}</code>
+                <code>{entry.created_at}</code>
               </td>
             </tr>
             <tr>
               <td>
                 <strong>Last Modified</strong>
               </td>
-              <td>{`${dayjs.unix(entry.mtime).fromNow()} (${dayjs
-                .unix(entry.mtime)
+              <td>{`${dayjs.unix(Date.parse(entry.updated_at)/1000).fromNow()} (${dayjs
+                .unix(Date.parse(entry.updated_at)/1000)
                 .format("MM/DD/YYYY HH:mm:ss")})`}</td>
             </tr>
-            {!entry.is_dir && (
               <tr>
                 <td>
                   <strong>Content-Type</strong>
                 </td>
                 <td>
-                  <code>{entry.is_dir}</code>
+                  <code>{entry.is_dir? 'dir':entry.name.split('.')[entry.name.split('.').length - 1]}</code>
                 </td>
               </tr>
-            )}
-            {entry.metadata && (
-                <tr>
-                  <td>
-                    <strong>Metadata</strong>
-                  </td>
-                  <td>
-                    <EntryMetadata metadata={entry.metadata}/>
-                  </td>
-                </tr>
-            )}
           </tbody>
         </Table>
       </Modal.Body>
@@ -759,7 +732,6 @@ export const Tree = ({
         <Card.Body>{body}</Card.Body>
       </Card>
 
-      <Paginator onPaginate={onPaginate} nextPage={nextPage} after={after} />
     </div>
   );
 };
