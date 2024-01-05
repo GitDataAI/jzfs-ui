@@ -13,38 +13,43 @@ import {useRouter} from "../../../../../lib/hooks/router";
 import { Box } from "@mui/material";
 import { RepoError } from "../error/error";
 import { useSearchParams } from "react-router-dom";
-import { useStorageConfig } from "../../../../../lib/hooks/storageConfig";
-import { UploadButton } from "./uplodaButton";
-import { ImportModal } from "./importModal";
-import { ImportButton, NoGCRulesWarning, ReadmeContainer, TreeContainer } from "./obj_comps";
-import { ObjectsBrowserProps } from "../../../interface/repo_interface";
+import { NoGCRulesWarning, TreeContainer } from "./obj_comps";
+import { Button } from "react-bootstrap";
+import { UploadIcon } from "@primer/octicons-react";
+import { Link } from "../../../../../lib/components/nav";
+import { cache } from "../../../../../lib/api";
 
 
-const ObjectsBrowser:React.FC<ObjectsBrowserProps> = ({ config, configError }) => {
+const ObjectsBrowser = () => {
   const router = useRouter();
-  const { path, after, importDialog } = router.query;
+  const { path, after, importDialog } = router.query ;
   const [searchParams, setSearchParams] = useSearchParams();
-  const { repo, reference, loading, error } = useRefs();
+  console.log('objrouter:',router);
+  
+  const { repo, reference, loading, error } = useRefs();  
   const [showUpload, setShowUpload] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [filepath,setFilepath] = useState(path);
   const [refreshToken, setRefreshToken] = useState(false);
-
   const refresh = () => setRefreshToken(!refreshToken);
   const parts = (path && path.split("/")) || [];
   const searchSuffix = parts.pop();
   let searchPrefix = parts.join("/");
+  const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";
-
+ console.log('path:',path);
+ 
   useEffect(() => {
     if (importDialog) {
       setShowImport(true);
       searchParams.delete("importDialog");
       setSearchParams(searchParams);
     }
-  }, [router.route, importDialog, searchParams, setSearchParams]);
+    setFilepath(path)
+  }, [router.route, importDialog, searchParams, setSearchParams,path]);
 
-  if (loading || !config) return <Loading />;
-  if (error || configError) return <RepoError error={error || configError} />;
+  if (loading) return <Loading />;
+  if (error) return <RepoError error={error} />;
 
   return (
     <>
@@ -56,13 +61,14 @@ const ObjectsBrowser:React.FC<ObjectsBrowserProps> = ({ config, configError }) =
             selected={reference}
             withCommits={true}
             withWorkspace={true}
-            selectRef={(ref: { id: string }) => router.push({
-              pathname: `/repositories/:repoId/objects`,
+            selectRef={(ref) => router.push({
+              pathname: `/repositories/:user/:repoId/objects`,
               params: {
-                repoId: repo.id,
+                repoId: repo.name,
+                user,
                 path: path === undefined ? "" : path,
               },
-              query: { ref: ref.id, path: path === undefined ? "" : path },
+              query: { ref:ref.id, path: path === undefined ? "" : path },
             })} onCancel={undefined}          
             />
         </ActionGroup>
@@ -70,7 +76,7 @@ const ObjectsBrowser:React.FC<ObjectsBrowserProps> = ({ config, configError }) =
         <ActionGroup orientation="right">
           <PrefixSearchWidget
             text="Search by Prefix"
-            key={path}
+            key={filepath}
             defaultValue={searchSuffix}
             onFilter={(prefix: string) => {
               const query = { path: "",ref:"" };
@@ -78,45 +84,29 @@ const ObjectsBrowser:React.FC<ObjectsBrowserProps> = ({ config, configError }) =
               if (prefix) query.path += prefix;
               if (reference) query.ref = reference.id;
               const url = {
-                pathname: `/repositories/:repoId/objects`,
+                pathname: `/repositories/:user/:repoId/objects`,
                 query,
-                params: { repoId: repo.id },
+                params: { repoId: repo.name,user },
               };
               router.push(url);
             }}
           />
           <RefreshButton onClick={refresh} />
-          <UploadButton
-            config={config}
-            path={path}
-            repo={repo}
-            reference={reference}
-            onDone={refresh}
-            onClick={() => {
-              setShowUpload(true);
-            }}
-            onHide={() => {
-              setShowUpload(false);
-            }}
-            show={showUpload}
-          />
-          <ImportButton onClick={() => setShowImport(true)} config={config} />
-          <ImportModal
-            config={config}
-            path={path}
-            repoId={repo.id}
-            referenceId={reference.id}
-            referenceType={reference.type}
-            onDone={refresh}
-            onHide={() => {
-              setShowImport(false);
-            }}
-            show={showImport}
-          />
+        <Button
+        variant={"light"}
+        >
+           <Link href={{
+            pathname: `/repositories/:user/:repoId/changes`,
+            params: {repoId: repo.name,user},
+            }}>
+        <UploadIcon />Edit
+          </Link>
+        </Button>
+          
         </ActionGroup>
       </ActionsBar>
 
-      <NoGCRulesWarning repoId={repo.id} />
+      <NoGCRulesWarning repoId={repo.name} />
 
       <Box
         sx={{
@@ -127,19 +117,18 @@ const ObjectsBrowser:React.FC<ObjectsBrowserProps> = ({ config, configError }) =
         }}
       >
         <TreeContainer
-          config={config}
-          reference={reference}
-          repo={repo}
-          path={path ? path : ""}
+            reference={reference}
+            repo={repo}
+          path={filepath ? filepath : "/"}
           after={after ? after : ""}
           onPaginate={(after:string) => {
             const query = { after,path:"",ref:""};
             if (path) query.path = path;
             if (reference) query.ref = reference.id;
             const url = {
-              pathname: `/repositories/:repoId/objects`,
+              pathname: `/repositories/:user/:repoId/objects`,
               query,
-              params: { repoId: repo.id },
+              params: { repoId: repo.name,user },
             };
             router.push(url);
           }}
@@ -152,26 +141,23 @@ const ObjectsBrowser:React.FC<ObjectsBrowserProps> = ({ config, configError }) =
           }}
           onRefresh={refresh}
         />
-
+{/* 
         <ReadmeContainer
-          config={config}
           reference={reference}
           repo={repo}
           path={path}
           refreshDep={refreshToken}
-        />
+        /> */}
       </Box>
     </>
   );
 };
 
 const RepositoryObjectsPage = () => {
-  const config = useStorageConfig();
 
   return (
     <RepositoryPageLayout activePage={"objects"}>
-      {config.loading && <Loading />}
-      <ObjectsBrowser config={config} configError={config.error} />
+      <ObjectsBrowser />
     </RepositoryPageLayout>
   );
 };

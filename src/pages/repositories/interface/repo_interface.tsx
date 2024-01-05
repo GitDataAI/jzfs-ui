@@ -1,5 +1,6 @@
 import { RepositoryDeletionError } from "../../../lib/api";
 import { Branch, QueryParams, RepositoryParams } from "../../../lib/api/interface";
+import { Commit } from "../../../lib/api/interface/Api";
 import { Entry } from "../../../util/otfUtil";
 
 export type StorageConfigContextType = {
@@ -327,18 +328,6 @@ export interface ActionsListProps {
 }
 export type metadata  = {
   [key: string]: string;
-}
-export interface Commit {
-  id: string;
-  message: string;
-  committer: string;
-  creation_date: number;
-  metadata: metadata;
-  parents: string[];
-  timestamp:string;
-  operation_type:string;
-  operation_content: string;
-  operation:React.ReactNode
 }
 
 export interface CommitWidgetProps {

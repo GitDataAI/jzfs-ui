@@ -9,17 +9,18 @@ import {TrashIcon} from "@primer/octicons-react";
 import Col from "react-bootstrap/Col";
 import {AlertError, Loading} from "../../../../lib/components/controls";
 import Modal from "react-bootstrap/Modal";
-import {repositories} from "../../../../lib/api";
+import {cache, repositories} from "../../../../lib/api";
 import {useRouter} from "../../../../lib/hooks/router";
 import {SettingsLayout} from "./layout";
 import {RepositoryPageLayout} from "../../../../lib/components/repository/layout";
+import { repos } from "../../../../lib/api/interface/Api";
 
 const DeleteRepositoryModal = ({repo, show, onSubmit, onCancel}) => {
     const [isDisabled, setIsDisabled] = useState(true);
     const repoNameField = useRef(null);
 
     const compareRepoName = () => {
-        setIsDisabled(repoNameField.current.value !== repo.id);
+        setIsDisabled(repoNameField.current.value !== repo.name);
     };
 
     return (
@@ -31,7 +32,7 @@ const DeleteRepositoryModal = ({repo, show, onSubmit, onCancel}) => {
                 <Modal.Title>Delete Repository</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Are you sure you wish to delete repository <strong>{repo.id}</strong>? <br />
+                Are you sure you wish to delete repository <strong>{repo.name}</strong>? <br />
                 This action cannot be undone. This will delete the following: <br /> <br />
 
                 <ul>
@@ -43,7 +44,7 @@ const DeleteRepositoryModal = ({repo, show, onSubmit, onCancel}) => {
 
                 Data in the underlying object store will not be deleted by this action. <br /> <br />
 
-                Please type <strong>{repo.id}</strong> to confirm: <br />
+                Please type <strong>{repo.name}</strong> to confirm: <br />
                 <Form.Control className="mt-2" placeholder="Enter repository name to confirm" type="text" autoFocus ref={repoNameField} onChange={compareRepoName}/>
             </Modal.Body>
             <Modal.Footer>
@@ -55,10 +56,10 @@ const DeleteRepositoryModal = ({repo, show, onSubmit, onCancel}) => {
 
 const SettingsContainer = () => {
     const router = useRouter();
-    const { repo, loading, error} = useRefs();
+    const { repo,reference, loading, error} = useRefs();
     const [showingDeleteModal, setShowDeleteModal] = useState(false);
     const [ deletionError, setDeletionError ] = useState(null);
-
+    const user = cache.get('user')
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
     if (deletionError) return <AlertError error={deletionError}/>;
@@ -76,7 +77,7 @@ const SettingsContainer = () => {
                         Repository name
                     </Form.Label>
                     <Col md={{span:4}}>
-                        <Form.Control readOnly value={repo.id} type="text"/>
+                        <Form.Control readOnly value={repo.name} type="text"/>
                     </Col>
                 </Row>
                 <Row>
@@ -92,7 +93,7 @@ const SettingsContainer = () => {
                         Default branch
                     </Form.Label>
                     <Col md={{span:4}}>
-                        <Form.Control readOnly value={repo.default_branch} type="text"/>
+                        <Form.Control readOnly value={repo.head} type="text"/>
                     </Col>
                 </Row>
             </Container>
@@ -105,7 +106,7 @@ const SettingsContainer = () => {
                 repo={repo}
                 onCancel={() => { setShowDeleteModal(false) }}
                 onSubmit={() => {
-                    repositories.delete(repo.id).then(() => {
+                    repos.deleteRepository(user,repo.name).then(() => {
                         return router.push('/repositories')
                     }).catch(err => {
                         setDeletionError(err)

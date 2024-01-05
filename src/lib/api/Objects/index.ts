@@ -1,4 +1,4 @@
-import {API_ENDPOINT, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs, uploadWithProgress} from "../index"
+import {API_ENDPOINT, AuthenticationError, AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, cache, extractError, qs, uploadWithProgress} from "../index"
 import { Upload, apiResponse } from "../interface";
 
 export class Objects {
@@ -89,5 +89,131 @@ export class Objects {
             throw new Error(await extractError(response));
         }
         return response.json()
+    }
+    // 获取用户内的Object的内容，二进制字符串：（type: string, format: binary）
+    async getObject(user: string, repository: string, branch: string, path: string) {
+        const headers = new Headers();
+        headers.append('Range', 'bytes=0-1023');
+        const response = await apiRequest(`/object/${user}/${repository}?branch=${branch}&path=${path}`, { method: 'GET', headers: headers });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 400:
+                    throw new Error(`Validation error: ${errorBody}`);
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 403:
+                    throw new AuthorizationError(errorBody);
+                case 404:
+                    throw new NotFoundError(errorBody);
+                case 410:
+                    throw new Error(`Object expired: ${errorBody}`);
+                case 416:
+                    throw new Error(`Requested Range Not Satisfiable: ${errorBody}`);
+                case 420:
+                    throw new Error(`Too many requests: ${errorBody}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response.json();
+    }
+    
+// 检查对象是否存在，内容长度（Content-Length:number）、最后修改时间（Last-Modified:string）、ETag（string）
+async headObject(user: string, repository: string, branch: string, path: string) {
+    const headers = new Headers();
+    headers.append('Range', 'bytes=0-1023');
+    const response = await apiRequest(`/object/${user}/${repository}?branch=${branch}&path=${path}`, { method: 'HEAD', headers: headers });
+    if (!response.ok) {
+        const errorBody = await extractError(response);
+        switch (response.status) {
+            case 400:
+                throw new Error(`Validation error: ${errorBody}`);
+            case 401:
+                throw new AuthenticationError(errorBody, response.status);
+            case 403:
+                throw new AuthorizationError(errorBody);
+            case 404:
+                throw new NotFoundError(errorBody);
+            case 410:
+                throw new Error(`Object expired: ${errorBody}`);
+            case 416:
+                throw new Error(`Requested Range Not Satisfiable: ${errorBody}`);
+            case 420:
+                throw new Error(`Too many requests: ${errorBody}`);
+            default:
+                throw new Error(`Unhandled error status: ${response.status}`);
+        }
+    }
+    return response.json();
+}
+
+    // 上传对象，（包含了上传的对象的元数据）
+    async uploadObject(repository: string, branch: string, path: string, file: File, wipID: string) {
+        let user = cache.get('user')
+        const formData = new FormData();
+        formData.append('content', file);
+        const headers = new Headers();
+        headers.append('If-None-Match', '*');
+        const response = await apiRequest(`/object/${user}/${repository}?branch=${branch}&path=${path}&wipID=${wipID}`, { method: 'POST', body: formData, headers: headers });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 400:
+                    throw new Error(`Validation error: ${errorBody}`);
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 403:
+                    throw new AuthorizationError(errorBody);
+                case 404:
+                    throw new NotFoundError(errorBody);
+                case 412:
+                    throw new Error(`Precondition failed: ${errorBody}`);
+                case 420:
+                    throw new Error(`Too many requests: ${errorBody}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response.json();
+    }
+    
+    
+    // 删除对象
+    async deleteObject(user: string, repository: string, branch: string, path: string, wipID: string) {
+        const headers = new Headers();
+        const response = await apiRequest(`/object/${user}/${repository}?branch=${branch}&path=${path}&wipID=${wipID}`, { method: 'DELETE', headers: headers });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 400:
+                    throw new Error(`Validation error: ${errorBody}`);
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 403:
+                    throw new AuthorizationError(errorBody);
+                case 404:
+                    throw new NotFoundError(errorBody);
+                case 420:
+                    throw new Error(`Too many requests: ${errorBody}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response.json();
+    }
+    // 获取目录内容
+    async  getEntriesInRef(owner:string,repository: string, type: string, path?:string, ref?:string) {
+        const query = qs({type});
+        const response: apiResponse = await apiRequest(`/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repository)}/contents?` + query ,{method: 'get'});
+    
+        if (response.status === 404) {
+            throw new NotFoundError(response.message ?? "URL not found");
+        }
+    
+        if (response.status !== 200) {
+            throw new Error(await extractError(response));
+        }
+        return await response.json();
     }
 }

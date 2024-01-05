@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import {GitCommitIcon, HistoryIcon,} from "@primer/octicons-react";
 
@@ -8,8 +8,8 @@ import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 
-import {branches, commits, refs} from "../../../../../lib/api";
-import {useAPIWithPagination} from "../../../../../lib/hooks/api";
+import {branches, cache, commits, refs} from "../../../../../lib/api";
+import {useAPI, useAPIWithPagination} from "../../../../../lib/hooks/api";
 import {useRefs} from "../../../../../lib/hooks/repo";
 import {ConfirmationModal} from "../../../../../lib/components/modals";
 import {ActionGroup, ActionsBar, AlertError, Loading, RefreshButton} from "../../../../../lib/components/controls";
@@ -18,20 +18,25 @@ import {RepositoryPageLayout} from "../../../../../lib/components/repository/lay
 import {formatAlertText} from "../../../../../lib/components/repository/errors";
 import {ChangesTreeContainer, MetadataFields} from "../../../../../lib/components/repository/changes";
 import {useRouter} from "../../../../../lib/hooks/router";
-import {URINavigator} from "../../../../../lib/components/repository/tree";
+import {Tree, URINavigator} from "../../../../../lib/components/repository/tree";
 import {RepoError} from "../error/error";
 import { ChangesBrowserProps, CommitButtonProps, GetMore, GetMoreUncommittedChanges, Pair, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
+import { object, repos, wip } from "../../../../../lib/api/interface/Api";
+import { UploadButton } from "../objects/uplodaButton";
 
 
 const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
-
+    const [msg, setMsg] = useState('');
+    const handleDescriptionChange = (e) => {
+        setMsg(e.target.value);
+      };
+      
     const textRef = useRef<HTMLInputElement>(null);
 
     const [committing, setCommitting] = useState(false)
     const [show, setShow] = useState(false)
     const [metadataFields, setMetadataFields] = useState<Pair[]>([])
     const hide = () => {
-        if (committing) return;
         setShow(false)
     }
 
@@ -47,6 +52,13 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
     };
 
     const alertText = formatAlertText(repo.id, null);
+    useEffect(() => {
+        if (msg) {
+            setCommitting(false);
+        } else  {
+            setCommitting(true);
+        }
+      }, [msg]);
     return (
         <>
             <Modal show={show} onHide={hide} size="lg">
@@ -59,7 +71,7 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
                         e.preventDefault();
                     }}>
                         <Form.Group controlId="message" className="mb-3">
-                            <Form.Control type="text" placeholder="Commit Message" ref={textRef}/>
+                            <Form.Control type="text" placeholder="Commit Message" ref={textRef} onChange={handleDescriptionChange}/>
                         </Form.Group>
 
                         <MetadataFields metadataFields={metadataFields} setMetadataFields={setMetadataFields}/>
@@ -67,7 +79,7 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
                     {(alertText) ? (<Alert variant="danger">{alertText}</Alert>) : (<span/>)}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" disabled={committing} onClick={hide}>
+                    <Button variant="secondary" onClick={hide}>
                         Cancel
                     </Button>
                     <Button variant="success" disabled={committing} onClick={onSubmit}>
@@ -110,7 +122,7 @@ export async function appendMoreResults(
     afterUpdated: string,
     setAfterUpdated: SetState<string>,
     setResultsState: SetState<ResultsState>,
-    getMore: GetMore
+    getMore
   ): Promise<ResultsState>{
     let resultsFiltered = resultsState.results
     if (resultsState.prefix !== prefix) {
@@ -121,7 +133,11 @@ export async function appendMoreResults(
     if (resultsFiltered.length > 0 && resultsFiltered.at(-1) && resultsFiltered.at(-1).path > afterUpdated) {
         return {prefix: prefix, results: resultsFiltered, pagination: resultsState.pagination}
       }
-    const {results, pagination} = await getMore()
+    const response = await getMore()
+    console.log('wip:', response);
+    
+    let pagination = {}
+    const results = response.data
     setResultsState({prefix: prefix, results: resultsFiltered.concat(results), pagination: pagination})
 return {prefix: resultsState.prefix, results: resultsState.results, pagination: pagination}
 }
@@ -131,33 +147,47 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     const [internalRefresh, setInternalRefresh] = useState(true);
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
     const [resultsState, setResultsState] = useState<ResultsState>({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
-
+    const user = cache.get('user')
     const delimiter = '/'
+    const router = useRouter();
+    const { path, after, importDialog } = router.query;
+    const [showUpload, setShowUpload] = useState(false);
+    const [showImport, setShowImport] = useState(false);
 
+    const initialState = {
+        inProgress: false,
+        error: null,
+        done: false,
+      };
+      const [deleteState, setDeleteState] = useState(initialState);
     const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
-        return refs.changes(repo.id, reference.id, afterUpdated, path, useDelimiter ? delimiter : "", amount > 0 ? amount : undefined)
+        return wip.getWipChanges(user,repo.name,{refName:reference.name})
     }
-
-    const { error, loading, nextPage } = useAPIWithPagination(async () => {
+    const { response,error , loading} = useAPI(async() =>
+    {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:reference.type})
+      }
+  , [repo.name , internalRefresh])
+    const {  } = useAPI(async () => {
         if (!repo) return
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
-            () => refs.changes(repo.id, reference.id, afterUpdated, prefix, delimiter));
-    }, [repo.id, reference.id, internalRefresh, afterUpdated, delimiter, prefix])
+           () => wip.getWipChanges(user,repo.name,{refName:reference.name}) );
+    }, [repo.name, reference.name, internalRefresh, afterUpdated, delimiter, prefix])
 
     const results = resultsState.results
-
+    let nextPage = ''
+    console.log('results:',results, 'referrer:',reference,'res:',response);
+    
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
         setInternalRefresh(!internalRefresh)
     }
 
-
+    
     if (error) return <AlertError error={error}/>
     if (loading) return <Loading/>
 
-    let onReset = async (entry: { path_type: string; path: string; }) => {
-        branches
-            .reset(repo.id, reference.id, {type: entry.path_type, path: entry.path})
+    let onReset = async (entry) => {
+        wip.revertWipChanges(repo.name, user,{refName:reference.name,pathPrefix:entry.path})
             .then(refresh)
             .catch(error => {
                 setActionError(error)
@@ -166,10 +196,10 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
 
     let onNavigate = (entry: { path: string; }) => {
         return {
-            pathname: `/repositories/:repoId/changes`,
-            params: {repoId: repo.id},
+            pathname: `/repositories/:user/:repoId/changes`,
+            params: {repoId: repo.name,user},
             query: {
-                ref: reference.id,
+                ref: reference.name,
                 prefix: entry.path,
             }
         }
@@ -178,12 +208,12 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     const uriNavigator =  <URINavigator path={prefix} reference={reference} repo={repo}
     pathURLBuilder={(params, query) => {
         return {
-            pathname: '/repositories/:repoId/changes',
+            pathname: '/repositories/:user/:repoId/changes',
             params: params,
-            query: { ref: reference.id, prefix: query.path ?? "" },
+            query: { ref: reference.name, prefix: query.path ?? "" },
         };
     } } downloadUrl={undefined}/>
-    const changesTreeMessage = <p>Showing changes for branch <strong>{reference.id}</strong></p>
+    const changesTreeMessage = <p>Showing changes for branch <strong>{reference.name}</strong></p>
     const committedRef = reference.id + "@"
     const uncommittedRef = reference.id
 
@@ -209,13 +239,28 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                     <RefreshButton onClick={refresh}/>
 
                     <RevertButton enabled={results.length > 0} onRevert={() => {
-                        branches.reset(repo.id, reference.id, {type: 'reset'})
+                        wip.revertWipChanges(repo.name, user,{refName:reference.name})
                             .then(refresh)
                             .catch(error => setActionError(error))
                     }}/>
+                    <UploadButton
+                        reference={reference}
+                        path={path ? path : "/"}
+                        repoId={repo.name}
+                        onDone={refresh}
+                        onClick={() => {
+                        setShowUpload(true);
+                        } }
+                        onHide={() => {
+                        setShowUpload(false);
+                        } }
+                        show={showUpload} 
+                        wipID={undefined}          
+                        />
                     <CommitButton repo={repo} enabled={results.length > 0} onCommit={async (commitDetails, done) => {
                         try {
-                            await commits.commit(repo.id, reference.id, commitDetails.message, commitDetails.metadata);
+                            const user = cache.get('user')
+                            await wip.commitWip(user, repo.name, {refName:reference.name ,msg:commitDetails.message}, commitDetails.metadata);
                             setActionError(null);
                             refresh();
                         } catch (err) {
@@ -226,8 +271,43 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                     }}/>
                 </ActionGroup>
             </ActionsBar>
-
+           
             {actionErrorDisplay}
+            {deleteState.error && <AlertError error={deleteState.error} onDismiss={() => setDeleteState(initialState)}/>}
+            <Tree
+                repo={repo}
+                reference={reference}
+                path={(path) ? path : ""}
+                showActions={true}
+                results={response.data?response.data:[null]}
+                after={after}
+                onPaginate={(after:string) => {
+                    const query = { after,path:"",ref:""};
+                    if (path) query.path = path;
+                    if (reference) query.ref = reference.name;
+                    const url = {
+                      pathname: `/repositories/:user/:repoId/objects`,
+                      query,
+                      params: { repoId: repo.name,user },
+                    };
+                    router.push(url);
+                  }}
+                onUpload={() => {
+                    setShowUpload(true);
+                  }}
+                onImport={() => {
+                    setShowImport(true)}
+                }
+                onDelete={(entry,dirname) => {
+                    object
+                        .deleteObject(user, repo.name, {refName:reference.name,path:dirname?dirname+'/'+entry.name:entry.name})
+                        .catch(error => {
+                            setDeleteState({...initialState, error: error})
+                            throw error
+                        })
+                        .then(refresh)
+                }}
+            />
             <ChangesTreeContainer results={results} delimiter={delimiter}
             uriNavigator={uriNavigator} leftDiffRefID={committedRef} rightDiffRefID={uncommittedRef}
             repo={repo} reference={reference} internalRefresh={internalRefresh} prefix={prefix}
@@ -242,9 +322,14 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
 
 const ChangesContainer = () => {
     const router = useRouter();
-    const {repo, reference, loading, error} = useRefs()
+    const {repo, reference, loading, error} = useRefs()    
     const {prefix} = router.query
+    const user = cache.get('user')
 
+    const {response} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name})
+)   
+    console.log(response);
+    
     if (loading) return <Loading/>
     if (error) return <RepoError error={error}/>
 
@@ -253,13 +338,15 @@ const ChangesContainer = () => {
             prefix={(prefix) ? prefix : ""}
             repo={repo}
             reference={reference}
-            onSelectRef={ref => router.push({
-                pathname: `/repositories/:repoId/changes`,
-                params: {repoId: repo.id},
+            onSelectRef={ref => 
+               { console.log('ref:',ref)
+                router.push({
+                pathname: `/repositories/:user/:repoId/changes`,
+                params: {repoId: repo.name,user},
                 query: {
                     ref: ref.id,
                 }
-            })}
+            })}}
         />
     )
 }

@@ -1,5 +1,6 @@
-import {AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, RepositoryDeletionError, apiRequest, extractError, qs} from "../index"
-import { QueryParams } from "../interface";
+import {AuthenticationError, AuthorizationError, DEFAULT_LISTING_AMOUNT, NotFoundError, RepositoryDeletionError, apiRequest, cache, extractError, qs} from "../index"
+import { QueryParams, RepositoryParams } from "../interface";
+import { RepositoryProps } from "../interface/Api";
 
 export class Repositories {
 
@@ -53,6 +54,104 @@ export class Repositories {
                     throw new NotFoundError(`table ${tablePath} not found`);
                 default:
                     throw new Error(await extractError(response));
+            }
+        }
+        return response.json();
+    }
+       
+    // 创建新的仓库，返回一个JSON
+    async createRepository(repo: RepositoryParams) {
+        let headers = new Headers()
+        headers.append("Content-Type", "application/json")
+        const response = await apiRequest(`/users/repos`, { 
+            method: 'POST', 
+            body: JSON.stringify(repo) 
+        }, headers);
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 400:
+                    throw new Error(`Validation Error: ${errorBody}`);
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 403:
+                    throw new Error(`Forbidden: ${errorBody}`);
+                default:
+                    throw new Error(`Unhandled error status: ${response.status}`);
+            }
+        }
+        return response.json();
+    }
+    // 获取仓库，返回一个JSON
+    async getRepository( repoId: string) {
+    const user =cache.get("user")
+    const response = await apiRequest(`/repos/${user}/${repoId}`, { method: 'GET' });
+    if (!response.ok) {
+        const errorBody = await extractError(response);
+        switch (response.status) {
+            case 400:
+                throw new Error(`Validation Error: ${errorBody}`);
+            case 401:
+                throw new AuthenticationError(errorBody, response.status);
+            case 403:
+                throw new Error(`Forbidden: ${errorBody}`);
+            default:
+                throw new Error(`Unhandled error status: ${response.status}`);
+        }
+    }
+    return response.json();
+    }
+    // 删除仓库
+    async deleteRepository(user: string, repoId: string) {
+    const response = await apiRequest(`/${user}/${repoId}`, { method: 'DELETE' });
+    if (!response.ok) {
+        const errorBody = await extractError(response);
+        switch (response.status) {
+            case 400:
+                throw new Error(`Validation Error: ${errorBody}`);
+            case 401:
+                throw new AuthenticationError(errorBody, response.status);
+            case 403:
+                throw new Error(`Forbidden: ${errorBody}`);
+            default:
+                throw new Error(`Unhandled error status: ${response.status}`);
+        }
+    }
+    return response.json();
+    }
+
+    // 更新仓库
+    async updateRepository(user: string, repoId: string, repo: RepositoryParams) {
+    const response = await apiRequest(`/${user}/${repoId}`, { method: 'POST', body: JSON.stringify(repo) });
+    if (!response.ok) {
+        const errorBody = await extractError(response);
+        switch (response.status) {
+            case 400:
+                throw new Error(`Validation Error: ${errorBody}`);
+            case 401:
+                throw new AuthenticationError(errorBody, response.status);
+            case 403:
+                throw new Error(`Forbidden: ${errorBody}`);
+            default:
+                throw new Error(`Unhandled error status: ${response.status}`);
+        }
+    }
+    return response.json();
+    }
+    // 获取用户的仓库列表，返回一个array
+    async listRepository(): Promise<RepositoryProps[]>{
+        const response = await apiRequest(`/users/repos`, { method: 'GET' });
+        if (!response.ok) {
+            const errorBody = await extractError(response);
+            switch (response.status) {
+                case 400:
+                    throw new Error(`Validation Error: ${errorBody}`);
+                case 401:
+                    throw new AuthenticationError(errorBody, response.status);
+                case 403:
+                    throw new Error(`Forbidden: ${errorBody}`);
+                default:
+                    throw new AuthenticationError(errorBody, response.status);
             }
         }
         return response.json();

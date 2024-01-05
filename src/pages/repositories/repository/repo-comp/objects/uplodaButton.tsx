@@ -1,7 +1,7 @@
 import {Button,Modal,Form,Container,Row,Col,ProgressBar} from "react-bootstrap";
 import React, {useCallback, useEffect, useState } from "react";
 import {useDropzone} from "react-dropzone";
-import {objects, staging,uploadWithProgress} from "../../../../../lib/api";
+import {cache, objects} from "../../../../../lib/api";
 import {CheckboxIcon, UploadIcon, XIcon} from "@primer/octicons-react";
 import {humanSize} from "../../../../../lib/components/repository/tree";
 import pMap from "p-map";
@@ -9,36 +9,21 @@ import {
     AlertError,
     Warnings
 } from "../../../../../lib/components/controls";
-import {RefTypeBranch} from "../../../../../constants";
 import { InitialState, UploadButtonProps, UploadCandidateProps, UploadFileProps, UploadResult, _File } from "../../../interface/repo_interface";
+import { object } from "../../../../../lib/api/interface/Api";
 
 const MAX_PARALLEL_UPLOADS = 5;
 
-function extractChecksumFromResponse(response:UploadResult){
-    if (response.contentMD5) {
-      // convert base64 to hex
-      const raw = atob(response.contentMD5)
-      let result = '';
-      for (let i = 0; i < raw.length; i++) {
-        const hex = raw.charCodeAt(i).toString(16);
-        result += (hex.length === 2 ? hex : '0' + hex);
-      }
-      return result;
-    }
-  
-    if (response.etag) {
-      // drop any quote and space
-      return response.etag.replace(/[" ]+/g, "");
-    }
-    return ""
-  }
-  
 const destinationPath = (path: string | undefined, file: _File) => {
     return `${path ? path : ""}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
   };
   
-  const UploadCandidate: React.FC<UploadCandidateProps> = ({ repo, reference, path, file, state, onRemove = null }) => {
+  const UploadCandidate = ({ repoId, path, file, state,setUploadPath,onRemove = null }) => {
     const fpath = destinationPath(path, file)
+  useEffect(()=>{
+    setUploadPath(fpath)
+  },[path])
+
     let uploadIndicator = null;
     if (state && state.status === "uploading") {
       uploadIndicator = <ProgressBar variant="success" now={state.percent}/>
@@ -59,7 +44,7 @@ const destinationPath = (path: string | undefined, file: _File) => {
         <Row className={`upload-item upload-item-${state ? state.status : "none"}`}>
           <Col>
             <span className="path">
-              jzfs://{repo.id}/{reference.id}/{fpath}
+              jzfs:/{repoId}{fpath}
             </span>
           </Col>
           <Col xs md="2">
@@ -77,26 +62,13 @@ const destinationPath = (path: string | undefined, file: _File) => {
     )
   };
   
-const uploadFile:UploadFileProps = async (config, repo, reference, path, file, onProgress) => {
-    const fpath = destinationPath(path, file);
-    if (config.pre_sign_support_ui) {
-        let additionalHeaders;
-        if (config.blockstore_type === "azure") {
-            additionalHeaders = { "x-ms-blob-type": "BlockBlob" }
-        }
-      const getResp = await staging.get(repo.id, reference.id, fpath, config.pre_sign_support_ui);
-      const uploadResponse = await uploadWithProgress(getResp.presigned_url, file, 'PUT', onProgress, additionalHeaders)
-      if (uploadResponse.status >= 400) {
-        throw new Error(`Error uploading file: HTTP ${status}`)
-      }
-      const checksum = extractChecksumFromResponse(uploadResponse)
-      await staging.link(repo.id, reference.id, fpath, getResp, checksum, file.size, file.type);
-    } else {
-      await objects.upload(repo.id, reference.id, fpath, file, onProgress);
-    }
-  };
+  async function uploadFile( repository: string, branch: string, path: string, file: File, wipID: string) {
+    const user = cache.get('user');
+    await object.uploadObject(user, repository,{refName:branch,path},{content:file});
+}
+
   
-export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, reference, path, onDone, onClick, onHide, show = false}) => {
+export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, onHide, show = false}) => {
     const initialState: InitialState = {
       inProgress: false,
       error : null,
@@ -107,13 +79,14 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
     const [files, setFiles] = useState<_File[]>([]);
     const [fileStates, setFileStates] = useState<{[key: string]: any}>({});
     const [abortController, setAbortController] = useState<AbortController | null>(null)
+    const [uploadpath, setUploadPath] = useState('/')
+
     const onDrop = useCallback((acceptedFiles:_File[]) => {
       setFiles([...acceptedFiles])
     }, [files])
   
     const { getRootProps, getInputProps, isDragAccept } = useDropzone({onDrop})
   
-    if (!reference || reference.type !== RefTypeBranch) return <></>;
   
     const hide = () => {
       if (uploadState.inProgress) {
@@ -123,6 +96,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
           return
         }
       }
+      setUploadPath(path)
       setUploadState(initialState);
       setFileStates({});
       setFiles([]);
@@ -146,9 +120,9 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
       const mapper = async (file:_File) => {
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
-          await uploadFile(config, repo, reference, currentPath, file, progress => {
-            setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: progress}}))
-          })
+          
+          await uploadFile( repoId, reference.name, uploadpath, file, wipID)
+          
         } catch (error: any | null) {
           setFileStates(next => ( {...next, [file.path]: {status: 'error'}}))
           setUploadState({ ...initialState, error });
@@ -179,8 +153,8 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
     };
   
     const changeCurrentPath = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-      setCurrentPath(e.target.value)
-    }, [setCurrentPath])
+      setUploadPath(e.target.value)
+    }, [setUploadPath])
   
     const onRemoveCandidate = useCallback((file: _File) => {
       return () => setFiles(current => current.filter(f => f !== file))
@@ -200,15 +174,10 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
                 upload();
               }}
             >
-              {config?.warnings && (
-                <Form.Group controlId="warnings" className="mb-3">
-                  <Warnings warnings={config.warnings} />
-                </Form.Group>
-              )}
-  
+
               <Form.Group controlId="path" className="mb-3">
                 <Form.Text>Path</Form.Text>
-                <Form.Control disabled={uploadState.inProgress} defaultValue={currentPath} onChange={changeCurrentPath}/>
+                <Form.Control disabled={uploadState.inProgress} value={uploadpath}  onChange={changeCurrentPath}/>
               </Form.Group>
   
               <Form.Group controlId="content" className="mb-3">
@@ -225,10 +194,10 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
                   {files && files.map(file =>
                       <UploadCandidate
                         key={file.path}
-                        repo={repo}
-                        reference={reference}
+                        repoId={repoId}
                         file={file}
                         path={currentPath}
+                        setUploadPath={setUploadPath}
                         state={fileStates[file.path]}
                         onRemove={!uploadState.inProgress ? onRemoveCandidate(file) : null}
                       />
@@ -252,7 +221,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({config, repo, referen
     </Modal>
   
       <Button
-        variant={!config.import_support ? "success" : "light"}
+        variant={"light"}
         onClick={onClick}
         >
         <UploadIcon /> Upload Object

@@ -1,5 +1,5 @@
 // 编辑个人仓库页面，为仓库页面与项目详情页面提供路由
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import {Col,Form,InputGroup,ButtonToolbar,Container} from "react-bootstrap";
 
 import {SearchIcon} from "@primer/octicons-react";
@@ -8,14 +8,16 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import Layout from "../../lib/components/layout";
 import {ActionsBar, useDebouncedState} from "../../lib/components/controls";
-import {config, repositories} from '../../lib/api';
-import {useAPI} from "../../lib/hooks/api";
+import {cache, config, repositories} from '../../lib/api';
 import {useRouter} from "../../lib/hooks/router";
 
 import {Route, Routes} from "react-router-dom";
 import RepositoryPage from './repository';
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
-import { Repo } from "./interface/repos_interface";
+import { RepositoryParams } from "../../lib/api/interface";
+import { useAPI } from "../../lib/hooks/api";
+import { users } from "../../lib/api/interface/Api";
+
 
 dayjs.extend(relativeTime);
 
@@ -26,24 +28,24 @@ const RepositoriesPage = () => {
     const [createRepoError, setCreateRepoError] = useState(null);
     const [refresh, setRefresh] = useState(false);
     const [creatingRepo, setCreatingRepo] = useState(false);
-    const [showActionsBar, setShowActionsBar] = useState(false);
-
     const routerPfx = (router.query.prefix) ? router.query.prefix : "";
+    const amount = useRef(10)
     const [prefix, setPrefix] = useDebouncedState(
         routerPfx,
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix},params:{}})
     );
+    const {response} = useAPI(() => users.listRepositoryOfAuthenticatedUser());
+    console.log(response);
+    
 
-    useAPI(() => config.getStorageConfig());
-
-    const createRepo = async (repo: Repo, presentRepo = true) => {
+    const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
         try {
             setCreatingRepo(true);
             setCreateRepoError(null);
-            await repositories.create(repo);
+            await users.createRepository(repo);
             setRefresh(!refresh);
             if (presentRepo) {
-                router.push({pathname: `/repositories/:repoId/objects`, params: {repoId: repo.name},query:{}});
+                router.push({pathname: `/repositories/:user/:repoId/objects`, params: {repoId: repo.Name,user:owner},query:{}});
             }
             return true;
         } catch (error: any) {
@@ -52,10 +54,6 @@ const RepositoriesPage = () => {
             return false;
         }
     };
-
-    const toggleShowActionsBar = useCallback((show = true) => {
-        setShowActionsBar(show);
-    }, [setShowActionsBar]);
 
     const createRepositoryButtonCallback = useCallback(() => {
         setSampleRepoChecked(false);
@@ -66,7 +64,7 @@ const RepositoriesPage = () => {
     return (
         <Layout>
             <Container fluid="xl" className="mt-3">
-                {showActionsBar && <ActionsBar>
+                {<ActionsBar>
                     <Form style={{minWidth: 300}} onSubmit={e => { e.preventDefault(); }}>
                         <Form.Group>
                             <Col>
@@ -90,17 +88,16 @@ const RepositoriesPage = () => {
                 </ActionsBar> }
 
                 <RepositoryList
-                    prefix={routerPfx}
+                    prefix={prefix}
                     refresh={refresh}
+                    amount={amount}
                     after={(router.query.after) ? router.query.after : ""}
                     onPaginate={after => {
                         const query = {after,prefix};
                         if (router.query.prefix) query.prefix = router.query.prefix;
                         router.push({pathname: `/repositories`, query,params:{}});
                     }}
-                    // onCreateSampleRepo={createSampleRepoButtonCallback}
                     onCreateEmptyRepo={createRepositoryButtonCallback}
-                    toggleShowActionsBar={toggleShowActionsBar}
                     creatingRepo={creatingRepo}
                     createRepoError={createRepoError}
                     />
@@ -111,10 +108,13 @@ const RepositoriesPage = () => {
                         setCreateRepoError(null);
                     }}
                     show={showCreateRepositoryModal}
+                    setShow = {setShowCreateRepositoryModal}
                     error={createRepoError}
+                    setRefresh = {setRefresh}
                     onSubmit={(repo) => createRepo(repo, true)}
                     samlpleRepoChecked={sampleRepoChecked}
                     inProgress={creatingRepo}
+                    refresh = {refresh}
                     />
 
             </Container>
@@ -126,7 +126,7 @@ const RepositoriesIndex = () => {
     return (
         <Routes>
             <Route path="/" element={<RepositoriesPage/>} />
-            <Route path=":repoId/*" element={<RepositoryPage/>} />
+            <Route path=":user/:repoId/*" element={<RepositoryPage/>} />
         </Routes>
     );
 };

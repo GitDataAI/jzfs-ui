@@ -1,38 +1,45 @@
 import React, {useEffect, useRef, useState} from "react";
 import {ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XIcon} from "@primer/octicons-react";
-import {tags, branches, commits} from '../../api';
+import {tags, branches, commits, cache} from '../../api';
 import {Nav, Badge,Form,Button,Alert,Overlay,Popover } from "react-bootstrap";
 import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../../constants";
 import { CommitListProps, RefDropdownProps, RefEntryProps, RefSelectorProps, ref, RepoPaginatorProps, ResponseProps } from "../interface/comp_interface";
 import { Commit } from "../../../pages/repositories/interface/repo_interface";
+import { repos } from "../../api/interface/Api";
 
 
-const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, withCommits, withWorkspace, withTags, amount = 300 }) => {
+const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, withWorkspace, withTags, amount = 300 }) => {
     // used for ref pagination
     const [pagination, setPagination] = useState({after: "", prefix: "", amount});
     const [refList, setRefs] = useState<{loading: boolean, payload:ResponseProps | null, error:Error | null}>({loading: true, payload: null, error: null});
     const [refType, setRefType] = useState(selected && selected.type || RefTypeBranch)
+    const user = cache.get('user')
     useEffect(() => {
         setRefs({loading: true, payload: null, error: null});
         const fetchRefs = async () => {
             try {
                 let response;
-                if (refType === RefTypeTag && repo.id) {
-                    response = await tags.list(repo.id, pagination.prefix, pagination.after, pagination.amount);
-                } else {
-                    if(repo.id)
-                    response = await branches.list(repo.id, pagination.prefix, pagination.after, pagination.amount);
-                }
-                setRefs({loading: false, payload: response, error: null});
+            //     if (refType === RefTypeTag && repo.name) {
+            //         response = await tags.list(repo.id, pagination.prefix, pagination.after, pagination.amount);
+            //     } else {
+                    if(repo.name)
+                        await repos.listBranches(user,repo.name).then(  (data)=>{
+                        response =   data.data
+                });
+                
+                // }
+                    setRefs({loading: false, payload: response, error: null});
             } catch (error) {
                 setRefs({loading: false, payload: null, error: error as Error});
             }
         };
         fetchRefs();
     }, [refType, repo.id, pagination])
+    console.log('branch:',refList.payload);
 
     // used for commit listing
     const initialCommitList = {branch: selected, commits: null, loading: false};
+    
     const [commitList, setCommitList] = useState(initialCommitList);
 
 
@@ -83,7 +90,7 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
             <CommitList
                 withWorkspace={withWorkspace}
                 commits={commitList.commits}
-                branch={commitList.branch as string}
+                branch={commitList.branch.name as string}
                 selectRef={selectRef}
                 reset={() => {
                     setCommitList(initialCommitList);
@@ -92,7 +99,7 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
 
 
     const results = refList.payload? refList.payload.results: '';
-
+                
     return (
         <div className="ref-selector">
             {form}
@@ -102,10 +109,8 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
                     <>
                         <ul className="list-group ref-list">
                             {results.map(namedRef => (
-                                <RefEntry key={namedRef.id} repo={repo} refType={refType} namedRef={namedRef.id?namedRef.id:''} selectRef={selectRef} selected={selected as ref} withCommits={refType !== RefTypeTag && withCommits} logCommits={async () => {
-                                    const data = await commits.log(repo.id?repo.id:'', namedRef.id?namedRef.id:'')
-                                    setCommitList({...commitList, branch: namedRef.id?namedRef.id:'', commits: data.results});
-                                }}/>
+                                <RefEntry repo={repo} namedRef={namedRef.name} selectRef={selectRef} refType={refType}
+                                />
                             ))}
                         </ul>
                         <Paginator results={refList.payload? refList.payload.results : []} pagination={refList.payload? refList.payload.pagination:{}} from={pagination.after} onPaginate={(after) => {
@@ -165,22 +170,20 @@ const CommitList:React.FC<CommitListProps> = ({ commits, selectRef, reset, branc
     );
 };
 
-const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, selected, logCommits, withCommits}) => {
+const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, selected, logCommits}) => {
     return (
         <li className="list-group-item" key={namedRef}>
-            {(!!selected && namedRef === selected.id) ?
+        {(!!selected && namedRef === selected.name) ?
                 <strong>{namedRef}</strong> :
                 <Button variant="link" onClick={() => {
                     selectRef({id: namedRef, type: refType});
                 }}>{namedRef}</Button>
-            }
+}
             <div className="actions">
-                {(refType === RefTypeBranch && namedRef === repo.default_branch) ? (<Badge variant="info">Default</Badge>) : <span/>}
-                {(withCommits) ? (
+               {(refType === RefTypeBranch && namedRef === repo.head) ? (<Badge variant="info">Default</Badge>) : <span/>}
                     <Button onClick={logCommits} size="sm" variant="link">
                         <ChevronRightIcon/>
                     </Button>
-                ) : (<span/>)}
             </div>
         </li>
     );
@@ -248,19 +251,12 @@ const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onC
         );
     }
 
-    const showId = (ref:ref) => {
-        if (!ref)
-            return ''
-        if (ref.type === RefTypeCommit)
-            return ref.id.substr(0, 12)
-        return ref.id
-    }
 
-    const title = prefix + (!!selected) ? `${prefix} ${selected.type}: ` : '';
+    const title = prefix + (!!selected) ? `${prefix} ${selected.type}: ` : '';    
     return (
         <>
             <Button ref={target} variant={variant} onClick={()=> { setShow(!show) }}>
-                {title} <strong>{showId(selected)}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
+                {title} <strong>{selected.name}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
             </Button>
             {cancelButton}
             {popover}

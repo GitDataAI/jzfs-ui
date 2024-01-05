@@ -29,17 +29,17 @@ export default ({ command }) => {
         port: 3000,
         proxy: {
           '/api': {
-            target: 'http://47.109.99.244:8000',
+            target: 'http://localhost:34913',
             changeOrigin: true,
             secure: false
           },
           '/oidc/login': {
-            target: 'http://47.109.99.244:8000',
+            target: 'http://localhost:34913',
             changeOrigin: false,
             secure: false
           },
           '/logout': {
-            target: 'http://47.109.99.244:8000',
+            target: 'http://localhost:34913',
             changeOrigin: false,
             secure: false
           }

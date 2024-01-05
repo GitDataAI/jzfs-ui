@@ -1,4 +1,4 @@
-import {BadRequestError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, extractError, qs} from "../index"
+import {BadRequestError, DEFAULT_LISTING_AMOUNT, NotFoundError, apiRequest, cache, extractError, qs} from "../index"
 export class Branches {
 
     async get(repoId:string, branchId:string) {
@@ -51,4 +51,45 @@ export class Branches {
         }
         return response.json();
     }
+    // 获取分支
+    async  getBranch(repository: string, refName: string) {
+        const user = cache.get('user')
+        const response = await apiRequest(`/repos/${user}/${repository}/branch?refName=${refName}`);
+        if (response.status !== 200) {
+            throw new Error(`Could not get branch: ${await extractError(response)}`);
+        }
+        return response.json();
+    }
+    // 删除分支
+    async  deleteBranch( repository: string, refName: string) {
+        const user = cache.get('user')
+        const response = await apiRequest(`/repos/${user}/${repository}/branch?refName=${refName}`, { method: 'DELETE' });
+        if (response.status !== 204) {
+            throw new Error(`Could not delete branch: ${await extractError(response)}`);
+        }
+        return response.status;
+    }
+    // 创建分支
+    async  createBranch(repository: string, branchCreation: any) {
+        const user = cache.get('user')
+        const response = await apiRequest(`/repos/${user}/${repository}/branch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(branchCreation)
+        });
+        if (response.status !== 201) {
+            throw new Error(`Could not create branch: ${await extractError(response)}`);
+        }
+        return response.json();
+    }
+    // 获取所有分支
+    async  listBranches(repository: string) {
+        const user = cache.get('user')
+        const response = await apiRequest(`/repos/${user}/${repository}/branches`);
+        if (response.status !== 200) {
+            throw new Error(`Could not list branches: ${await extractError(response)}`);
+        }
+        return response.json();
+    }
+    
 }

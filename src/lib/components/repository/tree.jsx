@@ -25,7 +25,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 
-import { commits, linkToPath, objects } from "../../api";
+import { cache, commits, linkToPath, objects } from "../../api";
 import { ConfirmationModal } from "../modals";
 import { Paginator } from "../pagination";
 import { Link } from "../nav";
@@ -36,6 +36,7 @@ import { useAPI } from "../../hooks/api";
 import noop from "lodash/noop";
 import {FaDownload} from "react-icons/fa";
 import {CommitInfoCard} from "./commits";
+import { useRouter } from "../../hooks/router";
 
 export const humanSize = (bytes) => {
   if (!bytes) return "0.0 B";
@@ -48,12 +49,13 @@ export const humanSize = (bytes) => {
 const Na = () => <span>&mdash;</span>;
 
 const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui = false }) => {
+  const {path,is_dir}= useRouter().query
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const handleCloseDeleteConfirmation = () => setShowDeleteConfirmation(false);
   const handleShowDeleteConfirmation = () => setShowDeleteConfirmation(true);
-  const deleteConfirmMsg = `are you sure you wish to delete object "${entry.path}"?`;
+  const deleteConfirmMsg = `are you sure you wish to delete object "${entry.name}"?`;
   const onSubmitDeletion = () => {
-    onDelete(entry);
+    is_dir?onDelete(entry,path):onDelete(entry);
     setShowDeleteConfirmation(false);
   };
 
@@ -76,7 +78,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          {entry.path_type === "object" && presign && (
+          {!entry.is_dir && presign && (
                <Dropdown.Item
                 onClick={async e => {
                   try {
@@ -91,18 +93,18 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
                 <LinkIcon /> Copy Presigned URL
               </Dropdown.Item>
           )}
-          {entry.path_type === "object" && (
+          {!entry.is_dir && (
             <PathLink
-              path={entry.path}
+              path={entry.name}
               reference={reference}
-              repoId={repo.id}
+              repoId={repo.name}
               as={Dropdown.Item}
               presign={presign_ui}
             >
               <DownloadIcon /> Download
             </PathLink>
           )}
-          {entry.path_type === "object" && (
+          {!entry.is_dir && (
             <Dropdown.Item
               onClick={(e) => {
                 e.preventDefault();
@@ -120,14 +122,14 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
           <Dropdown.Item
             onClick={(e) => {
               copyTextToClipboard(
-                `jzfs://${repo.id}/${reference.id}/${entry.path}`
+                `jzfs://${repo.name}/${reference.name}/${entry.name}`
               );
               e.preventDefault();
             }}
           >
             <PasteIcon /> Copy URI
           </Dropdown.Item>
-          {entry.path_type === "object" && reference.type === RefTypeBranch && (
+          {!entry.is_dir && reference.type === RefTypeBranch && (
             <>
               <Dropdown.Divider />
               <Dropdown.Item
@@ -181,7 +183,7 @@ const StatModal = ({ show, onHide, entry }) => {
                 <strong>Path</strong>
               </td>
               <td>
-                <code>{entry.path}</code>
+                <code>{entry.name}</code>
               </td>
             </tr>
             <tr>
@@ -189,7 +191,7 @@ const StatModal = ({ show, onHide, entry }) => {
                 <strong>Physical Address</strong>
               </td>
               <td>
-                <code>{entry.physical_address}</code>
+                <code>{entry.hash}</code>
               </td>
             </tr>
             <tr>
@@ -214,13 +216,13 @@ const StatModal = ({ show, onHide, entry }) => {
                 .unix(entry.mtime)
                 .format("MM/DD/YYYY HH:mm:ss")})`}</td>
             </tr>
-            {entry.content_type && (
+            {!entry.is_dir && (
               <tr>
                 <td>
                   <strong>Content-Type</strong>
                 </td>
                 <td>
-                  <code>{entry.content_type}</code>
+                  <code>{entry.is_dir}</code>
                 </td>
               </tr>
             )}
@@ -301,9 +303,9 @@ const OriginModal = ({ show, onHide, entry, repo, reference }) => {
             <Link
               className="me-2"
               href={{
-                pathname: "/repositories/:repoId/changes",
-                params: { repoId: repo.id },
-                query: { ref: reference.id },
+                pathname: "/repositories/:name/:repoId/changes",
+                params: { repoId: repo.name },
+                query: { ref: reference.name },
               }}
             >
               uncommitted change
@@ -328,8 +330,12 @@ const OriginModal = ({ show, onHide, entry, repo, reference }) => {
 };
 
 const PathLink = ({ repoId, reference, path, children, presign = false, as = null }) => {
+  const user = cache.get('user')
+ const urllinkToPath = ({ repoId,reference, path}) => {
+  return `/api/v1/object/${user}/${repoId}?refName=${reference.name}&path=${path}&type=${reference.type}`;
+};
   const name = path.split("/").pop();
-  const link = linkToPath(repoId, reference.id, path, presign);
+  const link = urllinkToPath({repoId, reference, path});
   if (as === null)
     return (
       <a href={link} download={name}>
@@ -339,47 +345,66 @@ const PathLink = ({ repoId, reference, path, children, presign = false, as = nul
   return React.createElement(as, { href: link, download: name }, children);
 };
 
-const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions }) => {
+export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
+  const {is_dir,path:dirpath} = useRouter().query
   let rowClass = "change-entry-row ";
-  switch (entry.diff_type) {
-    case "changed":
-      rowClass += "diff-changed";
-      break;
-    case "added":
-      rowClass += "diff-added";
-      break;
-    case "removed":
-      rowClass += "diff-removed";
-      break;
-    default:
-      break;
-  }
-
   const subPath = path.lastIndexOf("/") !== -1 ? path.substr(0, path.lastIndexOf("/")) : "";
   const buttonText =
-      subPath.length > 0 ? entry.path.substr(subPath.length + 1) : entry.path;
+      subPath.length > 0 ? entry.name.substr(subPath.length + 1) : entry.name;
 
-  const params = { repoId: repo.id };
-  const query = { ref: reference.id, path: entry.path };
-
+  const user = cache.get('user')
+  const params = { repoId: repo.name,user };
+  const query = { ref: reference.name, path: entry.name,type:reference.type};
+  console.log('text:',buttonText,'params:', params,'query:', query);
   let button;
-  if (entry.path_type === "common_prefix") {
-    button = (
-      <Link href={{ pathname: "/repositories/:repoId/objects", query, params }}>
-        {buttonText}
-      </Link>
-    );
-  } else if (entry.diff_type === "removed") {
-    button = <span>{buttonText}</span>;
-  } else {
+  if(entry.is_dir){
     const filePathQuery = {
       ref: query.ref,
       path: query.path,
+      type: query.type,
+      is_dir: entry.is_dir
+    }
+    button = (
+      <Link
+        href={{
+          pathname: "/repositories/:user/:repoId/objects",
+          query: filePathQuery,
+          params: params,
+        }}
+      >
+        {buttonText}
+      </Link>
+    )
+  } else if(!entry.is_dir && is_dir) {
+    const filePathQuery = {
+      ref: query.ref,
+      path:dirpath +'/'+ query.path,
+      type: query.type,
+      filepath : query.path
     };
     button = (
       <Link
         href={{
-          pathname: "/repositories/:repoId/object",
+          pathname: "/repositories/:user/:repoId/object",
+          query: filePathQuery,
+          params: params,
+        }}
+      >
+        {buttonText}
+      </Link>
+    );
+  } else if(!entry.is_dir && subPath.length>0)  {
+    return
+  }else {
+  const filePathQuery = {
+      ref: query.ref,
+      path: query.path,
+      type: query.type
+    };
+    button = (
+      <Link
+        href={{
+          pathname: "/repositories/:user/:repoId/object",
           query: filePathQuery,
           params: params,
         }}
@@ -396,9 +421,9 @@ const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions 
     size = (
       <OverlayTrigger
         placement="bottom"
-        overlay={<Tooltip>{entry.size_bytes} bytes</Tooltip>}
+        overlay={<Tooltip>{entry.size} bytes</Tooltip>}
       >
-        <span>{humanSize(entry.size_bytes)}</span>
+        <span>{humanSize(entry.size)}</span>
       </OverlayTrigger>
     );
   }
@@ -412,11 +437,11 @@ const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions 
         placement="bottom"
         overlay={
           <Tooltip>
-            {dayjs.unix(entry.mtime).format("MM/DD/YYYY HH:mm:ss")}
+            {dayjs.unix(Date.parse(entry.updated_at)/1000).format("MM/DD/YYYY HH:mm:ss")}
           </Tooltip>
         }
       >
-        <span>{dayjs.unix(entry.mtime).fromNow()}</span>
+        <span>{dayjs.unix(Date.parse(entry.updated_at)/1000).fromNow()}</span>
       </OverlayTrigger>
     );
   }
@@ -471,8 +496,8 @@ const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions 
         reference={reference}
         entry={entry}
         onDelete={onDelete}
-        presign={config.config.pre_sign_support}
-        presign_ui={config.config.pre_sign_support_ui}
+        presign={repo.name}
+        presign_ui={repo.name}
       />
     );
   }
@@ -482,7 +507,7 @@ const EntryRow = ({ config, repo, reference, path, entry, onDelete, showActions 
       <tr className={rowClass}>
         <td className="diff-indicator">{diffIndicator}</td>
         <td className="tree-path">
-          {entry.path_type === "common_prefix" ? (
+          {entry.is_dir === true ? (
             <FileDirectoryIcon />
           ) : (
             <FileIcon />
@@ -524,7 +549,7 @@ function pathParts(path, isPathToFile) {
 }
 
 const buildPathURL = (params, query) => {
-  return { pathname: "/repositories/:repoId/objects", params, query };
+  return { pathname: "/repositories/:user/:repoId/objects", params, query };
 };
 
 export const URINavigator = ({
@@ -535,37 +560,42 @@ export const URINavigator = ({
   relativeTo = "",
   pathURLBuilder = buildPathURL,
   isPathToFile = false,
-  hasCopyButton = false
+  hasCopyButton = false,
+  filepath
 }) => {
   const parts = pathParts(path, isPathToFile);
-  const params = { repoId: repo.id };
-
+  const user = cache.get('user')
+  const params = {repoId: repo.name?repo.name:repo,user};
+  const query = {type:reference.type,path:filepath?filepath:path,is_dir:true,ref:reference.name}
+  console.log('repo:',repo,'query:',query);
   return (
     <div className="d-flex">
       <div className="lakefs-uri flex-grow-1">
         {relativeTo === "" ? (
           <>
             <strong>{"jzfs://"}</strong>
-            <Link href={{ pathname: "/repositories/:repoId/objects", params }}>
-              {repo.id}
+            <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
+              {repo.name}
             </Link>
             <strong>{"/"}</strong>
             <Link
-              href={{
-                pathname: "/repositories/:repoId/objects",
-                params,
-                query: { ref: reference.id },
-              }}
-            >
+              href={{pathname: "/repositories/:user/:repoId/objects",params}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
-                : reference.id}
+                : reference.name}
             </Link>
             <strong>{"/"}</strong>
+            <Link  href={{
+                pathname: "/repositories/:user/:repoId/objects",
+                params,
+                query
+              }}>
+            {filepath?filepath:path==='/'? '':path}
+            </Link>
           </>
         ) : (
           <>
-            <Link href={pathURLBuilder(params, { path: "" })}>{relativeTo}</Link>
+            <Link href={pathURLBuilder(params, {path})}>{relativeTo}</Link>
             <strong>{"/"}</strong>
           </>
         )}
@@ -576,7 +606,7 @@ export const URINavigator = ({
               .slice(0, i + 1)
               .map((p) => p.name)
               .join("/") + "/";
-          const query = { path, ref: reference.id };
+          const query = { path, ref: reference };
           const edgeElement =
             isPathToFile && i === parts.length - 1 ? (
               <span>{part.name}</span>
@@ -592,14 +622,14 @@ export const URINavigator = ({
       <div className="object-viewer-buttons">
         {hasCopyButton &&
         <ClipboardButton
-            text={`jzfs://${repo.id}/${reference.id}/${path}`}
+            text={`jzfs://${repo.name}/${reference.id}/${path}`}
             variant="link"
             size="sm"
             onSuccess={noop}
             onError={noop}
             className={"me-1"}
             tooltip={"copy URI to clipboard"}/>}
-        {(downloadUrl) && (
+        {(
           <a
               href={downloadUrl}
               download={path.split('/').pop()}
@@ -612,8 +642,8 @@ export const URINavigator = ({
   );
 };
 
-const GetStarted = ({ config, onUpload, onImport }) => {
-  const importDisabled = !config.config.import_support;
+const GetStarted = ({ onUpload, onImport }) => {
+  const importDisabled = true;
   return (
     <Container className="m-4 mb-5">
       <h2 className="mt-2">To get started with this repository:</h2>
@@ -629,7 +659,7 @@ const GetStarted = ({ config, onUpload, onImport }) => {
           >
             Import
           </Button>
-          &nbsp;data from {config.config.blockstore_type}. Or, see the&nbsp;
+          &nbsp;data from jzfs. Or, see the&nbsp;
           <a
             href="https://docs.pando.network/howto/import.html"
             target="_blank"
@@ -678,13 +708,12 @@ const GetStarted = ({ config, onUpload, onImport }) => {
 };
 
 export const Tree = ({
-  config,
   repo,
   reference,
   results,
   after,
   onPaginate,
-  nextPage,
+  nextPage='',
   onUpload,
   onImport,
   onDelete,
@@ -692,28 +721,29 @@ export const Tree = ({
   path = "",
 }) => {
   let body;
+  console.log('repo:',repo,'branch:',reference,'data:',results);
+
   if (results.length === 0 && path === "" && reference.type === RefTypeBranch) {
     // empty state!
     body = (
-      <GetStarted config={config} onUpload={onUpload} onImport={onImport} />
+      <GetStarted  onUpload={onUpload} onImport={onImport} />
     );
   } else {
     body = (
       <>
         <Table borderless size="sm">
           <tbody>
-            {results.map((entry) => (
+            { results? results.map((entry) => (
               <EntryRow
-                config={config}
-                key={entry.path}
+                key={entry.hash}
                 entry={entry}
-                path={path}
+                path={entry.name}
                 repo={repo}
                 reference={reference}
                 showActions={showActions}
                 onDelete={onDelete}
               />
-            ))}
+            )):<></>}
           </tbody>
         </Table>
       </>

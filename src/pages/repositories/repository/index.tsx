@@ -44,7 +44,7 @@ const RepositoryPage = () => {
             path="settings/branches/*"
             element={<RepositorySettingsBranchesPage />}
           />
-          <Route path="/" element={<Navigate to="objects" />} />
+          <Route path="/" element={<Navigate to=":user/" />} />
         </Routes>
       </StorageConfigProvider>
     </RefContextProvider>

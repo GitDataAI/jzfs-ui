@@ -25,7 +25,7 @@ type URLBuilderInput = URLDetails | string;
 // TODO(elad): Return URL
 export const buildURL = (url: URLBuilderInput): string => {
   if (typeof url === "string") return url;
-  // otherwise, assume query, params and pathname
+  // otherwise, assume query, params and pathname  
   const path = generatePath(url.pathname, url.params ? url.params : {});
   if (!url.query) return path;
   const definedQuery = Object.fromEntries(

@@ -1,5 +1,5 @@
 import {DependencyList, useEffect, useState} from 'react';
-import {AuthenticationError} from "../api";
+import { AuthenticationError, AuthorizationError} from "../api";
 import {useRouter} from "./router";
 import { APIState, InitialPaginationState, PromiseFunction,} from '../components/interface/comp_interface';
 
@@ -36,9 +36,9 @@ export const useAPIWithPagination = (promise: ()=> Promise<any>, deps: Dependenc
         // calculate current state on API response
         setPagination({
             error: null,
-            nextPage: (!!response.pagination && response.pagination.has_more) ? response.pagination.next_offset : null,
+            nextPage: (!!response.data.pagination && response.data.pagination.has_more) ? response.data.pagination.next_offset : null,
             loading: false,
-            results: response.results
+            results: response.data.results
         });
     }, [response, loading, error]);
 
@@ -56,16 +56,17 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
     const router = useRouter();
     const [request, setRequest] = useState(initialAPIState);
     const [login, setLogin] = useState(false);
-
+    
     useEffect(() => {
         if (login) {
             const loginPathname = '/auth/login';
+            console.log(router);
             if (router.route === loginPathname) {
                 return;
             }
             router.push({
                 pathname: loginPathname,
-                query: {next: router.route, redirected: '' + true},
+                query: { redirected: '' + true},
                 params:{}
             });
             setLogin(false);
@@ -84,8 +85,10 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
                     response,
                     responseHeaders:null,
                 });
-            } catch (error: unknown | Error | null) {
-                if (error instanceof AuthenticationError) {
+            } catch (error: unknown | Error | null) {         
+                       
+                if (error.status == 401) {
+                    
                     if (isMounted) {
                         setLogin(true);
                     }

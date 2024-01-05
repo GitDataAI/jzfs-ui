@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 import Layout from "../../lib/components/layout";
 import {Button,Col,Form,Card,Row} from "react-bootstrap";
-import {auth, AuthenticationError, setup, SETUP_STATE_INITIALIZED} from "../../lib/api";
+import {auth as Auth, AuthenticationError, cache, setup, SETUP_STATE_INITIALIZED} from "../../lib/api";
 import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
 import {useAPI} from "../../lib/hooks/api";
+import { auth, users } from "../../lib/api/interface/Api";
 
 interface LoginConfig {
     login_url: string;
@@ -19,22 +20,35 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     const router = useRouter();
     const [loginError, setLoginError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
-   
+    const reghandleclick = (e) =>{
+        e.preventDefault();
+        router.push('/auth/register')
+    }
+    const loghandleclick = (e) =>{
+        e.preventDefault();
+        router.push('/auth/login')
+    }
     return (
-        <Row>
-            <Col md={{offset: 4, span: 4}}>
-                <Card className="login-widget">
-                    <Card.Header>Login</Card.Header>
-                    <Card.Body>
+        <Row className="justify-content-center align-items-center">
+            <Col md={{offset: 5, span: 8}} >
+                <Card className="login-widget jiaozi-login">
+                <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
+                        <Card.Body>
                         <Form onSubmit={async (e) => {
                             e.preventDefault()
                             const form = e.target as HTMLFormElement;
                             const username = form.elements.namedItem('username') as HTMLInputElement;
                             const password = form.elements.namedItem('password') as HTMLInputElement;
                             try {
-                                await auth.login(username.value, password.value)
-                                setLoginError(null);
-                                router.push(next ? next : '/repositories');
+                                const response = await auth.login({name:username.value,password:password.value})
+                                    Auth.clearCurrentUser()
+                                    await users.getUserInfo().then((response)=>{
+                                        cache.set('user', response.data.name)
+                                        console.log(window.localStorage);
+                                        setLoginError(null);
+                                        router.push(next ? next : '/repositories');
+                                    })
+                                   
                             } catch(err) {
                                 if (err instanceof AuthenticationError && err.status === 401) {
                                     const contents = {__html: `${loginConfig.login_failed_message}` ||
@@ -63,10 +77,12 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                             document.cookie = `${cookie}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
                                         }
                                     );
-
-if (loginConfig.fallback_login_url) {
-    window.location = loginConfig.fallback_login_url;
-}                                }}>{loginConfig.fallback_login_label || 'Try another way to login'}</Button>
+                        if (loginConfig.fallback_login_url) 
+                        {
+                            window.location = loginConfig.fallback_login_url;
+                        }                                }}>
+                        {loginConfig.fallback_login_label || 'Try another way to login'}
+                            </Button>
                                 : ""
                             }
                         </div>

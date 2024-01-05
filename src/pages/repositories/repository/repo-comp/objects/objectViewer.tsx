@@ -1,20 +1,22 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box } from "@mui/material";
 import Alert from "react-bootstrap/Alert";
 import Card from "react-bootstrap/Card";
 
 import { useAPI } from "../../../../../lib/hooks/api";
-import { useQuery } from "../../../../../lib/hooks/router";
-import { objects } from "../../../../../lib/api";
+import { useQuery, useRouter } from "../../../../../lib/hooks/router";
+import { cache, objects } from "../../../../../lib/api";
 import { ObjectRenderer } from "../../fileRenderers";
 import { AlertError } from "../../../../../lib/components/controls";
-import { URINavigator } from "../../../../../lib/components/repository/tree";
+import { EntryRow, Tree, URINavigator } from "../../../../../lib/components/repository/tree";
 import { RefTypeBranch } from "../../../../../constants";
 import { RepositoryPageLayout } from "../../../../../lib/components/repository/layout";
-import { RefContextProvider } from "../../../../../lib/hooks/repo";
+import { RefContextProvider, useRefs } from "../../../../../lib/hooks/repo";
 import { useStorageConfig } from "../../../../../lib/hooks/storageConfig";
 import { linkToPath } from "../../../../../lib/api";
+import { object, repos } from "../../../../../lib/api/interface/Api";
+import { Table } from "react-bootstrap";
 
 // import "../../../styles/ipynb.css";
 // import "../../../styles/quickstart.css";
@@ -57,48 +59,51 @@ export const getContentType = (headers: Headers): string | null => {
   return headers.get("Content-Type") ?? null;
 };
 
-const FileObjectsViewerPage = () => {
-  const config = useStorageConfig();
-  const { repoId } = useParams<ObjectViewerPathParams>();
-  const queryString = useQuery<ObjectViewerQueryString>();
-  const refId = queryString["ref"] ?? "";
-  const path = queryString["path"] ?? "";
-  const { response, error, loading } = useAPI(() => {
-    return objects.head(repoId, refId, path);
-  }, [repoId, refId, path]);
-
-  let content;
-  if (loading || config.loading) {
+const FileObjectsViewerPage =  () => {
+  const router = useRouter() 
+  const {repoId,user} = router.params;  
+  const {path,ref,type,filepath} = router.query
+   console.log('file router:',router);
+  const {repo,reference,loading,error} = useRefs()
+  const { response,loading:load,error:err} = useAPI( () => {
+    return  object.headObject(user,repoId,{ refName: ref,path,type});
+  }, [repoId, ref, path]);
+      let content;
+  if (loading || load) {
     content = <Loading />;
-  } else if (error) {
+  } else if (error||err) {
     content = <AlertError error={error} />;
   } else {
     const fileExtension = getFileExtension(path);
     // We'll need to convert the API service to get rid of this any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const contentType = getContentType((response as any)?.headers);
+    
+    const contentType = getContentType(response.Headers);
     const sizeBytes = parseInt(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (response as any)?.headers.get("Content-Length")
     );
+    console.log('repo:',repo,'ref:',reference);
     content = (
       <FileContents
-        repoId={repoId || ""}
+        repo={repo}
         // ref type is unknown since we lost that context while reaching here (and it's not worth a url param).
         // Effectively it means that if the ref is commit, we won't truncate it in the URI navigator,
         // which is a better behaviour than truncating it when it's a branch/tag.
-        reference={{ id: refId, type: RefTypeBranch}}
+        reference={reference}
         path={path}
+        type={type}
         fileExtension={fileExtension}
         contentType={contentType}
         sizeBytes={sizeBytes}
         error={error}
         loading={loading}
-        presign={config.pre_sign_support_ui}
+        presign={true}
+        filepath
       />
     );
   }
-
+  
   return (
     <RefContextProvider>
       <RepositoryPageLayout activePage={"objects"}>
@@ -109,9 +114,10 @@ const FileObjectsViewerPage = () => {
 };
 
 export const FileContents: FC<FileContentsProps> = ({
-  repoId,
+  repo,
   reference,
   path,
+  type,
   loading,
   error,
   contentType = null,
@@ -119,16 +125,17 @@ export const FileContents: FC<FileContentsProps> = ({
   sizeBytes = -1,
   showFullNavigator = true,
   presign = false,
+  filepath = ''
 }) => {
-  const objectUrl = linkToPath(repoId, reference.id, path, presign);
-
+  const user = cache.get('user')
+  const urllinkToPath = ({ repoId,reference, path}) => {
+    return `/api/v1/object/${user}/${repoId}?refName=${reference}&path=${path}&type=${type}`;
+  };
+  const objectUrl = urllinkToPath({ repoId:repo.name, reference:reference.name , path});
   if (loading || error) {
     return <></>;
   }
 
-  const repo = {
-    id: repoId,
-  };
 
   const titleComponent = showFullNavigator ? (
     <URINavigator
@@ -138,6 +145,7 @@ export const FileContents: FC<FileContentsProps> = ({
       isPathToFile={true}
       downloadUrl={objectUrl}
       hasCopyButton={true}
+      filepath
     />
   ) : (
     <span>{path}</span>
@@ -151,9 +159,10 @@ export const FileContents: FC<FileContentsProps> = ({
       <Card.Body className={"file-content-body"}>
         <Box sx={{ mx: 1 }}>
           <ObjectRenderer
-            repoId={repoId}
-            refId={reference.id}
+            repoId={repo.name}
             path={path}
+            branch={reference.name}
+            type={type}
             fileExtension={fileExtension}
             contentType={contentType}
             sizeBytes={sizeBytes}

@@ -1,6 +1,6 @@
 import React, {useContext, useState, createContext, useEffect} from "react";
 
-import {repositories, branches, commits, NotFoundError, tags, BadRequestError} from "../api";
+import {repositories, branches, commits, NotFoundError, tags, BadRequestError, cache} from "../api";
 import {useRouter} from "./router";
 import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../constants";
 
@@ -8,25 +8,26 @@ import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../constants";
 export const resolveRef = async (repoId:string, refId:string) => {
     // try branch
     try {
-        const branch = await branches.get(repoId, refId);
-        return {id: branch.id, type: RefTypeBranch};
+        const branch = await branches.getBranch(repoId, refId);
+        
+        return {...branch,type: RefTypeBranch};
     } catch(error) {
         if (!(error instanceof NotFoundError) && !(error instanceof BadRequestError)) {
             throw error;
         }
     }
-    // try tag
-    try {
-        const tag = await tags.get(repoId, refId);
-        return {id: tag.id, type: RefTypeTag};
-    } catch(error) {
-        if (!(error instanceof NotFoundError) && !(error instanceof BadRequestError)) {
-            throw error;
-        }
-    }
+    // // try tag
+    // try {
+    //     const tag = await tags.get(repoId, refId);
+    //     return {id: tag.id, type: RefTypeTag};
+    // } catch(error) {
+    //     if (!(error instanceof NotFoundError) && !(error instanceof BadRequestError)) {
+    //         throw error;
+    //     }
+    // }
     // try commit
     try {
-        const commit = await commits.get(repoId, refId);
+        const commit = await commits.getCommitsInRepository(repoId, refId);
         return {id: commit.id,  type: RefTypeCommit};
     } catch(error) {
         if (!(error instanceof NotFoundError)) {
@@ -61,17 +62,17 @@ export const RefContextProvider = ({ children }) => {
     const router = useRouter();
     const { repoId } = router.params;
     const {ref, compare} = router.query;
-
     const [refState, setRefState] = useState(refContextInitialState);
-
+    console.log('repoId:',repoId,'ref:',ref);
+    
     useEffect(() => {
         const fetch = async () => {
             setRefState(refContextInitialState);
             if (!repoId) return;
             try {
-                const repo = await repositories.get(repoId);
-                const reference = await resolveRef(repoId, (ref) ? ref : repo.default_branch);
-                const comparedRef = await resolveRef(repoId, (compare)? compare : repo.default_branch);
+                const repo = await repositories.getRepository(repoId);
+                const reference = await resolveRef(repoId, ref?ref:'main');
+                const comparedRef = await resolveRef(repoId, ref?ref:'main');
                 setRefState({...refContextInitialState, loading: false, repo, reference, compare: comparedRef});
             } catch (err) {
                 setRefState({...refContextInitialState, loading: false, error: err});

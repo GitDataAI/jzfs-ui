@@ -146,10 +146,10 @@ export interface DebouncedFormControlProps extends FormControlProps {
 export interface APIState {
     loading: boolean;
     error: Error | null;
-    response: ResponseProps | null; 
+    response: any; 
     responseHeaders: any | null; 
 }
-export interface ResponseProps {
+export interface ResponseProps extends Response {
     upgrade_url: string | undefined;
     friendly_name: string;
     default_namespace_prefix: string;
@@ -299,7 +299,7 @@ export type WrappedComponentProps = WrapLinkProps & {
 export type WrappedComponent = ComponentType<WrappedComponentProps>;
 
 export interface CompLinkProps extends Omit<React.ComponentProps<typeof RouterLink>, 'to'> {
-    href?: { pathname: string; params?: { repoId: string; commitId?:string}; } | string;
+    href?: { pathname: string; params?: { repoId: string; commitId?:string; user?:string }; } | string;
     to?: string;
     children?: ReactNode;
     components?: any;

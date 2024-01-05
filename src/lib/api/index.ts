@@ -14,6 +14,7 @@ import { Statistics } from "./Statistics";
 import { Staging } from "./Staging";
 import { OTFDiffs } from "./OTFDiffs";
 import { Import } from "./Import";
+import mergeHeaders from 'merge-headers';
 import { AdditionalHeaders, LinkToPathParams, QueryParts, RequestData, UploadWithProgress, _Headers, _Response } from "./interface";
 
 export const API_ENDPOINT = '/api/v1';
@@ -23,7 +24,7 @@ export const SETUP_STATE_INITIALIZED = "initialized";
 export const SETUP_STATE_NOT_INITIALIZED = "not_initialized";
 
 class LocalCache {
-    get(key:string) {
+    get(key: string) {
         const value = localStorage.getItem(key);
         if (value !== null) {
             return JSON.parse(value);
@@ -31,18 +32,18 @@ class LocalCache {
         return null;
     }
 
-    set(key:string, value:string) {
+    set(key: string, value: string) {
         localStorage.setItem(key, JSON.stringify(value));
     }
 
-    delete(key:string) {
+    delete(key: string) {
         localStorage.removeItem(key);
     }
 }
 
 export const cache = new LocalCache();
 
-export const linkToPath = ({repoId, branchId, path, presign = false}:LinkToPathParams) => {
+export const linkToPath = ({ repoId, branchId, path, presign = false }: LinkToPathParams) => {
     const query = qs({
         path,
         presign,
@@ -50,12 +51,12 @@ export const linkToPath = ({repoId, branchId, path, presign = false}:LinkToPathP
     return `${API_ENDPOINT}/repositories/${repoId}/refs/${branchId}/objects?${query}`;
 };
 
-export const qs = (queryParts:QueryParts) => {
+export const qs = (queryParts: QueryParts) => {
     const parts = Object.keys(queryParts).map(key => [key, String(queryParts[key])]);
     return new URLSearchParams(parts).toString();
 };
 
-export const extractError = async (response:_Response) => {
+export const extractError = async (response: Response) => {
     let body;
     if (response.headers.get('Content-Type') === 'application/json') {
         const jsonBody = await response.json();
@@ -66,20 +67,21 @@ export const extractError = async (response:_Response) => {
     return body;
 };
 
-export const defaultAPIHeaders = {
+export const defaultAPIHeaders = new Headers({
     "Accept": "application/json",
     "Content-Type": "application/json",
     "X-Lakefs-Client": "lakefs-webui/__buildVersion",
-};
+});
 
 const authenticationError = "error authenticating request"
 
-export const apiRequest = async (uri:string, requestData: RequestData = {}, additionalHeaders: _Headers = {}) => {
-    const headers = new Headers({
-        ...defaultAPIHeaders,
-        ...additionalHeaders,
-    });
-    const response = await fetch(`${API_ENDPOINT}${uri}`, {headers, ...requestData});
+export const apiRequest = async (uri: string, requestData: RequestData = {}, additionalHeaders?: Headers) => {
+    let headers = defaultAPIHeaders
+    if (additionalHeaders) {
+        headers = mergeHeaders(defaultAPIHeaders, additionalHeaders)
+    }
+
+    const response = await fetch(`${API_ENDPOINT}${uri}`, { headers, ...requestData });
 
     // check if we're missing credentials
     if (response.status === 401) {
@@ -96,21 +98,21 @@ export const apiRequest = async (uri:string, requestData: RequestData = {}, addi
 
 // helper errors
 export class NotFoundError extends Error {
-    constructor(message:string) {
+    constructor(message: string) {
         super(message)
         this.name = this.constructor.name;
     }
 }
 
 export class BadRequestError extends Error {
-    constructor(message:string) {
+    constructor(message: string) {
         super(message)
         this.name = this.constructor.name;
     }
 }
 
 export class AuthorizationError extends Error {
-    constructor(message:string) {
+    constructor(message: string) {
         super(message);
         this.name = this.constructor.name;
     }
@@ -118,7 +120,7 @@ export class AuthorizationError extends Error {
 
 export class AuthenticationError extends Error {
     status: number;
-    constructor(message:string, status:number) {
+    constructor(message: string, status: number) {
         super(message);
         this.status = status;
         this.name = this.constructor.name;
@@ -126,8 +128,8 @@ export class AuthenticationError extends Error {
 }
 
 export class MergeError extends Error {
-        payload:Record<string, string>;
-    constructor(message: string , payload: Record<string, string>) {
+    payload: Record<string, string>;
+    constructor(message: string, payload: Record<string, string>) {
         super(message);
         this.name = this.constructor.name;
         this.payload = payload;
@@ -135,8 +137,8 @@ export class MergeError extends Error {
 }
 
 export class RepositoryDeletionError extends Error {
-        repoId:string;
-    constructor(message:string, repoId:string) {
+    repoId: string;
+    constructor(message: string, repoId: string) {
         super(message);
         this.name = this.constructor.name;
         this.repoId = repoId;
@@ -147,7 +149,7 @@ export class RepositoryDeletionError extends Error {
 
 // uploadWithProgress uses good ol' XMLHttpRequest because progress indication in fetch() is
 //  still not well supported across browsers (see https://stackoverflow.com/questions/35711724/upload-progress-indicators-for-fetch).
-export const uploadWithProgress:UploadWithProgress = (url, file, method = 'POST', onProgress, additionalHeaders: AdditionalHeaders = {}) => {
+export const uploadWithProgress: UploadWithProgress = (url, file, method = 'POST', onProgress, additionalHeaders: AdditionalHeaders = {}) => {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('progress', event => {
@@ -156,13 +158,13 @@ export const uploadWithProgress:UploadWithProgress = (url, file, method = 'POST'
             }
         });
         xhr.addEventListener('load', () => {
-          resolve({
-              status: xhr.status,
-              body: xhr.responseText,
-              contentType: xhr.getResponseHeader('Content-Type'),
-              etag: xhr.getResponseHeader('ETag'),
-              contentMD5: xhr.getResponseHeader('Content-MD5'),
-          })
+            resolve({
+                status: xhr.status,
+                body: xhr.responseText,
+                contentType: xhr.getResponseHeader('Content-Type'),
+                etag: xhr.getResponseHeader('ETag'),
+                contentMD5: xhr.getResponseHeader('Content-MD5'),
+            })
         });
         xhr.addEventListener('error', () => reject(new Error('Upload Failed')));
         xhr.addEventListener('abort', () => reject(new Error('Upload Aborted')));
