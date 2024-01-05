@@ -29,7 +29,6 @@ export const TreeContainer= ({
   onImport,
   refreshToken
 }) => {
-  console.log('path:',path);
   
   const user = cache.get('user')
   const { response, error, loading } = useAPI(async() =>

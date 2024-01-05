@@ -35,7 +35,6 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
         };
         fetchRefs();
     }, [refType, repo.id, pagination])
-    console.log('branch:',refList.payload);
 
     // used for commit listing
     const initialCommitList = {branch: selected, commits: null, loading: false};
