@@ -63,7 +63,6 @@ const FileObjectsViewerPage =  () => {
   const router = useRouter() 
   const {repoId,user} = router.params;  
   const {path,ref,type,filepath} = router.query
-   console.log('file router:',router);
   const {repo,reference,loading,error} = useRefs()
   const { response,loading:load,error:err} = useAPI( () => {
     return  object.headObject(user,repoId,{ refName: ref,path,type});
@@ -83,7 +82,6 @@ const FileObjectsViewerPage =  () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (response as any)?.headers.get("Content-Length")
     );
-    console.log('repo:',repo,'ref:',reference);
     content = (
       <FileContents
         repo={repo}

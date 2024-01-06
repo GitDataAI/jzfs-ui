@@ -99,12 +99,17 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
               <InfoIcon /> Object Info
             </Dropdown.Item>
 
+          {/* <Dropdown.Item onClick={handleShowObjectOrigin}>
+            <LogIcon /> Blame
+          </Dropdown.Item> */}
+
           <Dropdown.Item
             onClick={(e) => {
               copyTextToClipboard(
                 `http://localhost:3000/api/v1/object/${user}/${repo.name}?refName=${reference.name}&path=${entry.name}&type=${reference.type}`
                 ,
                 ()=>{
+                  console.log(e);
                 }
               );
               e.preventDefault();
@@ -112,7 +117,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
           >
             <PasteIcon /> Copy URI
           </Dropdown.Item>
-          {/* {!entry.is_dir && reference.type === RefTypeBranch && (
+          {!entry.is_dir && reference.type === RefTypeBranch && (
             <>
               <Dropdown.Divider />
               <Dropdown.Item
@@ -124,7 +129,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
                 <TrashIcon /> Delete
               </Dropdown.Item>
             </>
-          )} */}
+          )}
         </Dropdown.Menu>
       </Dropdown>
 
@@ -153,6 +158,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
 };
 
 const StatModal = ({ show, onHide, entry }) => {
+  console.log(entry);
   return (
     <Modal show={show} onHide={onHide} size={"xl"}>
       <Modal.Header closeButton>
@@ -326,6 +332,7 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
   const user = cache.get('user')
   const params = { repoId: repo.name,user };
   const query = { ref: reference.name, path: entry.name,type:reference.type};
+  console.log('text:',buttonText,'params:', params,'query:', query);
   let button;
   if(entry.is_dir){
     const filePathQuery = {
@@ -537,6 +544,7 @@ export const URINavigator = ({
   const user = cache.get('user')
   const params = {repoId: repo.name?repo.name:repo,user};
   const query = {type:reference.type,path:filepath?filepath:path,is_dir:true,ref:reference.name}
+  console.log('repo:',repo,'query:',query);
   return (
     <div className="d-flex">
       <div className="lakefs-uri flex-grow-1">
@@ -690,6 +698,7 @@ export const Tree = ({
   path = "",
 }) => {
   let body;
+  console.log('repo:',repo,'branch:',reference,'data:',results);
 
   if (results.length === 0 && path === "" && reference.type === RefTypeBranch) {
     // empty state!
@@ -726,7 +735,6 @@ export const Tree = ({
         </Card.Header>
         <Card.Body>{body}</Card.Body>
       </Card>
-
     </div>
   );
 };

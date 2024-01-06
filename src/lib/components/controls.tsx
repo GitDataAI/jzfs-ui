@@ -128,7 +128,7 @@ export const ActionsBar:React.FC<ActionsBarProps> = ({ children }) => {
 
 export const copyTextToClipboard:CopyTextToClipboard = async (text, onSuccess, onError) => {
     const textArea = document.createElement('textarea');
-
+    
     //
     // *** This styling is an extra step which is likely not required. ***
     //
@@ -165,19 +165,20 @@ export const copyTextToClipboard:CopyTextToClipboard = async (text, onSuccess, o
 
     // Avoid flash of white box if rendered for any reason.
     textArea.style.background = 'transparent';
-
+    
     if(typeof text === 'string') textArea.value = text;
-
+    
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
 
     let err = null;
+    
     try {
-        if ('clipboard' in navigator) {
-            text === 'string'? await navigator.clipboard.writeText(text) :  new Error('text\'s type is Array<string>');
+        if ('clipboard' in navigator) {            
+            typeof text === 'string'? await navigator.clipboard.writeText(text) :  new Error('text\'s type is Array<string>');
         } else {
-            text === 'string'? document.execCommand('copy', true, text):  new Error('text\'s type is Array<string>');
+            typeof text === 'string'? document.execCommand('copy', true, text):  new Error('text\'s type is Array<string>');
         }
     } catch (e) {
         err = e;

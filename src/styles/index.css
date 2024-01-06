@@ -1,18 +1,47 @@
 body {
   background-color: #f1f3f8;
+  background-repeat: repeat;
 }
 a {
   color: inherit;
   text-decoration: none;
+}
+.login-box {
+  display: flex;
+}
+.login-display {
+  width: 400px;
+  height: 450px;
+  margin-top: 200px;
+  border-radius: 5px 0 0 5px;
+  background-image: url(../../pub/space-7073093_1280.png);
+}
+.login-display .tittle {
+  display: flex;
+  justify-content: center;
+}
+.login-display .tittle h1 {
+  color: white;
+  font-size: 30px;
+  margin: 30px;
+}
+.login-display .tittle h1 img {
+  width: 50px;
 }
 .login-widget.jiaozi-login.card {
   display: grid;
   justify-content: center;
   background-color: white;
   width: 332px;
-  height: 280px;
+  height: 450px;
   border: 1px solid #95a3a7;
-  border-radius: 5px;
+  border-radius: 0 5px 5px 0;
+}
+.login-widget.jiaozi-login.card .card-header {
+  height: 80px;
+}
+.login-widget.jiaozi-login.card .card-body {
+  margin-bottom: 100px;
 }
 .login-widget.jiaozi-login.card a {
   display: inline-block;
@@ -71,4 +100,50 @@ a {
 }
 .login-widget.jiaozi-login.card.register {
   height: 330px;
+}
+.waytologin {
+  margin: 40px 5px;
+}
+.waytologin p {
+  margin: 0 auto;
+  color: #95a3a7;
+  font-size: 14px;
+}
+.waytologin .ways {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.waytologin .ways .item svg {
+  font-size: 25px;
+}
+.sidebar {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  height: 100vh;
+  width: 20rem;
+}
+.sidebar .navbar-expand {
+  justify-content: center;
+}
+.sidebar .navbar {
+  height: 100px;
+  width: 100%;
+}
+.sidebar .navbar .nav-link {
+  color: white;
+  padding: 0.5rem 1rem;
+}
+.sidebar form .col {
+  margin-top: -450px;
+  flex-wrap: wrap;
+  align-content: space-between;
+}
+.sidebar form .col .btn {
+  margin-left: 40px;
+}
+.child {
+  margin: 15px;
+  width: 100%;
 }

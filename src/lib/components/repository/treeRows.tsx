@@ -152,7 +152,6 @@ const TableRow:React.FC<TableRowProps> = ({className,diffIndicator, depth, loadi
 }
 
 function extractPathText(entry:Entry, relativeTo:string) {
-    console.log('entry:',entry);
 
     let pathText = entry.to_hash? entry.to_hash:entry.base_hash;
     if (pathText.startsWith(relativeTo)) {

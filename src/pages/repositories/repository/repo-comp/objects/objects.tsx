@@ -24,7 +24,6 @@ const ObjectsBrowser = () => {
   const router = useRouter();
   const { path, after, importDialog } = router.query ;
   const [searchParams, setSearchParams] = useSearchParams();
-  console.log('objrouter:',router);
   
   const { repo, reference, loading, error } = useRefs();  
   const [showUpload, setShowUpload] = useState(false);
@@ -37,7 +36,6 @@ const ObjectsBrowser = () => {
   let searchPrefix = parts.join("/");
   const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";
- console.log('path:',path);
  
   useEffect(() => {
     if (importDialog) {
