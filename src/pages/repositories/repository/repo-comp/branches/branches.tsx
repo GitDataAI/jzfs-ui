@@ -129,7 +129,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
     const [error, setError] = useState<Error | boolean | null>(null);
     const textRef = useRef<HTMLInputElement>(null);
     const defaultBranch = useMemo(
-        () => ({ id: repo.head, type: "branch"}),
+        () => ({ name: repo.head, type: "branch"}),
         [repo.head]);
     const [selectedBranch, setSelectedBranch] = useState(defaultBranch);
     const user = cache.get('user');
@@ -185,7 +185,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
                                 prefix={'From '}
                                 selected={selectedBranch}
                                 selectRef={(ref) => {
-                                    setSelectedBranch({ ...ref });
+                                    setSelectedBranch({ name:ref.id,type:ref.type });
                                 } }
                                 withCommits={true}
                                 withWorkspace={false} onCancel={undefined}/>
@@ -223,7 +223,7 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
         // }
         );
     }, [repo.id, refresh, prefix, after]);
-
+    
     const doRefresh = () =>  setRefresh(!refresh);
 
     let content;
