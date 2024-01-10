@@ -33,6 +33,7 @@ export class Auth {
 
     clearCurrentUser() {
         cache.delete('user');
+        cache.delete('token');
     }
 
     async getCurrentUserWithCache() {

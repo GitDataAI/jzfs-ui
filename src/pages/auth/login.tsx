@@ -52,6 +52,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                             try {
                                 const response = await auth.login({name:username.value,password:password.value})
                                     Auth.clearCurrentUser()
+                                    cache.set('token', response.data.token)
                                     await users.getUserInfo().then((response)=>{
                                         cache.set('user', response.data.name)
                                         setLoginError(null);
