@@ -147,6 +147,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
     const onSubmit = async () => {
         setDisabled(true);
         const branchId = textRef.current ? textRef.current.value : '';
+        
         const sourceRef = selectedBranch.id;
 
         try {
@@ -183,8 +184,8 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
                                 emptyText={'Select Source Branch'}
                                 prefix={'From '}
                                 selected={selectedBranch}
-                                selectRef={(refId:string) => {
-                                    setSelectedBranch({ id: refId, type: "branch" });
+                                selectRef={(ref) => {
+                                    setSelectedBranch({ ...ref });
                                 } }
                                 withCommits={true}
                                 withWorkspace={false} onCancel={undefined}/>
