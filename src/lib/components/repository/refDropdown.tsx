@@ -255,7 +255,7 @@ const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onC
     return (
         <>
             <Button ref={target} variant={variant} onClick={()=> { setShow(!show) }}>
-                {title} <strong>{selected.name}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
+                {title} <strong>{selected.id}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
             </Button>
             {cancelButton}
             {popover}
