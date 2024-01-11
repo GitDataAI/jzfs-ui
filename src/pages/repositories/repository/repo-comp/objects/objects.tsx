@@ -77,7 +77,7 @@ const ObjectsBrowser = () => {
             key={filepath}
             defaultValue={searchSuffix}
             onFilter={(prefix: string) => {
-              const query = { path: "",ref:"" };
+              let query = { path: "",ref:"" };
               if (searchPrefix !== undefined) query.path = searchPrefix;
               if (prefix) query.path += prefix;
               if (reference) query.ref = reference.name;

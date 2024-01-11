@@ -60,22 +60,16 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) =>
                     <ButtonGroup className="commit-actions">
                         <LinkButton
                             buttonVariant="outline-dark"
-                            // href={
-                            //     {
-                            //     pathname: '/repositories/:user/:repoId/commits/:commitId',
-                            //     params: {repoId: repo.name, commitId: commit.hash,user},
-                            //     query:{ref:reference.name,basedhash:commit.parent_hashes[0]
-                            //     }
-                            // }}
+                            href={
+                                {
+                                pathname: '/repositories/:user/:repoId/commits/:commitId',
+                                params: {repoId: repo.name, commitId: commit.hash,user},
+                                query:{ref:reference.name,basedhash:commit.parent_hashes[0],message:commit.message,committer:commit.committer.name,commitDate:commit.committer.when
+                                }
+                            }}
                             >
                             <code>{commit.hash.substr(0, 16)}</code>
                         </LinkButton>
-                        {/* <LinkButton
-                            buttonVariant={buttonVariant}
-                            href={{pathname: '/repositories/:user/:repoId/actions', query: {commit:{}}, params: {repoId: repo.name,user}}}
-                            tooltip="View Commit Action runs">
-                            <PlayIcon/>
-                        </LinkButton> */}
                         <ClipboardButton variant={buttonVariant} text={commit.hash} tooltip="Copy ID to clipboard"/>
                         <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.name}/${commit.hash}`} tooltip="Copy URI to clipboard" icon={<LinkIcon/>}/>
                         <ClipboardButton variant={buttonVariant} text={`s3://${repo.name}/${commit.hash}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon/>}/>
@@ -102,7 +96,6 @@ const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, 
         return await repos.getCommitsInRepository(user, repo.name,{refName:reference.name})
     }, [repo.name, reference.name, refresh, after])
     const results =  response;
-    console.log('commit:', results);
     
     if (loading) return <Loading/>
     if (error) return <AlertError error={error}/>
@@ -152,7 +145,6 @@ const CommitsContainer = () => {
     const router = useRouter();
     const { after } = router.query;
     const { repo, reference, loading ,error } = useRefs();
-    console.log('repo:',repo,'reference:',reference);
     const user = cache.get('user')
     if (loading) return <Loading/>;
     if (error) return <RepoError error={error}/>;

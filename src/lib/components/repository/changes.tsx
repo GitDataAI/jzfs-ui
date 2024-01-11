@@ -163,7 +163,6 @@ export const ChangesTreeContainer= ({results, delimiter, uriNavigator,
                                          getMore, loading, nextPage, setAfterUpdated, onNavigate, onRevert, setIsTableMerge,
                                          changesTreeMessage= ""}) => {
     const [tableDiffState, setTableDiffState] = useState({isShown: false, expandedTablePath: "", expandedTableName: ""});
-    // const isDeltaDiffEnabled = useAPI(() => otfUtils.isDeltaLakeDiffEnabled(), []);
     const compareTipStorageKey = "show_compare_tip";
     const [showCompareTip, setShowCompareTip] = useState(window.localStorage.getItem(compareTipStorageKey) !== "false");
     const closeAndRememberCompareTip = useCallback(() => {
@@ -171,9 +170,6 @@ export const ChangesTreeContainer= ({results, delimiter, uriNavigator,
         setShowCompareTip(false);
     },[]);
 
-    // if (isDeltaDiffEnabled.loading) {
-    //     return <Loading />
-    // }
     if (results.length === 0) {
         return <div className="tree-container">
             <Alert variant="info">No changes</Alert>

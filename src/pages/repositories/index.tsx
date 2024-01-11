@@ -32,11 +32,11 @@ const RepositoriesPage = () => {
     const amount = useRef(10)
     const [prefix, setPrefix] = useDebouncedState(
         routerPfx,
-        (prefix: string) => router.push({pathname: `/repositories`, query: {prefix},params:{}})
+        (prefix: string) => router.push({pathname: `/repositories`, query: {prefix}})
     );
     const {response} = useAPI(() => users.listRepositoryOfAuthenticatedUser());
     console.log(response);
-    
+
 
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
         try {
@@ -76,7 +76,7 @@ const RepositoriesPage = () => {
                                         placeholder="Find a repository..."
                                         autoFocus
                                         value={prefix}
-                                        onChange={event => setPrefix(event.target.value)}
+                                        onChange={event =>setPrefix(event.target.value)}
                                     />
                                 </InputGroup>
                             </Col>
