@@ -10,98 +10,108 @@ import {URINavigator} from "../../../../../lib/components/repository/tree";
 import {appendMoreResults} from "../../repo-comp/changes/changes";
 import {CommitInfoCard} from "../../../../../lib/components/repository/commits";
 import { repos } from "../../../../../lib/api/interface/Api";
+import { Alert, Card, Table } from "react-bootstrap";
 
+const ChangesContainer = ({changes,commit})=>{
+    return(
+        <>
+         <Card>
+                        <Card.Header>
+                                <span className="float-start">
+                                    {commit.commitId}
+                                </span>
+                        </Card.Header>
+                        <Card.Body>
+                            <Table borderless size="sm">
+                                <tbody>
+                                {changes.map(change => {
+                                    let action
+                                    switch (change.action) {
+                                        case 1:
+                                            action = 'upload'
+                                            break;
+                                        case 2:
+                                            action = 'delete'
+                                            break;
+                                        case 3:
+                                            action = 'updata'
+                                            break;
+                                        default:
+                                            return <AlertError error={"Unsupported diff type " + change.action}/>;
+                                    } 
+                                    return (
+                                        <div className="changeList">
+                                        Change file:<code>{change.path}</code> 
+                                        <span>Change ID: <code>{change.base_hash}</code></span>
+                                        <span>Change action:<code>{action}</code></span>
+                                        </div>                                        
+                                        );
+                                })}
+                                </tbody>
+                            </Table>
+                        </Card.Body>
+                    </Card>
+        </>
+    )
+}
 
-
-const ChangeList = ({ repo, commit, prefix, onNavigate }) => {
-    // const [actionError, setActionError] = useState(null);
-    // const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
-    // const [resultsState, setResultsState] = useState({prefix: prefix, results:[], pagination:{}}); // current retrieved children of the item
-    // const user = cache.get('user')
-    // const delimiter = "/"
-    console.log('testcommit:',commit);
-
-    // const { error, loading, nextPage } = useAPIWithPagination(async () => {
-    //     if (!repo) return
-    //     if (!commit || commit.length === 0) return {results: [], pagination: {has_more: false}};
-
-    //     return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
-    //         () => repos.getCommitDiff(user,repo.name, repo.head));
-    // }, [repo.id, commit.hash, afterUpdated, prefix])
-
-    // const results = resultsState.results
-
-    // if (error) return <AlertError error={error}/>
-    // if (loading) return <Loading/>
-
-    // const actionErrorDisplay = (actionError) ?
-    //     <AlertError error={actionError} onDismiss={() => setActionError(null)}/> : <></>
-
-    // const commitSha = commit.hash.substring(0, 12);
-
-    // const uriNavigator = <URINavigator path={prefix} reference={commit} repo={repo}
-    //                                    relativeTo={`${commitSha}`}
-    //                                    pathURLBuilder={(params, query) => {
-    //                                        return {
-    //                                            pathname: '/repositories/:repoId/commits/:commitId',
-    //                                            params: {repoId: repo.name, commitId: commit.to_hash},
-    //                                            query: {prefix: query.path}
-    //                                        }
-    //                                    }}/>
-    // const changesTreeMessage = <p>Showing changes for commit <strong>{commitSha}</strong></p>
+const ChangeList = ({ repo, change,commit}) => {
+    const [actionError, setActionError] = useState(null);
+    const actionErrorDisplay = (actionError) ?
+        <AlertError error={actionError} onDismiss={() => setActionError(null)}/> : <></> 
+    const commitSha = commit.commitId.substring(0, 12);
+    
+    const changesTreeMessage = <p>Showing changes for commit <strong>{commitSha}</strong></p>
     return (    
         <>
-            {/* {actionErrorDisplay} */}
-            {/* <ChangesTreeContainer results={results} delimiter={delimiter} uriNavigator={uriNavigator} leftDiffRefID={commit.parents[0]}
-                                  rightDiffRefID={commit.id} repo={repo} reference={commit} prefix={prefix}
-                                  getMore={defaultGetMoreChanges(repo, commit.parents[0], commit.id, delimiter)}
-                                  loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated} onNavigate={onNavigate}
-                                  changesTreeMessage={changesTreeMessage}/> */}
+            {actionErrorDisplay}
+            {changesTreeMessage}
+            <ChangesContainer  changes={change} commit={commit}/>
         </>
     )
 };
 
-const CommitView = ({ repo, commitId, onNavigate, view, prefix,basedhash}) => {
+const CommitView = ({ repo, commitId,commitDate, committer,basedhash,message}) => {
     // pull commit itself
     const user = cache.get('user')
     const {response, loading, error} = useAPI(async () => {
-        return await repos.getCommitDiff(user,repo.name,`${basedhash}...${commitId}`);
+        return await repos.getCommitChanges(user,repo.name,commitId);
     }, [repo.name, commitId]);
-
+    const commit = {commitId,basedhash,message,commitDate, committer}
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
 
     const results = response.data;
-
+    if (results.length === 0) {
+        return <div className="tree-container">
+            <Alert variant="info">No changes</Alert>
+        </div>
+    }else{
     return (
-        results.map((commit)=>{
-            return<div className="mb-5 mt-3">
+            <div className="mb-5 mt-3">
             <CommitInfoCard repo={repo} commit={commit}/>
             <div className="mt-4">
-                {/* <ChangeList
-                    prefix={prefix}
-                    view={(view) ? view : ""}
+                <ChangeList
                     repo={repo}
                     commit={commit}
-                    // onNavigate={onNavigate}
-                /> */}
+                    change={results}
+                />
             </div>
         </div>
-        })
+        )
        
-    );
+    }
 };
 
 const CommitContainer = () => {
     const router = useRouter();
     const { repo, loading, error } = useRefs();
-    const { prefix,ref,basedhash} = router.query;
+    const { prefix,ref,basedhash,message,committer,commitDate} = router.query;
     const { commitId ,user} = router.params;
     console.log('router:',router);
     
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
-    console.log('----------------------------------------------------------------');
 
     return (
         <CommitView
@@ -109,6 +119,9 @@ const CommitContainer = () => {
             prefix={(prefix) ? prefix : ""}
             commitId={commitId}
             basedhash={basedhash}
+            message={message}
+            committer={committer}
+            commitDate={commitDate}
             onNavigate={(entry) => {
                 return {
                     pathname: '/repositories/:user/:repoId/commits/:commitId',

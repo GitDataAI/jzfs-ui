@@ -21,19 +21,19 @@ const CommitActions: React.FC<CommitActionsProps> = ({ repo, commit }) => {
       <ButtonGroup className="commit-actions">
         <LinkButton
           buttonVariant="outline-dark"
-          href={{pathname: '/repositories/:repoId/objects', params: {repoId: repo.id}, query: {ref: commit.id}}}
+          href={{pathname: '/repositories/:repoId/objects', params: {repoId: repo.name}, query: {ref: commit.commitId}}}
           tooltip="Browse commit objects">
           <BrowserIcon/>
         </LinkButton>
         <LinkButton
           buttonVariant={buttonVariant}
-          href={{pathname: '/repositories/:repoId/actions', params: {repoId: repo.id}, query: {commit: commit.id}}}
+          href={{pathname: '/repositories/:repoId/actions', params: {repoId: repo.name}, query: {commit: commit.commitId}}}
           tooltip="View Commit Action runs">
           <PlayIcon/>
         </LinkButton>
-        <ClipboardButton variant={buttonVariant} text={commit.id} tooltip="Copy ID to clipboard"/>
-        <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.id}/${commit.id}`} tooltip="Copy URI to clipboard" icon={<LinkIcon/>}/>
-        <ClipboardButton variant={buttonVariant} text={`s3://${repo.id}/${commit.id}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon/>}/>
+        <ClipboardButton variant={buttonVariant} text={commit.commitId} tooltip="Copy ID to clipboard"/>
+        <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.name}/${commit.commitId}`} tooltip="Copy URI to clipboard" icon={<LinkIcon/>}/>
+        <ClipboardButton variant={buttonVariant} text={`s3://${repo.name}/${commit.commitId}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon/>}/>
       </ButtonGroup>
     </div>
   );
@@ -82,12 +82,7 @@ const CommitMetadataUIButtons = ({commit}:{commit:Commit}) => {
 const CommitLink = ({ repoId, commitId }:{ repoId:string, commitId:string }) => {
   return (
     <>
-      <Link href={{
-        pathname: '/repositories/:repoId/commits/:commitId',
-        params: {repoId, commitId}
-      }}>
         <code>{commitId}</code>
-      </Link>
       <br/>
     </>
   );
@@ -100,7 +95,7 @@ const CommitInfo = ({ repo, commit }:{ repo:RepositoryParams, commit:Commit }) =
       <tr>
         <td><strong>ID</strong></td>
         <td>
-          <CommitLink repoId={repo.id} commitId={commit.id}/>
+          <CommitLink repoId={repo.name} commitId={commit.commitId}/>
         </td>
       </tr>
       <tr>
@@ -110,17 +105,17 @@ const CommitInfo = ({ repo, commit }:{ repo:RepositoryParams, commit:Commit }) =
       <tr>
         <td><strong>Creation Date</strong></td>
         <td>
-          {dayjs.unix(commit.creation_date).format("MM/DD/YYYY HH:mm:ss")} ({dayjs.unix(commit.creation_date).fromNow()})
+          {dayjs.unix(Date.parse(commit.commitDate)/1000).format("MM/DD/YYYY HH:mm:ss")} ({dayjs.unix(Date.parse(commit.commitDate)/1000).fromNow()})
         </td>
       </tr>
-      {(commit.parents) ? (
+      {(commit.basedhash) ? (
         <tr>
           <td>
             <strong>Parents</strong></td>
           <td>
-            {commit.parents.map(cid => (
-              <CommitLink key={cid} repoId={repo.id} commitId={cid}/>
-            ))}
+            {
+              <CommitLink key={commit.basedhash} repoId={repo.name} commitId={commit.basedhash}/>
+            }
           </td>
         </tr>
       ) : <></>}
@@ -129,7 +124,9 @@ const CommitInfo = ({ repo, commit }:{ repo:RepositoryParams, commit:Commit }) =
   );
 };
 
-export const CommitInfoCard:React.FC<CommitInfoCardProps>= ({ repo, commit, bare = false }) => {
+export const CommitInfoCard:React.FC<CommitInfoCardProps>= ({ repo, commit , bare = false }) => {
+  console.log('commit:',commit);
+  
   const content = (
     <>
         <div className="d-flex">

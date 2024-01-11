@@ -49,13 +49,11 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
 };
 
 // export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
-export const RepositoryList = (refresh,prefix, after,amount=5,onPaginate) => {
-    console.log('prefix:',prefix);
-    
+export const RepositoryList = ({refresh,prefix, after,amount=5,onPaginate}) => {
     const user = cache.get('user')
     const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
             // let query={prefix, after,amount}
-            return  await users.listRepository(user)
+            return  await prefix? users.listRepository(user,{prefix}):users.listRepository(user)
  
     }, [refresh, prefix, after]);
     
@@ -64,12 +62,10 @@ export const RepositoryList = (refresh,prefix, after,amount=5,onPaginate) => {
         console.log('err') 
        return <AlertError error={error}/>;}
     if(results){
-        console.log('list:' , results);
     return (
         <div>
             {
                 results.map((repo)=>{
-                    console.log(Date.parse(repo.created_at));
                     return(
                 <Row key={repo.id}>
                     <Col className={"mb-2 mt-2"}>
