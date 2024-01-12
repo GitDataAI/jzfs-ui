@@ -208,7 +208,7 @@ const Paginator:React.FC<RepoPaginatorProps> = ({ pagination, onPaginate, result
     );
 };
 
-const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onCancel, variant="light", prefix = '', emptyText = '', withCommits = true, withWorkspace = true, withTags = true }) => {
+const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onCancel, variant="light", prefix = '', emptyText = '', withCommits = true, withWorkspace = true, withTags = true,commitId}) => {
 
     const [show, setShow] = useState(false);
     const target = useRef(null);
@@ -251,11 +251,12 @@ const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onC
     }
 
 
-    const title = prefix + (!!selected) ? `${prefix} ${selected.type}: ` : '';    
+    const title = commitId? 'commit' : selected.type;    
+    const content = commitId? commitId : selected.name;    
     return (
         <>
             <Button ref={target} variant={variant} onClick={()=> { setShow(!show) }}>
-                {title} <strong>{selected.name}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
+                {title} <strong>{content}</strong> {show ? <ChevronUpIcon/> : <ChevronDownIcon/>}
             </Button>
             {cancelButton}
             {popover}
