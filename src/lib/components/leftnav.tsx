@@ -113,7 +113,6 @@ const Leftnav = () =>{
                 <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} word={'New'} style={{fontSize: '10px'}}/>
             </ButtonToolbar>            
             </Col>
-          <FormControl type="text" placeholder="Find a repository..." className="mr-sm-2" />
           <RepositoryList
                     prefix={''}
                     refresh={refresh}
