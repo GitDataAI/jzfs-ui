@@ -385,7 +385,7 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
   }
 
   let size;
-  if (entry.diff_type === "removed" || entry.path_type === "common_prefix") {
+  if (entry.action === 2) {
     size = <Na />;
   } else {
     size = (
@@ -399,7 +399,7 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
   }
 
   let modified;
-  if (entry.diff_type === "removed" || entry.path_type === "common_prefix") {
+  if (entry.action ===2) {
     modified = <Na />;
   } else {
     modified = (
@@ -407,18 +407,20 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
         placement="bottom"
         overlay={
           <Tooltip>
-            {dayjs.unix(Date.parse(entry.updated_at)/1000).format("MM/DD/YYYY HH:mm:ss")}
+            {dayjs.unix(entry.updated_at/1000).format("MM/DD/YYYY HH:mm:ss")}
           </Tooltip>
         }
       >
-        <span>{dayjs.unix(Date.parse(entry.updated_at)/1000).fromNow()}</span>
+        <span>{dayjs.unix(entry.updated_at/1000).fromNow()}</span>
       </OverlayTrigger>
     );
   }
 
   let diffIndicator;
-  switch (entry.diff_type) {
-    case "removed":
+  let diffstyle;
+  switch (entry.action) {
+    case 2:
+      diffstyle = "diif-remove"
       diffIndicator = (
         <OverlayTrigger
           placement="bottom"
@@ -430,7 +432,8 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
         </OverlayTrigger>
       );
       break;
-    case "added":
+    case 1:
+      diffstyle = "diif-add"
       diffIndicator = (
         <OverlayTrigger
           placement="bottom"
@@ -442,7 +445,8 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
         </OverlayTrigger>
       );
       break;
-    case "changed":
+    case 3:
+      diffstyle = "diif-change"
       diffIndicator = (
         <OverlayTrigger
           placement="bottom"
@@ -455,6 +459,7 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
       );
       break;
     default:
+      diffstyle = "tree-path"
       break;
   }
 
@@ -476,13 +481,13 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
     <>
       <tr className={rowClass}>
         <td className="diff-indicator">{diffIndicator}</td>
-        <td className="tree-path">
-          {entry.is_dir === true ? (
+        <td className={diffstyle}>
+        <span>{entry.is_dir === true ? (
             <FileDirectoryIcon />
           ) : (
             <FileIcon />
           )}{" "}
-          {button}
+          {button}</span>
         </td>
         <td className="tree-size">{size}</td>
         <td className="tree-modified">{modified}</td>

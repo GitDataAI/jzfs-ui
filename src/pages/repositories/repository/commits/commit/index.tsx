@@ -11,68 +11,11 @@ import {appendMoreResults} from "../../repo-comp/changes/changes";
 import {CommitInfoCard} from "../../../../../lib/components/repository/commits";
 import { repos } from "../../../../../lib/api/interface/Api";
 import { Alert, Card, Table } from "react-bootstrap";
+import ChangeList from "./changesrow";
 
-const ChangesContainer = ({changes,commit})=>{
-    return(
-        <>
-         <Card>
-                        <Card.Header>
-                                <span className="float-start">
-                                    {commit.commitId}
-                                </span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Table borderless size="sm">
-                                <tbody>
-                                {changes.map(change => {
-                                    let action
-                                    switch (change.action) {
-                                        case 1:
-                                            action = 'upload'
-                                            break;
-                                        case 2:
-                                            action = 'delete'
-                                            break;
-                                        case 3:
-                                            action = 'updata'
-                                            break;
-                                        default:
-                                            return <AlertError error={"Unsupported diff type " + change.action}/>;
-                                    } 
-                                    return (
-                                        <div className="changeList">
-                                        Change file:<code>{change.path}</code> 
-                                        <span>Change ID: <code>{change.base_hash}</code></span>
-                                        <span>Change action:<code>{action}</code></span>
-                                        </div>                                        
-                                        );
-                                })}
-                                </tbody>
-                            </Table>
-                        </Card.Body>
-                    </Card>
-        </>
-    )
-}
-
-const ChangeList = ({ repo, change,commit}) => {
-    const [actionError, setActionError] = useState(null);
-    const actionErrorDisplay = (actionError) ?
-        <AlertError error={actionError} onDismiss={() => setActionError(null)}/> : <></> 
-    const commitSha = commit.commitId.substring(0, 12);
-    
-    const changesTreeMessage = <p>Showing changes for commit <strong>{commitSha}</strong></p>
-    return (    
-        <>
-            {actionErrorDisplay}
-            {changesTreeMessage}
-            <ChangesContainer  changes={change} commit={commit}/>
-        </>
-    )
-};
-
-const CommitView = ({ repo, commitId,commitDate, committer,basedhash,message}) => {
+const CommitView = ({ repo, commitId,commitDate, committer,basedhash,message,refname}) => {
     // pull commit itself
+    const [actionError, setActionError] = useState(null);
     const user = cache.get('user')
     const {response, loading, error} = useAPI(async () => {
         return await repos.getCommitChanges(user,repo.name,commitId);
@@ -80,7 +23,11 @@ const CommitView = ({ repo, commitId,commitDate, committer,basedhash,message}) =
     const commit = {commitId,basedhash,message,commitDate, committer}
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
-
+    const actionErrorDisplay = (actionError) ?
+        <AlertError error={actionError} onDismiss={() => setActionError(null)}/> : <></> 
+    const commitSha = commitId.substring(0, 12);
+    
+    const changesTreeMessage = <p>Showing changes for commit <strong>{commitSha}</strong></p>
     const results = response.data;
     if (results.length === 0) {
         return <div className="tree-container">
@@ -89,13 +36,13 @@ const CommitView = ({ repo, commitId,commitDate, committer,basedhash,message}) =
     }else{
     return (
             <div className="mb-5 mt-3">
-            <CommitInfoCard repo={repo} commit={commit}/>
+            <CommitInfoCard repo={repo} commit={commit} refname={refname}/>
             <div className="mt-4">
-                <ChangeList
-                    repo={repo}
-                    commit={commit}
-                    change={results}
-                />
+            {actionErrorDisplay}
+            {changesTreeMessage}
+            <ChangeList 
+            changes={results}
+             />
             </div>
         </div>
         )
@@ -106,17 +53,18 @@ const CommitView = ({ repo, commitId,commitDate, committer,basedhash,message}) =
 const CommitContainer = () => {
     const router = useRouter();
     const { repo, loading, error } = useRefs();
-    const { prefix,ref,basedhash,message,committer,commitDate} = router.query;
+    const { ref:refname,basedhash,message,committer,commitDate} = router.query;
     const { commitId ,user} = router.params;
     console.log('router:',router);
     
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
+    console.log('ref:',refname);
 
     return (
         <CommitView
             repo={repo}
-            prefix={(prefix) ? prefix : ""}
+            refname={refname}
             commitId={commitId}
             basedhash={basedhash}
             message={message}
@@ -128,7 +76,7 @@ const CommitContainer = () => {
                     params: {repoId: repo.name, commitId: commitId,user},
                     query: {
                         prefix: entry.path,
-                        ref:ref
+                        ref:refname
                     }
                 }
             }}

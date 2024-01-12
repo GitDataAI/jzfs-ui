@@ -27,11 +27,24 @@ export const TreeContainer= ({
   onRefresh,
   onUpload,
   onImport,
-  refreshToken
+  refreshToken,
+  commitId
 }) => {
-  
+
   const user = cache.get('user')
-  const { response, error, loading } = useAPI(async() =>
+  let changes = []
+  let load = false
+  if(commitId){
+    const {response, loading} = useAPI(async () => {
+      return await repos.getCommitChanges(user,repo.name,commitId);
+  }, [repo.name, commitId]);
+    changes = response
+    load = loading    
+  }
+  const { response, error, loading } =commitId? useAPI(async() =>
+  {return await repos.getEntriesInRef(user,repo.name,{ref:commitId,type:'commit',path})
+}
+  , [repo.name , refreshToken]):useAPI(async() =>
   {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:reference.type,path})
 }
   , [repo.name , refreshToken])
@@ -41,9 +54,30 @@ export const TreeContainer= ({
     error: null,
     done: false,
   };
-  const [deleteState, setDeleteState] = useState(initialState);
+  const [deleteState, setDeleteState] = useState(initialState);    
+    if (loading || load) return <Loading/>;
+    if(commitId){
+    for (let i = 0; i < response.data.length; i++) {
+      let found = changes.data.find(item => item.path === response.data[i].name);
+      if (found) {
+        response.data[i].action = found.action;
+      }
+    }
+    for (let i = 0; i < changes.data.length; i++) {
+      let found = response.data.find(item => item.name === changes.data[i].path);
+      if (!found) {
+        let newObj = {...changes.data[i]};
+        newObj.name = newObj.path
+        for (let key in response.data[0]) {
+          if (!newObj.hasOwnProperty(key)) {
+            newObj[key] = '';
+          }
+        }
+        response.data.push(newObj);
+      }
+    }
+}
 
-    if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
 
     return (

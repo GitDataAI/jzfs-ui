@@ -59,7 +59,6 @@ export const RepositoryList = ({refresh,prefix, after,amount=5,onPaginate}) => {
     
     if (loading) return <Loading/>;
     if (error) { 
-        console.log('err') 
        return <AlertError error={error}/>;}
     if(results){
     return (
@@ -81,7 +80,7 @@ export const RepositoryList = ({refresh,prefix, after,amount=5,onPaginate}) => {
                                 </h5>
                                 <p>
                                     <small>
-                                        created at <code>{dayjs.unix( Math.floor(Date.parse(repo.created_at)/1000)).toISOString()}</code> ({dayjs.unix( Math.floor(Date.parse(repo.created_at)/1000)).fromNow()})<br/>
+                                        created at <code>{dayjs.unix(Math.floor(repo.created_at)/1000).toISOString()}</code> ({dayjs.unix( Math.floor(repo.created_at)/1000).fromNow()})<br/>
                                         default branch: <code>{repo.head}</code>,{' '}
                                         storage namespace: <code>{repo.name}</code>
                                     </small>

@@ -10,26 +10,22 @@ import React from "react";
 import { CommitActionsProps } from "../interface/comp_interface";
 import { Commit, CommitInfoCardProps, metadata } from "../../../pages/repositories/interface/repo_interface";
 import { RepositoryParams } from "../../api/interface";
+import { cache } from "../../api";
 
 
-const CommitActions: React.FC<CommitActionsProps> = ({ repo, commit }) => {
+const CommitActions: React.FC<CommitActionsProps> = ({ repo, commit,refname}) => {
 
   const buttonVariant = "outline-dark";
+  const user = cache.get('user')
 
   return (
     <div>
       <ButtonGroup className="commit-actions">
         <LinkButton
           buttonVariant="outline-dark"
-          href={{pathname: '/repositories/:repoId/objects', params: {repoId: repo.name}, query: {ref: commit.commitId}}}
+          href={{pathname: '/repositories/:user/:repoId/objects', params: {repoId: repo.name,user}, query: {ref:refname,commitId:commit.commitId}}}
           tooltip="Browse commit objects">
           <BrowserIcon/>
-        </LinkButton>
-        <LinkButton
-          buttonVariant={buttonVariant}
-          href={{pathname: '/repositories/:repoId/actions', params: {repoId: repo.name}, query: {commit: commit.commitId}}}
-          tooltip="View Commit Action runs">
-          <PlayIcon/>
         </LinkButton>
         <ClipboardButton variant={buttonVariant} text={commit.commitId} tooltip="Copy ID to clipboard"/>
         <ClipboardButton variant={buttonVariant} text={`jzfs://${repo.name}/${commit.commitId}`} tooltip="Copy URI to clipboard" icon={<LinkIcon/>}/>
@@ -105,7 +101,7 @@ const CommitInfo = ({ repo, commit }:{ repo:RepositoryParams, commit:Commit }) =
       <tr>
         <td><strong>Creation Date</strong></td>
         <td>
-          {dayjs.unix(Date.parse(commit.commitDate)/1000).format("MM/DD/YYYY HH:mm:ss")} ({dayjs.unix(Date.parse(commit.commitDate)/1000).fromNow()})
+          {dayjs.unix(commit.commitDate/1000).format("MM/DD/YYYY HH:mm:ss")} ({dayjs.unix(commit.commitDate/1000).fromNow()})
         </td>
       </tr>
       {(commit.basedhash) ? (
@@ -124,8 +120,7 @@ const CommitInfo = ({ repo, commit }:{ repo:RepositoryParams, commit:Commit }) =
   );
 };
 
-export const CommitInfoCard:React.FC<CommitInfoCardProps>= ({ repo, commit , bare = false }) => {
-  console.log('commit:',commit);
+export const CommitInfoCard:React.FC<CommitInfoCardProps>= ({ repo, commit , bare = false ,refname}) => {
   
   const content = (
     <>
@@ -134,7 +129,7 @@ export const CommitInfoCard:React.FC<CommitInfoCardProps>= ({ repo, commit , bar
             <h4>{commit.message}</h4>
           </div>
           <div>
-            <CommitActions repo={repo} commit={commit}/>
+            <CommitActions repo={repo} commit={commit} refname={refname}/>
           </div>
         </div>
 

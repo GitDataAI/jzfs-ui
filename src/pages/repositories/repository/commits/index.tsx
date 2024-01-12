@@ -41,18 +41,21 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) =>
                 <div className="float-start">
                     <h6>
                         <Link 
-                        // href={{
-                        //     pathname: '/repositories/:user/:repoId/commits/:commitId',
-                        //     params: {repoId: repo.name, commitId: commit.hash,user},
-                        //     query:{basedhash:commit.parent_hashes[0]}
-                        // }}
+                        href={
+                            {
+                            pathname: '/repositories/:user/:repoId/commits/:commitId',
+                            params: {repoId: repo.name, commitId: commit.hash,user},
+                            query:{ref:reference.name,basedhash:commit.parent_hashes[0],message:commit.message,committer:commit.committer.name,commitDate:commit.committer.when
+                            }
+                        }}
                         >
                             {commit.message}
                         </Link>
                     </h6>
                     <p>
                         <small>
-                            <strong>{commit.committer.name}</strong> committed at <strong>{commit.committer.when}</strong> ({dayjs.unix(Date.parse(commit.committer.when)/1000).fromNow()})
+                            <strong>{commit.committer.name}</strong> committed at <strong>{dayjs.unix(commit.committer.when/1000).format("MM/DD/YYYY HH:mm:ss")}</strong> 
+                            ({dayjs.unix(commit.committer.when/1000).fromNow()})
                         </small>
                     </p>
                 </div>
@@ -75,7 +78,7 @@ const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) =>
                         <ClipboardButton variant={buttonVariant} text={`s3://${repo.name}/${commit.hash}`} tooltip="Copy S3 URI to clipboard" icon={<PackageIcon/>}/>
                         <LinkButton
                             buttonVariant="outline-dark"
-                            href={{pathname: '/repositories/:user/:repoId/objects', params: {repoId: repo.name,user}, query: {ref: reference.name}}}
+                            href={{pathname: '/repositories/:user/:repoId/objects', params: {repoId: repo.name,user}, query: {ref: reference.name,commitId: commit.hash}}}
                             tooltip="Browse objects at this commit">
                             <BrowserIcon/>
                         </LinkButton>
