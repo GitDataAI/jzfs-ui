@@ -24,6 +24,7 @@ import {RepoError} from "../error/error";
 import { ChangesBrowserProps, CommitButtonProps, GetMore, GetMoreUncommittedChanges, Pair, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
 import { object, repos, wip } from "../../../../../lib/api/interface/Api";
 import { UploadButton } from "../objects/uplodaButton";
+import ChangeList from "../../commits/commit/changesrow";
 
 
 const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
@@ -160,27 +161,27 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
         done: false,
       };
       const [deleteState, setDeleteState] = useState(initialState);
-    const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
-        return wip.getWipChanges(user,repo.name,{refName:reference.name})
-    }
+    // const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
+    //     return wip.getWipChanges(user,repo.name,{refName:reference.name})
+    // }
     const { response,error , loading} = useAPI(async() =>
-    {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:reference.type})
-      }
-  , [repo.name , internalRefresh])
+    {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:'wip',path:path?path:'/'})}
+    ,[repo.name,internalRefresh,path])
     const {  } = useAPI(async () => {
         if (!repo) return
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
            () => wip.getWipChanges(user,repo.name,{refName:reference.name}) );
     }, [repo.name, reference.name, internalRefresh, afterUpdated, delimiter, prefix])
-
     const results = resultsState.results
-    let nextPage = ''
+    useEffect(()=>{
+        
+        loading?refresh():''
+    },[loading])
     
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
         setInternalRefresh(!internalRefresh)
     }
-
     
     if (error) return <AlertError error={error}/>
     if (loading) return <Loading/>
@@ -193,28 +194,28 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
             })
     }
 
-    let onNavigate = (entry: { path: string; }) => {
-        return {
-            pathname: `/repositories/:user/:repoId/changes`,
-            params: {repoId: repo.name,user},
-            query: {
-                ref: reference.name,
-                prefix: entry.path,
-            }
-        }
-    }
+    // let onNavigate = (entry: { path: string; }) => {
+    //     return {
+    //         pathname: `/repositories/:user/:repoId/changes`,
+    //         params: {repoId: repo.name,user},
+    //         query: {
+    //             ref: reference.name,
+    //             prefix: entry.path,
+    //         }
+    //     }
+    // }
 
-    const uriNavigator =  <URINavigator path={prefix} reference={reference} repo={repo}
-    pathURLBuilder={(params, query) => {
-        return {
-            pathname: '/repositories/:user/:repoId/changes',
-            params: params,
-            query: { ref: reference.name, prefix: query.path ?? "" },
-        };
-    } } downloadUrl={undefined}/>
+    // const uriNavigator =  <URINavigator path={prefix} reference={reference} repo={repo}
+    // pathURLBuilder={(params, query) => {
+    //     return {
+    //         pathname: '/repositories/:user/:repoId/changes',
+    //         params: params,
+    //         query: { ref: reference.name, prefix: query.path ?? "" },
+    //     };
+    // } } downloadUrl={undefined}/>
     const changesTreeMessage = <p>Showing changes for branch <strong>{reference.name}</strong></p>
-    const committedRef = reference.id + "@"
-    const uncommittedRef = reference.id
+    // const committedRef = reference.id + "@"
+    // const uncommittedRef = reference.id
 
    const actionErrorDisplay = (actionError) ?
         <AlertError error={actionError} onDismiss={() => setActionError(null)}/> : <></>
@@ -307,14 +308,11 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                         .then(refresh)
                 }}
             />
-            <ChangesTreeContainer results={results} delimiter={delimiter}
-            uriNavigator={uriNavigator} leftDiffRefID={committedRef} rightDiffRefID={uncommittedRef}
-            repo={repo} reference={reference} internalRefresh={internalRefresh} prefix={prefix}
-            getMore={getMoreUncommittedChanges}
-            loading={loading} nextPage={nextPage} setAfterUpdated={setAfterUpdated}
-            onNavigate={onNavigate} onRevert={onReset} changesTreeMessage={changesTreeMessage} setIsTableMerge={function (_isTableMerge: boolean): void {
-                throw new Error("Function not implemented.");
-            } }/>
+            {changesTreeMessage}
+            <ChangeList 
+            changes={results}
+            revert={onReset}
+             />
         </>
     )
 }
@@ -325,8 +323,7 @@ const ChangesContainer = () => {
     const {prefix} = router.query
     const user = cache.get('user')
 
-    const {response} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name})
-)   
+    const {response} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name}))   
     
     if (loading) return <Loading/>
     if (error) return <RepoError error={error}/>

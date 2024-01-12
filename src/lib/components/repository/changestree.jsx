@@ -99,17 +99,12 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
               <InfoIcon /> Object Info
             </Dropdown.Item>
 
-          {/* <Dropdown.Item onClick={handleShowObjectOrigin}>
-            <LogIcon /> Blame
-          </Dropdown.Item> */}
-
           <Dropdown.Item
             onClick={(e) => {
               copyTextToClipboard(
                 `http://localhost:3000/api/v1/object/${user}/${repo.name}?refName=${reference.name}&path=${entry.name}&type=${reference.type}`
                 ,
                 ()=>{
-                  console.log(e);
                 }
               );
               e.preventDefault();
@@ -158,7 +153,6 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
 };
 
 const StatModal = ({ show, onHide, entry }) => {
-  console.log(entry);
   return (
     <Modal show={show} onHide={onHide} size={"xl"}>
       <Modal.Header closeButton>
@@ -328,11 +322,9 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
   const subPath = path.lastIndexOf("/") !== -1 ? path.substr(0, path.lastIndexOf("/")) : "";
   const buttonText =
       subPath.length > 0 ? entry.name.substr(subPath.length + 1) : entry.name;
-
   const user = cache.get('user')
   const params = { repoId: repo.name,user };
   const query = { ref: reference.name, path: entry.name,type:reference.type};
-  console.log('text:',buttonText,'params:', params,'query:', query);
   let button;
   if(entry.is_dir){
     const filePathQuery = {
@@ -344,7 +336,7 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
     button = (
       <Link
         href={{
-          pathname: "/repositories/:user/:repoId/objects",
+          pathname: "/repositories/:user/:repoId/changes",
           query: filePathQuery,
           params: params,
         }}
@@ -414,11 +406,11 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
         placement="bottom"
         overlay={
           <Tooltip>
-            {dayjs.unix(Date.parse(entry.updated_at)/1000).format("MM/DD/YYYY HH:mm:ss")}
+            {dayjs.unix(entry.updated_at/1000).format("MM/DD/YYYY HH:mm:ss")}
           </Tooltip>
         }
       >
-        <span>{dayjs.unix(Date.parse(entry.updated_at)/1000).fromNow()}</span>
+        <span>{dayjs.unix(entry.updated_at/1000).fromNow()}</span>
       </OverlayTrigger>
     );
   }
@@ -544,26 +536,25 @@ export const URINavigator = ({
   const user = cache.get('user')
   const params = {repoId: repo.name?repo.name:repo,user};
   const query = {type:reference.type,path:filepath?filepath:path,is_dir:true,ref:reference.name}
-  console.log('repo:',repo,'query:',query);
   return (
     <div className="d-flex">
       <div className="lakefs-uri flex-grow-1">
         {relativeTo === "" ? (
           <>
             <strong>{"jzfs://"}</strong>
-            <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
+            <Link href={{ pathname: "/repositories/:user/:repoId/changes", params }}>
               {repo.name}
             </Link>
             <strong>{"/"}</strong>
             <Link
-              href={{pathname: "/repositories/:user/:repoId/objects",params}}>
+              href={{pathname: "/repositories/:user/:repoId/changes",params}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
                 : reference.name}
             </Link>
             <strong>{"/"}</strong>
             <Link  href={{
-                pathname: "/repositories/:user/:repoId/objects",
+                pathname: "/repositories/:user/:repoId/changes",
                 params,
                 query
               }}>
@@ -698,7 +689,6 @@ export const Tree = ({
   path = "",
 }) => {
   let body;
-  console.log('repo:',repo,'branch:',reference,'data:',results);
 
   if (results.length === 0 && path === "" && reference.type === RefTypeBranch) {
     // empty state!
