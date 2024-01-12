@@ -18,13 +18,15 @@ import { Button } from "react-bootstrap";
 import { UploadIcon } from "@primer/octicons-react";
 import { Link } from "../../../../../lib/components/nav";
 import { cache } from "../../../../../lib/api";
+import { useAPI } from "../../../../../lib/hooks/api";
+import { repos } from "../../../../../lib/api/interface/Api";
+import { Tree } from "../../../../../lib/components/repository/tree";
+import ChangeList from "../../commits/commit/changesrow";
 
 
 const ObjectsBrowser = () => {
   const router = useRouter();
-  const { path, after, importDialog } = router.query ;
-  const [searchParams, setSearchParams] = useSearchParams();
-  
+  const { path, after, importDialog,commitId} = router.query ;
   const { repo, reference, loading, error } = useRefs();  
   const [showUpload, setShowUpload] = useState(false);
   const [showImport, setShowImport] = useState(false);
@@ -36,19 +38,93 @@ const ObjectsBrowser = () => {
   let searchPrefix = parts.join("/");
   const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";
- 
   useEffect(() => {
-    if (importDialog) {
-      setShowImport(true);
-      searchParams.delete("importDialog");
-      setSearchParams(searchParams);
-    }
     setFilepath(path)
-  }, [router.route, importDialog, searchParams, setSearchParams,path]);
+    refresh()
+  }, [path]); 
 
   if (loading) return <Loading />;
   if (error) return <RepoError error={error} />;
+  if (commitId){
+  
+  return(
+  <>
+   <ActionsBar>
+        <ActionGroup orientation="left">
+          <RefDropdown
+            emptyText={"Select Branch"}
+            repo={repo}
+            commitId={commitId}
+            selected={reference}
+            withCommits={true}
+            withWorkspace={true}
+            selectRef={(ref) => router.push({
+              pathname: `/repositories/:user/:repoId/objects`,
+              params: {
+                repoId: repo.name,
+                user,
+                path: path === undefined ? "" : path,
+              },
+              query: { ref:ref.id, path: path === undefined ? "" : path },
+            })} onCancel={undefined}          
+            />
+        </ActionGroup>
 
+        <ActionGroup orientation="right">
+          <RefreshButton onClick={refresh} />
+        <Button
+        variant={"light"}
+        >
+           <Link href={{
+            pathname: `/repositories/:user/:repoId/changes`,
+            params: {repoId: repo.name,user},
+            }}>
+        <UploadIcon />Edit
+          </Link>
+        </Button>
+          
+        </ActionGroup>
+      </ActionsBar>
+
+      <NoGCRulesWarning repoId={repo.name} />
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+          mb: "30px",
+        }}
+      ></Box>
+
+      <TreeContainer
+            commitId={commitId}
+            reference={reference}
+            repo={repo}
+            path={filepath ? filepath : "/"}
+            after={after ? after : ""}
+            onPaginate={(after:string) => {
+            const query = { after,path:"",ref:""};
+            if (path) query.path = path;
+            if (reference) query.ref = reference.id;
+            const url = {
+              pathname: `/repositories/:user/:repoId/objects`,
+              query,
+              params: { repoId: repo.name,user },
+            };
+            router.push(url);
+          }}
+          refreshToken={refreshToken}
+          onUpload={() => {
+            setShowUpload(true);
+          }}
+          onImport={() => {
+            setShowImport(true);
+          }}
+          onRefresh={refresh}
+        />
+  </>)}
+  else
   return (
     <>
       <ActionsBar>
@@ -72,7 +148,7 @@ const ObjectsBrowser = () => {
         </ActionGroup>
 
         <ActionGroup orientation="right">
-          <PrefixSearchWidget
+          {/* <PrefixSearchWidget
             text="Search by Prefix"
             key={filepath}
             defaultValue={searchSuffix}
@@ -88,7 +164,7 @@ const ObjectsBrowser = () => {
               };
               router.push(url);
             }}
-          />
+          /> */}
           <RefreshButton onClick={refresh} />
         <Button
         variant={"light"}
@@ -117,9 +193,9 @@ const ObjectsBrowser = () => {
         <TreeContainer
             reference={reference}
             repo={repo}
-          path={filepath ? filepath : "/"}
-          after={after ? after : ""}
-          onPaginate={(after:string) => {
+            path={filepath ? filepath : "/"}
+            after={after ? after : ""}
+            onPaginate={(after:string) => {
             const query = { after,path:"",ref:""};
             if (path) query.path = path;
             if (reference) query.ref = reference.id;
