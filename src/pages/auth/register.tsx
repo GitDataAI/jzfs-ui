@@ -18,8 +18,16 @@ const RegisterForm = () => {
         router.push('/auth/login')
     }
     return(
-        <Row className="justify-content-center align-items-center">
-            <Col md={{offset: 5, span: 8}} >
+            <Row className="justify-content-center align-items-center">
+            <Col md={{offset: 5, span: 10}} className="login-box" >
+            <Card className="login-display">
+                    <Card.Body>
+                        <div className="tittle">
+                            <h1><img src="/pub/logo.png" alt="" /> JiaoziFS</h1>
+                            <p><h1>企业级 dataspace 研发管理平台</h1></p>
+                        </div>
+                    </Card.Body>
+            </Card>
             <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
                 <Card.Body>

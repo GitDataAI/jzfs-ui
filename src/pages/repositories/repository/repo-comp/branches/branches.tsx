@@ -103,10 +103,12 @@ const BranchWidget = ({ repo, branch, onDelete }:BranchWidgetParms) => {
                     }
 
                     <ButtonGroup className="branch-actions ms-2">
-                        <LinkButton                           // href={{
-                            //     pathname: '/repositories/:user/:repoId/commits/:commitId',
-                            //     params:{repoId: repo.name, commitId: branch.name,user},
-                            // }}
+                        <LinkButton                           
+                        href={{
+                            pathname: '/repositories/:user/:repoId/objects',
+                            params: {repoId: repo.name,user},
+                            query: {ref: branch.name
+                            }}}
                             buttonVariant="outline-dark"
                             // tooltip="View referenced commit"
                             >
@@ -133,7 +135,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
         [repo.head]);
     const [selectedBranch, setSelectedBranch] = useState(defaultBranch);
     const user = cache.get('user');
-
+    
 
     const hide = () => {
         if (disabled) return;
@@ -148,7 +150,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
         setDisabled(true);
         const branchId = textRef.current ? textRef.current.value : '';
         
-        const sourceRef = selectedBranch.id;
+        const sourceRef = selectedBranch.name;
 
         try {
             await repos.createBranch(user, repo.name, {name:branchId,source:sourceRef});
@@ -248,15 +250,8 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
             <ActionsBar>
                 <ActionGroup orientation="right">
 
-                    <PrefixSearchWidget
-                        defaultValue={router.query.prefix}
-                        text="Find branch"
-                        onFilter={prefix => {
-                            const query = {prefix};
-                            router.push({pathname: '/repositories/:user/:repoId/branches', params: {repoId: repo.name,user}, query});
-                        }}/>
+                    
 
-                    <RefreshButton onClick={doRefresh}/>
 
                     <CreateBranchButton repo={repo} variant="success" onCreate={doRefresh}>
                         <GitBranchIcon/> Create Branch
