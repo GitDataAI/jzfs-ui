@@ -32,7 +32,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     }
     return (
         <Row className="justify-content-center align-items-center">
-            <Col md={{offset: 5, span: 10}} className="login-box" >
+            <Col md={{offset: 2, span: 8}} className="login-box" >
             <Card className="login-display">
                     <Card.Body>
                         <div className="tittle">
@@ -77,7 +77,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                             {(loginError) && <AlertError error={loginError}/>}
 
                             <Button variant="primary" type="submit">Login</Button>
-                            <div className="waytologin">
+                            {/* <div className="waytologin">
                                 <p>————Try another way to login————</p>
                                 <div className="ways">
                                 <div className="item">
@@ -93,7 +93,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                 <a href="#"><AiFillTwitterCircle /></a>
                                 </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </Form>
                     </Card.Body>
             </Card>
