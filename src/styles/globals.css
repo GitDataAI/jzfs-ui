@@ -42,7 +42,7 @@
 }
 
 .card.login-widget,.card.setup-widget, .reset-pwd-widget, .request-reset-pwd-widget {
-  margin-top: 200px;
+  margin-top: 100px;
 }
 
 .card.create-invited-user-widget {

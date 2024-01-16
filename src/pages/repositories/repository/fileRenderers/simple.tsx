@@ -62,8 +62,17 @@ const { response, error, loading } = useAPI(
       () =>  object.getObject(user, repoId,{refName:branch,path,type:type}),
     [repoId, branch, path]
   );
+  
   useEffect(() => {
-   response? response.text().then(text => setBody(text)):response;
+    if (response) {
+      const reader = new FileReader();
+      response.blob().then(blob => {
+        reader.onloadend = () => {
+          setBody(reader.result);
+        };
+        reader.readAsText(blob);
+      });
+    }
   }, [response]);
   
     
@@ -76,7 +85,7 @@ const { response, error, loading } = useAPI(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const component =body? body :'loading';
-  return <>{component}</>;
+  return <><pre>{component}</pre></>;
 };
 
 export const MarkdownRenderer: FC<RendererComponentWithText> = ({
