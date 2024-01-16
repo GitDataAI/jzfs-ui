@@ -76,7 +76,6 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
                             <Form.Control type="text" placeholder="Commit Message" ref={textRef} onChange={handleDescriptionChange}/>
                         </Form.Group>
 
-                        <MetadataFields metadataFields={metadataFields} setMetadataFields={setMetadataFields}/>
                     </Form>
                     {(alertText) ? (<Alert variant="danger">{alertText}</Alert>) : (<span/>)}
                 </Modal.Body>
@@ -164,19 +163,20 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     // const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
     //     return wip.getWipChanges(user,repo.name,{refName:reference.name})
     // }
-    const { response,error , loading} = useAPI(async() =>
+    const {loading:loaded} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name}))   
+    const { response,loading:load} = useAPI(async() =>
     {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:'wip',path:path?path:'/'})}
     ,[repo.name,internalRefresh,path])
-    const {  } = useAPI(async () => {
+    const { error , loading } = useAPI(async () => {
         if (!repo) return
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
            () => wip.getWipChanges(user,repo.name,{refName:reference.name}) );
     }, [repo.name, reference.name, internalRefresh, afterUpdated, delimiter, prefix])
     const results = resultsState.results
     useEffect(()=>{
-        
-        loading?refresh():''
-    },[loading])
+        if(loading || load || loaded)
+            setTimeout(()=>refresh(), 100);
+    },[])
     
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
@@ -184,7 +184,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     }
     
     if (error) return <AlertError error={error}/>
-    if (loading) return <Loading/>
+    if (loading || load ||loaded) return <Loading/>
 
     let onReset = async (entry) => {
         wip.revertWipChanges(repo.name, user,{refName:reference.name,pathPrefix:entry.path})
@@ -231,7 +231,9 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                         withCommits={false}
                         withWorkspace={false}
                         withTags={false}
-                        selectRef={onSelectRef} onCancel={undefined}                    />
+                        selectRef={onSelectRef}
+                        onCancel={undefined} 
+                        />
                 </ActionGroup>
 
                 <ActionGroup orientation="right">
@@ -323,7 +325,6 @@ const ChangesContainer = () => {
     const {prefix} = router.query
     const user = cache.get('user')
 
-    const {response} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name}))   
     
     if (loading) return <Loading/>
     if (error) return <RepoError error={error}/>

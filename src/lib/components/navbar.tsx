@@ -85,7 +85,7 @@ const TopNav = ({logged = true}) => {
                         <TopNavLink href="/repositories">Repositories</TopNavLink>
                         <TopNavLink href="/auth">Organizations</TopNavLink>
                     </Nav>
-                    <NavUserInfo/>
+                    {/* <NavUserInfo/> */}
                 </Navbar.Collapse>
             </Container>
         </Navbar>
