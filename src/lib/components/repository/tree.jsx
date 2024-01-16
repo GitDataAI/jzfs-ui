@@ -498,13 +498,13 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
 };
 
 function pathParts(path, isPathToFile) {
-  let parts = path.split(/\//);
+  let parts = path.replace(/^\/*|\/*$/g, '').split(/\//);
   let resolved = [];
   if (parts.length === 0) {
     return resolved;
   }
 
-  if (parts[parts.length - 1] === "" || !isPathToFile) {
+  if (parts[parts.length - 1] === "") {
     parts = parts.slice(0, parts.length - 1);
   }
 
@@ -541,10 +541,11 @@ export const URINavigator = ({
   const parts = pathParts(path, isPathToFile);
   const user = cache.get('user')
   const params = {repoId: repo.name?repo.name:repo,user};
-  const query = {type:reference.type,path:filepath?filepath:path,is_dir:true,ref:reference.name}
+  const  query = {type:reference.type,path:"/",is_dir:true,ref:reference.name}
   return (
     <div className="d-flex">
       <div className="lakefs-uri flex-grow-1">
+
         {relativeTo === "" ? (
           <>
             <strong>{"jzfs://"}</strong>
@@ -552,20 +553,14 @@ export const URINavigator = ({
               {repo.name}
             </Link>
             <strong>{"/"}</strong>
+
             <Link
-              href={{pathname: "/repositories/:user/:repoId/objects",params}}>
+              href={{pathname: "/repositories/:user/:repoId/objects",params, query}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
                 : reference.name}
             </Link>
             <strong>{"/"}</strong>
-            <Link  href={{
-                pathname: "/repositories/:user/:repoId/objects",
-                params,
-                query
-              }}>
-            {filepath?filepath:path==='/'? '':path}
-            </Link>
           </>
         ) : (
           <>
@@ -573,14 +568,13 @@ export const URINavigator = ({
             <strong>{"/"}</strong>
           </>
         )}
-
         {parts.map((part, i) => {
           const path =
             parts
               .slice(0, i + 1)
               .map((p) => p.name)
-              .join("/") + "/";
-          const query = { path, ref: reference };
+              .join("/");
+          const query = { path, type: reference.type, is_dir:true,ref:reference.name };
           const edgeElement =
             isPathToFile && i === parts.length - 1 ? (
               <span>{part.name}</span>
