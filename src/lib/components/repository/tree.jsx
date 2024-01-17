@@ -499,13 +499,13 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
 };
 
 function pathParts(path, isPathToFile) {
-  let parts = path.replace(/^\/*|\/*$/g, '').split(/\//);
+  let parts = path.split(/\//);
   let resolved = [];
   if (parts.length === 0) {
     return resolved;
   }
 
-  if (parts[parts.length - 1] === "") {
+  if (parts[parts.length - 1] === "" || !isPathToFile) {
     parts = parts.slice(0, parts.length - 1);
   }
 
