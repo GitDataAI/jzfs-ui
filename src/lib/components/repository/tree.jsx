@@ -15,6 +15,7 @@ import {
   TrashIcon,
   LogIcon,
 } from "@primer/octicons-react";
+import { GoFileDirectoryFill } from "react-icons/go";
 import Tooltip from "react-bootstrap/Tooltip";
 import Table from "react-bootstrap/Table";
 import Card from "react-bootstrap/Card";
@@ -195,8 +196,8 @@ const StatModal = ({ show, onHide, entry }) => {
               <td>
                 <strong>Last Modified</strong>
               </td>
-              <td>{`${dayjs.unix(Date.parse(entry.updated_at)/1000).fromNow()} (${dayjs
-                .unix(Date.parse(entry.updated_at)/1000)
+              <td>{`${dayjs.unix(entry.updated_at/1000).fromNow()} (${dayjs
+                .unix(entry.updated_at/1000)
                 .format("MM/DD/YYYY HH:mm:ss")})`}</td>
             </tr>
               <tr>
@@ -483,13 +484,13 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
         <td className="diff-indicator">{diffIndicator}</td>
         <td className={diffstyle}>
         <span>{entry.is_dir === true ? (
-            <FileDirectoryIcon />
+            <GoFileDirectoryFill style={{fontSize:'18px',color:'blue'}}/>
           ) : (
             <FileIcon />
           )}{" "}
           {button}</span>
         </td>
-        <td className="tree-size">{size}</td>
+        <td className="tree-size">{entry.is_dir?'Directory':size}</td>
         <td className="tree-modified">{modified}</td>
         <td className={"change-entry-row-actions"}>{entryActions}</td>
       </tr>
@@ -541,57 +542,59 @@ export const URINavigator = ({
   const parts = pathParts(path, isPathToFile);
   const user = cache.get('user')
   const params = {repoId: repo.name?repo.name:repo,user};
-  const query = {type:reference.type,path:filepath?filepath:path,is_dir:true,ref:reference.name}
+  let dir = ''
   return (
     <div className="d-flex">
       <div className="lakefs-uri flex-grow-1">
         {relativeTo === "" ? (
-          <>
-            <strong>{"jzfs://"}</strong>
-            <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
-              {repo.name}
-            </Link>
-            <strong>{"/"}</strong>
+          (<>
+          <strong>{"jzfs://"}</strong>
+          <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
+            {repo.name}
+          </Link>
+          <strong>{"/"}</strong>
             <Link
-              href={{pathname: "/repositories/:user/:repoId/objects",params}}>
+              href={{pathname: "/repositories/:user/:repoId/objects",params,query:{path:'',type:reference.type,ref:reference.name}}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
                 : reference.name}
             </Link>
+          {parts.length==0?(
+            <>
             <strong>{"/"}</strong>
-            <Link  href={{
-                pathname: "/repositories/:user/:repoId/objects",
-                params,
-                query
-              }}>
-            {filepath?filepath:path==='/'? '':path}
+            <Link
+              href={{pathname: "/repositories/:user/:repoId/objects",params,
+              query:{type:reference.type,path: path,is_dir:true,ref:reference.name}}}>
+              {path}
             </Link>
-          </>
+            </>
+            ) :
+            parts.map((part,index)=>{
+              index==0 ? dir = part.name : dir = dir + "/" + part.name
+            return index == parts.length - 1 ?(
+            <>
+            <strong>{"/"}</strong>
+            <span>{part.name}</span>
+            </>
+            ):(
+            <>
+            <strong>{"/"}</strong>
+            <Link
+              href={{pathname: "/repositories/:user/:repoId/objects",params,
+              query:{type:reference.type,path: dir,is_dir:true,ref:reference.name}}}>
+              {part.name}
+            </Link>
+            </>)
+            })
+          }
+        
+          </>)
         ) : (
           <>
             <Link href={pathURLBuilder(params, {path})}>{relativeTo}</Link>
             <strong>{"/"}</strong>
           </>
         )}
-
-        {parts.map((part, i) => {
-          const path =
-            parts
-              .slice(0, i + 1)
-              .map((p) => p.name)
-              .join("/") + "/";
-          const query = { path, ref: reference };
-          const edgeElement =
-            isPathToFile && i === parts.length - 1 ? (
-              <span>{part.name}</span>
-            ) : (
-              <>
-                <Link href={pathURLBuilder(params, query)}>{part.name}</Link>
-                <strong>{"/"}</strong>
-              </>
-            );
-          return <span key={part.name}>{edgeElement}</span>;
-        })}
         </div>
       <div className="object-viewer-buttons">
         {hasCopyButton &&
