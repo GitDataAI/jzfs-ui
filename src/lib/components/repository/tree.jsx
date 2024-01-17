@@ -511,8 +511,8 @@ function pathParts(path, isPathToFile) {
 
   // else
   for (let i = 0; i < parts.length; i++) {
-    let currentPath = parts.slice(0, i + 1).join("/");
-    if (currentPath.length > 0) {
+    let parts = path.split(/\//);
+    if (parts[parts.length - 1] === "" || !isPathToFile) {
       currentPath = `${currentPath}/`;
     }
     resolved.push({
@@ -548,6 +548,14 @@ export const URINavigator = ({
       <div className="lakefs-uri flex-grow-1">
 
         {relativeTo === "" ? (
+          (<>
+            <strong>{"jzfs://"}</strong>
+            <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
+              {repo.name}
+            </Link>
+            <strong>{"/"}</strong>
+              <Link
+                href={{pathname: "/repositories/:user/:repoId/objects",params,query:{path:'',type:reference.type,ref:reference.name}}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
                 : reference.name}
