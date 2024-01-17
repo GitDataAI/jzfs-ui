@@ -8,16 +8,11 @@ const ChangeRow = ({change,revert}) =>{
     const subPath = change.path.lastIndexOf("/") !== -1 ? change.path.substr(0, change.path.lastIndexOf("/")) : "";
     const buttonText =
       subPath.length > 0 ? change.path.substr(subPath.length + 1) : change.path;
-      console.log('text:',buttonText);
     const [show,setShow] = useState(false)
     const onHide = () =>{
       setShow(!show)
     }
-    let  button = (
-        <Link to={""}>
-          {buttonText}
-        </Link>
-      )
+    let  button = buttonText
     
     let diffIndicator;
     let diffstyle

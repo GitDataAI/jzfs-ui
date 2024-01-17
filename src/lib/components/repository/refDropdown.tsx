@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XIcon} from "@primer/octicons-react";
-import {tags, branches, commits, cache} from '../../api';
+import {cache} from '../../api';
 import {Nav, Badge,Form,Button,Alert,Overlay,Popover } from "react-bootstrap";
 import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../../constants";
 import { CommitListProps, RefDropdownProps, RefEntryProps, RefSelectorProps, ref, RepoPaginatorProps, ResponseProps } from "../interface/comp_interface";

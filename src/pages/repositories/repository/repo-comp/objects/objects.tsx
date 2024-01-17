@@ -5,29 +5,25 @@ import {
     ActionGroup,
     ActionsBar,
     Loading,
-    PrefixSearchWidget,
     RefreshButton,
 } from "../../../../../lib/components/controls";
 import {useRefs} from "../../../../../lib/hooks/repo";
 import {useRouter} from "../../../../../lib/hooks/router";
 import { Box } from "@mui/material";
 import { RepoError } from "../error/error";
-import { useSearchParams } from "react-router-dom";
 import { NoGCRulesWarning, TreeContainer } from "./obj_comps";
 import { Button } from "react-bootstrap";
 import { UploadIcon } from "@primer/octicons-react";
 import { Link } from "../../../../../lib/components/nav";
 import { cache } from "../../../../../lib/api";
-import { useAPI } from "../../../../../lib/hooks/api";
-import { repos } from "../../../../../lib/api/interface/Api";
-import { Tree } from "../../../../../lib/components/repository/tree";
-import ChangeList from "../../commits/commit/changesrow";
 
 
 const ObjectsBrowser = () => {
   const router = useRouter();
   const { path, after, importDialog,commitId} = router.query ;
   const { repo, reference, loading, error } = useRefs();  
+  console.log('repo:', repo,'reference:',reference);
+  
   const [showUpload, setShowUpload] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [filepath,setFilepath] = useState(path);

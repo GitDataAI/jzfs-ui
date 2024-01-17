@@ -82,6 +82,8 @@ const FileObjectsViewerPage =  () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (response as any)?.headers.get("Content-Length")
     );
+    console.log('router:',router);
+    
     content = (
       <FileContents
         repo={repo}
@@ -134,7 +136,8 @@ export const FileContents: FC<FileContentsProps> = ({
     return <></>;
   }
 
-
+  console.log('repo:',repo,'reference:',reference);
+  
   const titleComponent = showFullNavigator ? (
     <URINavigator
       path={path}
