@@ -511,8 +511,8 @@ function pathParts(path, isPathToFile) {
 
   // else
   for (let i = 0; i < parts.length; i++) {
-    let parts = path.split(/\//);
-    if (parts[parts.length - 1] === "" || !isPathToFile) {
+    let currentPath = parts.slice(0, i + 1).join("/");
+    if (currentPath.length > 0) {
       currentPath = `${currentPath}/`;
     }
     resolved.push({
