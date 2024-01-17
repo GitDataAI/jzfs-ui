@@ -83,9 +83,7 @@ const TopNav = ({logged = true}) => {
                          style={{ maxHeight: '100px' }}
                          navbarScroll>
                         <TopNavLink href="/repositories">Repositories</TopNavLink>
-                        <TopNavLink href="/auth">Organizations</TopNavLink>
                     </Nav>
-                    {/* <NavUserInfo/> */}
                 </Navbar.Collapse>
             </Container>
         </Navbar>

@@ -3,14 +3,15 @@ import React, {useContext, useState, createContext, useEffect} from "react";
 import {repositories, branches, commits, NotFoundError, tags, BadRequestError, cache} from "../api";
 import {useRouter} from "./router";
 import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../constants";
+import { repos } from "../api/interface/Api";
 
 
-export const resolveRef = async (repoId:string, refId:string) => {
+export const resolveRef = async (user,repoId:string, refId:string) => {
     // try branch
     try {
-        const branch = await branches.getBranch(repoId, refId);
+        const branch = await repos.getBranch(user,repoId, {refName:refId});
         
-        return {...branch,type: RefTypeBranch};
+        return {...branch.data,type: RefTypeBranch};
     } catch(error) {
         if (!(error instanceof NotFoundError) && !(error instanceof BadRequestError)) {
             throw error;
@@ -63,17 +64,16 @@ export const RefContextProvider = ({ children }) => {
     const { repoId } = router.params;
     const {ref, compare} = router.query;
     const [refState, setRefState] = useState(refContextInitialState);
-    console.log('repoId:',repoId,'ref:',ref);
-    
+    const user = cache.get('user')
     useEffect(() => {
         const fetch = async () => {
             setRefState(refContextInitialState);
             if (!repoId) return;
             try {
-                const repo = await repositories.getRepository(repoId);
-                const reference = await resolveRef(repoId, ref?ref:'main');
-                const comparedRef = await resolveRef(repoId, ref?ref:'main');
-                setRefState({...refContextInitialState, loading: false, repo, reference, compare: comparedRef});
+                const repo = await repos.getRepository( user, repoId)
+                const reference = await resolveRef(user,repoId, ref?ref:'main');
+                const comparedRef = await resolveRef(user,repoId, ref?ref:'main');
+                setRefState({...refContextInitialState, loading: false, repo: repo.data,reference, compare: comparedRef});
             } catch (err) {
                 setRefState({...refContextInitialState, loading: false, error: err});
             }
