@@ -499,13 +499,13 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
 };
 
 function pathParts(path, isPathToFile) {
-  let parts = path.replace(/^\/*|\/*$/g, '').split(/\//);
+  let parts = path.split(/\//);
   let resolved = [];
   if (parts.length === 0) {
     return resolved;
   }
 
-  if (parts[parts.length - 1] === "") {
+  if (parts[parts.length - 1] === "" || !isPathToFile) {
     parts = parts.slice(0, parts.length - 1);
   }
 
@@ -548,6 +548,14 @@ export const URINavigator = ({
       <div className="lakefs-uri flex-grow-1">
 
         {relativeTo === "" ? (
+          (<>
+            <strong>{"jzfs://"}</strong>
+            <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
+              {repo.name}
+            </Link>
+            <strong>{"/"}</strong>
+              <Link
+                href={{pathname: "/repositories/:user/:repoId/objects",params,query:{path:'',type:reference.type,ref:reference.name}}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
                 : reference.name}

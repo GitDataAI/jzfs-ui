@@ -80,6 +80,7 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
     const [fileStates, setFileStates] = useState<{[key: string]: any}>({});
     const [abortController, setAbortController] = useState<AbortController | null>(null)
     const [uploadpath, setUploadPath] = useState('/')
+    const [inputstuts, setInputStuts] = useState(true)
 
     const onDrop = useCallback((acceptedFiles:_File[]) => {
       setFiles([...acceptedFiles])
@@ -107,20 +108,23 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
   
     useEffect(() => {
       setCurrentPath(path)
+
     }, [path])
-  
+    useEffect(() =>{
+      files.length>1? setInputStuts(false):''
+    },[files])
     const upload = async () => {
       if (files.length < 1) {
         return
       }
-  
       const abortController = new AbortController()
-      setAbortController(abortController)
-  
+      setAbortController(abortController)      
       const mapper = async (file:_File) => {
+        console.log('file:',file);
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
-          
+          files.length >1?          
+          await uploadFile( repoId, reference.name, file.path, file, wipID):
           await uploadFile( repoId, reference.name, uploadpath, file, wipID)
           
         } catch (error: any | null) {
@@ -177,12 +181,12 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
 
               <Form.Group controlId="path" className="mb-3">
                 <Form.Text>Path</Form.Text>
-                <Form.Control disabled={uploadState.inProgress} value={uploadpath}  onChange={changeCurrentPath}/>
+                <Form.Control disabled={!inputstuts} value={uploadpath}  onChange={changeCurrentPath}/>
               </Form.Group>
   
               <Form.Group controlId="content" className="mb-3">
                 <div {...getRootProps({className: 'dropzone'})}>
-                    <input {...getInputProps()} />
+                    <input {...getInputProps()} webkitdirectory="" />
                     <div className={isDragAccept ? "file-drop-zone file-drop-zone-focus" : "file-drop-zone"}>
                       Drag &apos;n&apos; drop files or folders here (or click to select)
                     </div>
