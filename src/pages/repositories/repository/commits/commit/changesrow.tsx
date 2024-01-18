@@ -6,6 +6,7 @@ import { ConfirmationModal } from "../../../../../lib/components/modals";
 
 const ChangeRow = ({change,revert}) =>{
     const subPath = change.path.lastIndexOf("/") !== -1 ? change.path.substr(0, change.path.lastIndexOf("/")) : "";
+    
     const buttonText =
       subPath.length > 0 ? change.path.substr(subPath.length + 1) : change.path;
     const [show,setShow] = useState(false)
@@ -71,8 +72,9 @@ const ChangeRow = ({change,revert}) =>{
         <FileIcon />
           <span>{button}</span>
         </td>
+        <td>path:<code>{'/'}{change.path}</code></td>
         <td className="diff-indicator">{diffIndicator}</td>
-        {revert && <td><Button variant="link" disabled={false}
+        {revert && <td>revert:<Button variant="link" disabled={false}
                         onClick={(e) => {
                             e.preventDefault();
                             setShow(!show)
