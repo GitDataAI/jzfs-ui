@@ -330,7 +330,7 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
   if(entry.is_dir){
     const filePathQuery = {
       ref: query.ref,
-      path: query.path,
+      path: dirpath?`${dirpath}/${query.path}`: query.path,
       type: query.type,
       is_dir: entry.is_dir
     }

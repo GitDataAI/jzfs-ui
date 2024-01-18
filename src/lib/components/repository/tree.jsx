@@ -317,21 +317,39 @@ const PathLink = ({ repoId, reference, path, children, presign = false, as = nul
   return React.createElement(as, { href: link, download: name }, children);
 };
 
-export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
-  const {is_dir,path:dirpath} = useRouter().query
+export const EntryRow = ({repo, reference, path, entry, onDelete, showActions }) => {
+  const {is_dir,path:dirpath,commitId} = useRouter().query
   let rowClass = "change-entry-row ";
   const subPath = path.lastIndexOf("/") !== -1 ? path.substr(0, path.lastIndexOf("/")) : "";
   const buttonText =
       subPath.length > 0 ? entry.name.substr(subPath.length + 1) : entry.name;
-
   const user = cache.get('user')
   const params = { repoId: repo.name,user };
   const query = { ref: reference.name, path: entry.name,type:reference.type};
   let button;
-  if(entry.is_dir){
+  if(commitId && entry.is_dir){
     const filePathQuery = {
       ref: query.ref,
-      path: query.path,
+      path: dirpath?`${dirpath}/${query.path}`: query.path,
+      type: query.type,
+      is_dir: entry.is_dir,
+      commitId:commitId
+    }
+    button = (
+      <Link
+        href={{
+          pathname: "/repositories/:user/:repoId/objects",
+          query: filePathQuery,
+          params: params,
+        }}
+      >
+        {buttonText}
+      </Link>
+    )
+  }else if(entry.is_dir){
+    const filePathQuery = {
+      ref: query.ref,
+      path: dirpath?`${dirpath}/${query.path}`: query.path,
       type: query.type,
       is_dir: entry.is_dir
     }
@@ -366,7 +384,8 @@ export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }
     );
   } else if(!entry.is_dir && subPath.length>0)  {
     return
-  }else {
+  }
+  else {
   const filePathQuery = {
       ref: query.ref,
       path: query.path,
@@ -699,7 +718,6 @@ export const Tree = ({
   path = "",
 }) => {
   let body;
-
   if (results.length === 0 && path === "" && reference.type === RefTypeBranch) {
     // empty state!
     body = (

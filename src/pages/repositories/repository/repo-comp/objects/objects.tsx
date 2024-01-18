@@ -22,7 +22,6 @@ const ObjectsBrowser = () => {
   const router = useRouter();
   const { path, after, importDialog,commitId} = router.query ;
   const { repo, reference, loading, error } = useRefs();  
-  console.log('repo:', repo,'reference:',reference);
   
   const [showUpload, setShowUpload] = useState(false);
   const [showImport, setShowImport] = useState(false);
@@ -135,10 +134,9 @@ const ObjectsBrowser = () => {
               pathname: `/repositories/:user/:repoId/objects`,
               params: {
                 repoId: repo.name,
-                user,
-                path: path === undefined ? "" : path,
+                user
               },
-              query: { ref:ref.id, path: path === undefined ? "" : path },
+              query: { ref:ref.id},
             })} onCancel={undefined}          
             />
         </ActionGroup>
