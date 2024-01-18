@@ -120,7 +120,6 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
       const abortController = new AbortController()
       setAbortController(abortController)      
       const mapper = async (file:_File) => {
-        console.log('file:',file);
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
           files.length >1?          

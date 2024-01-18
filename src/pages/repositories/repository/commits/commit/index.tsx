@@ -55,11 +55,9 @@ const CommitContainer = () => {
     const { repo, loading, error } = useRefs();
     const { ref:refname,basedhash,message,committer,commitDate} = router.query;
     const { commitId ,user} = router.params;
-    console.log('router:',router);
     
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
-    console.log('ref:',refname);
 
     return (
         <CommitView

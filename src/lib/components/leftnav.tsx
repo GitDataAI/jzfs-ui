@@ -93,7 +93,7 @@ const Leftnav = () =>{
                     onClick={async()=> {
                         auth.clearCurrentUser();
                         window.location = logoutUrl;
-                        console.log(await auth.logout());
+                        await auth.logout();
                     }}>
                     Logout
                 </NavDropdown.Item>
