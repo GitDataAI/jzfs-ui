@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build",
+    "docker": "docker build -t gitdatateam/jiaozifs-ui:latest . && docker push gitdatateam/jiaozifs-ui:latest",
+    "docker-test": "docker build -t gitdatateam/jiaozifs-ui:test . && docker push gitdatateam/jiaozifs-ui:test",
     "serve": "vite preview",
     "test": "vitest run",
     "coverage": "vitest --coverage && codecov",

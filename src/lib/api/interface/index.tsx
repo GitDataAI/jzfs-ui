@@ -1,9 +1,10 @@
 import { cache } from "..";
 import {Api, ApiConfig, ContentType, FullRequestParams, HttpResponse, QueryParamsType, RequestParams } from "./Api";
+
 type CancelToken = Symbol | string | number;
 
 export class HttpClient<SecurityDataType = unknown> {
-    public baseUrl: string = "http://localhost:3000/api/v1";
+    public baseUrl: string = window.JIAOZIFS_API_URL;
     private securityData: SecurityDataType | null = null;
     private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
     private abortControllers = new Map<CancelToken, AbortController>();
