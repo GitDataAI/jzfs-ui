@@ -1,3 +1,10 @@
-FROM nginx
+FROM busybox:1.35
 
-COPY dist/. /usr/share/nginx/html
+WORKDIR /static
+
+COPY dist/. .
+COPY start.sh .
+
+RUN busybox chmod +x start.sh
+
+ENTRYPOINT ["sh", "start.sh"]

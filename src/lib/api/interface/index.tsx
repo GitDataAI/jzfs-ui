@@ -4,7 +4,7 @@ import {Api, ApiConfig, ContentType, FullRequestParams, HttpResponse, QueryParam
 type CancelToken = Symbol | string | number;
 
 export class HttpClient<SecurityDataType = unknown> {
-    public baseUrl: string = import.meta.env.VITE_JIAOZIFS_API_URL;
+    public baseUrl: string = window.JIAOZIFS_API_URL;
     private securityData: SecurityDataType | null = null;
     private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
     private abortControllers = new Map<CancelToken, AbortController>();
@@ -119,7 +119,6 @@ export class HttpClient<SecurityDataType = unknown> {
       cancelToken,
       ...params
     }: FullRequestParams): Promise<HttpResponse<T, E>> => {
-      console.log("xxx", import.meta.env.VITE_JIAOZIFS_API_URL);
       const secureParams =
         ((typeof secure === "boolean" ? secure : this.baseApiParams.secure) &&
           this.securityWorker &&
