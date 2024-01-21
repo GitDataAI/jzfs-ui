@@ -1,11 +1,10 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-    readonly VITE_USERNAME: string
-    readonly VITE_PASSWORD: string
+    readonly VITE_JIAOZIFS_API_URL: string
   }
   
-  interface ImportMeta {
+interface ImportMeta {
     readonly env: ImportMetaEnv
-  }
+}
   
