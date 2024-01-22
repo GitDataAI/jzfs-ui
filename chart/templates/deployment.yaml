@@ -19,6 +19,6 @@ spec:
         - name: jiaozifs-ui
           image: gitdatateam/jiaozifs-ui:latest
           imagePullPolicy: Always
-          args: [{{ Values.api_url }}]
+          args: [{{ .Values.api_url }}]
           ports:
-            - containerPort: 80
+            - containerPort: 3000
