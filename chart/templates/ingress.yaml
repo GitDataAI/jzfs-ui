@@ -25,4 +25,4 @@ spec:
               service:
                 name: jiaozifs-ui-service
                 port:
-                  number: 80
+                  number: 3000

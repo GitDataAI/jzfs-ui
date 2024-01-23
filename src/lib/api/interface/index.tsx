@@ -129,14 +129,14 @@ export class HttpClient<SecurityDataType = unknown> {
       const payloadFormatter = this.contentFormatters[type || ContentType.Json];
       const responseFormat = format || requestParams.format;
       const token = cache.get('token');
-  
+      let headers = {
+        ...(requestParams.headers || {}),
+        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+        ...(token?{'Authorization': `Bearer ${token}`}:{})
+      }
       return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
         ...requestParams,
-        headers: {
-          ...(requestParams.headers || {}),
-          ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
-          'Authorization': `Bearer ${token}`
-        },
+        headers: headers,
         signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
         body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
       }).then(async (response) => {
