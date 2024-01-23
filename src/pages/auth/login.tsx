@@ -59,19 +59,15 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                         router.push(next ? next : '/repositories');
                                     })
                             } catch(err) {
-                                if (err && err.status === 401) {
-                                    const contents = {__html: `${err.error.message}` ||
-                                        "Credentials don't match."};
-                                    setLoginError(<span dangerouslySetInnerHTML={contents}/>);
-                                }
-                            }
+                                setLoginError(<span>{'Check your username or password,and password must contain at least 8 characters'}</span>)
+                    }                            
                         }}>
                             <Form.Group controlId="username" className="mb-3">
-                                <Form.Control type="text" placeholder={"Access Key ID"} autoFocus/>
+                                <Form.Control type="text" placeholder={"Access username"} autoFocus/>
                             </Form.Group>
 
                             <Form.Group controlId="password" className="mb-3">
-                                <Form.Control type="password" placeholder={"Secret Access Key"}/>
+                                <Form.Control type="password" placeholder={"Access password"}/>
                             </Form.Group>
 
                             {(loginError) && <AlertError error={loginError}/>}

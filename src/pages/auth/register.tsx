@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import Layout from "../../lib/components/layout"
 import { useRouter } from "../../lib/hooks/router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { AuthenticationError, auth } from "../../lib/api";
+import { users } from "../../lib/api/interface/Api";
 import { AlertError } from "../../lib/components/controls";
 
 const RegisterForm = () => {
@@ -19,7 +19,7 @@ const RegisterForm = () => {
     }
     return(
             <Row className="justify-content-center align-items-center">
-            <Col md={{offset: 5, span: 10}} className="login-box" >
+            <Col md={{offset: 2, span: 8}} className="login-box" >
             <Card className="login-display">
                     <Card.Body>
                         <div className="tittle">
@@ -38,27 +38,26 @@ const RegisterForm = () => {
                         const password = form.elements.namedItem('password') as HTMLInputElement;
                         const email = form.elements.namedItem('email') as HTMLInputElement;
                         try {
-                            auth.register({name: username.value,password:password.value,email:email.value})
+                            await users.register({name: username.value,password:password.value,email:email.value})
                             setRegisterError(null);
                             router.push(next ? next : '/auth/login');
                         } catch(err) {
-                            if (err instanceof AuthenticationError && err.status === 401) {
-                                const contents = {__html: `${loginConfig.login_failed_message}` ||
-                                    "Credentials don't match."};
-                                    setRegisterError(<span dangerouslySetInnerHTML={contents}/>);
-                            }
+                            if(password.value.length<8)
+                                    {setRegisterError(<span>{'The password must contain at least 8 characters'}</span>)
+                                }else if(!email.value)
+                                    {setRegisterError(<span>{'Please input your e-mail'}</span>)}
                         }
                     }}>
                         <Form.Group controlId="username" className="mb-3">
-                            <Form.Control type="text" placeholder={"Access Key ID"} autoFocus/>
+                            <Form.Control type="text" placeholder={"Access username"} autoFocus/>
                         </Form.Group>
 
                         <Form.Group controlId="password" className="mb-3">
-                            <Form.Control type="password" placeholder={"Secret Access Key"}/>
+                            <Form.Control type="password" placeholder={"Access password"}/>
                         </Form.Group>
 
                         <Form.Group controlId="email" className="mb-3">
-                            <Form.Control type="email" placeholder={"Secret email"}/>
+                            <Form.Control type="email" placeholder={"Access email"}/>
                         </Form.Group>
 
                         {(!!RegisterError) && <AlertError error={RegisterError}/>}

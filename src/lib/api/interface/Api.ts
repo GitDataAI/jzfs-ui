@@ -74,6 +74,137 @@ export enum RefType {
   Commit = "commit",
 }
 
+export interface CreateMergeRequest {
+  target_branch_name: string;
+  source_branch_name: string;
+  /** @max 50 */
+  title: string;
+  /** @max 500 */
+  description?: string;
+}
+
+export interface UpdateMergeRequest {
+  title?: string;
+  description?: string;
+  /** @format int */
+  status?: number;
+}
+
+export interface MergeMergeRequest {
+  msg: string;
+  /** use to record the resolution of the conflict, example({"b/a.txt":"left"}) */
+  conflict_resolve?: Record<string, string>;
+}
+
+export interface MergeRequest {
+  /** @format uuid */
+  id: string;
+  /** @format uint64 */
+  sequence: number;
+  /** @format uuid */
+  target_branch: string;
+  /** @format uuid */
+  source_branch: string;
+  /** @format uuid */
+  source_repo_id: string;
+  /** @format uuid */
+  target_repo_id: string;
+  title: string;
+  /** @format int */
+  merge_status: number;
+  description?: string;
+  /** @format uuid */
+  author_id: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
+}
+
+export interface MergeRequestFullState {
+  /** @format uuid */
+  id: string;
+  /** @format uint64 */
+  sequence: number;
+  /** @format uuid */
+  target_branch: string;
+  /** @format uuid */
+  source_branch: string;
+  /** @format uuid */
+  source_repo_id: string;
+  /** @format uuid */
+  target_repo_id: string;
+  title: string;
+  /** @format int */
+  merge_status: number;
+  description?: string;
+  /** @format uuid */
+  author_id: string;
+  changes: {
+    path: string;
+    left?: {
+      path: string;
+      action: 1 | 2 | 3;
+      base_hash?: string;
+      to_hash?: string;
+    };
+    right?: {
+      path: string;
+      action: 1 | 2 | 3;
+      base_hash?: string;
+      to_hash?: string;
+    };
+    is_conflict: boolean;
+  }[];
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
+}
+
+export interface MergeRequestList {
+  pagination: {
+    /** Next page is available */
+    has_more: boolean;
+    /** Token used to retrieve the next page */
+    next_offset: string;
+    /**
+     * Number of values found in the results
+     * @min 0
+     */
+    results: number;
+    /**
+     * Maximal number of entries per page
+     * @min 0
+     */
+    max_per_page: number;
+  };
+  results: {
+    /** @format uuid */
+    id: string;
+    /** @format uint64 */
+    sequence: number;
+    /** @format uuid */
+    target_branch: string;
+    /** @format uuid */
+    source_branch: string;
+    /** @format uuid */
+    source_repo_id: string;
+    /** @format uuid */
+    target_repo_id: string;
+    title: string;
+    /** @format int */
+    merge_status: number;
+    description?: string;
+    /** @format uuid */
+    author_id: string;
+    /** @format int64 */
+    created_at: number;
+    /** @format int64 */
+    updated_at: number;
+  }[];
+}
+
 export interface Branch {
   /** @format uuid */
   id: string;
@@ -84,10 +215,10 @@ export interface Branch {
   description?: string;
   /** @format uuid */
   creator_id: string;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface BranchList {
@@ -117,10 +248,10 @@ export interface BranchList {
     description?: string;
     /** @format uuid */
     creator_id: string;
-    /** @format date-time */
-    created_at: string;
-    /** @format date-time */
-    updated_at: string;
+    /** @format int64 */
+    created_at: number;
+    /** @format int64 */
+    updated_at: number;
   }[];
 }
 
@@ -166,10 +297,10 @@ export interface RepositoryList {
     description?: string;
     /** @format uuid */
     creator_id: string;
-    /** @format date-time */
-    created_at: string;
-    /** @format date-time */
-    updated_at: string;
+    /** @format int64 */
+    created_at: number;
+    /** @format int64 */
+    updated_at: number;
   }[];
 }
 
@@ -186,10 +317,10 @@ export interface Repository {
   description?: string;
   /** @format uuid */
   creator_id: string;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface Blob {
@@ -202,18 +333,18 @@ export interface Blob {
   /** @format int64 */
   size: number;
   properties: Record<string, string>;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface Signature {
   name: string;
   /** @format email */
   email: string;
-  /** @format date-time */
-  when: string;
+  /** @format int64 */
+  when: number;
 }
 
 export interface Commit {
@@ -224,24 +355,24 @@ export interface Commit {
     name: string;
     /** @format email */
     email: string;
-    /** @format date-time */
-    when: string;
+    /** @format int64 */
+    when: number;
   };
   committer: {
     name: string;
     /** @format email */
     email: string;
-    /** @format date-time */
-    when: string;
+    /** @format int64 */
+    when: number;
   };
   merge_tag: string;
   message: string;
   tree_hash: string;
   parent_hashes: string[];
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface TreeEntry {
@@ -256,10 +387,10 @@ export interface FullTreeEntry {
   is_dir: boolean;
   /** @format int64 */
   size: number;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface TreeNode {
@@ -274,10 +405,10 @@ export interface TreeNode {
     hash: string;
     is_dir: boolean;
   }[];
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface Wip {
@@ -293,10 +424,15 @@ export interface Wip {
   state: number;
   /** @format uuid */
   creator_id: string;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
+}
+
+export interface UpdateWip {
+  base_commit?: string;
+  current_tree?: string;
 }
 
 export interface Change {
@@ -304,6 +440,23 @@ export interface Change {
   action: 1 | 2 | 3;
   base_hash?: string;
   to_hash?: string;
+}
+
+export interface ChangePair {
+  path: string;
+  left?: {
+    path: string;
+    action: 1 | 2 | 3;
+    base_hash?: string;
+    to_hash?: string;
+  };
+  right?: {
+    path: string;
+    action: 1 | 2 | 3;
+    base_hash?: string;
+    to_hash?: string;
+  };
+  is_conflict: boolean;
 }
 
 export interface UserUpdate {
@@ -320,18 +473,18 @@ export interface UserInfo {
   name: string;
   /** @format email */
   email: string;
-  /** @format date-time */
-  current_sign_in_at?: string;
-  /** @format date-time */
-  last_sign_in_at?: string;
+  /** @format int64 */
+  current_sign_in_at?: number;
+  /** @format int64 */
+  last_sign_in_at?: number;
   /** @format ipv4 */
   current_sign_in_ip?: string;
   /** @format ipv4 */
   last_sign_in_ip?: string;
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface UserRegisterInfo {
@@ -540,6 +693,7 @@ export enum ContentType {
   UrlEncoded = "application/x-www-form-urlencoded",
   Text = "text/plain",
 }
+
 /**
  * @title jiaozifs API
  * @version 1.0.0
@@ -798,10 +952,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           state: number;
           /** @format uuid */
           creator_id: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         },
         void
       >({
@@ -810,6 +964,38 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         query: query,
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags wip
+     * @name UpdateWip
+     * @summary update wip
+     * @request POST:/wip/{owner}/{repository}
+     * @secure
+     */
+    updateWip: (
+      repository: string,
+      owner: string,
+      query: {
+        /** ref name */
+        refName: string;
+      },
+      data: {
+        base_commit?: string;
+        current_tree?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/wip/${owner}/${repository}`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -938,10 +1124,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           state: number;
           /** @format uuid */
           creator_id: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         },
         void
       >({
@@ -977,10 +1163,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           state: number;
           /** @format uuid */
           creator_id: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         }[],
         void
       >({
@@ -1007,9 +1193,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: {
         /** specific path, if not specific return entries in root */
         path?: string;
-        /** specific branch,  default to repostiory default branch(HEAD) */
+        /** specific( ref name, tag name, commit hash), for wip and branchm, branch name default to repository default branch(HEAD), */
         ref?: string;
-        /** type indicate to retrieve from wip/branch/tag, default branch */
+        /** type indicate to retrieve from wip/branch/tag/commit, default branch */
         type: "branch" | "wip" | "tag" | "commit";
       },
       params: RequestParams = {},
@@ -1021,10 +1207,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           is_dir: boolean;
           /** @format int64 */
           size: number;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         }[],
         void
       >({
@@ -1112,20 +1298,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags repo
-     * @name GetCommitsInRepository
-     * @summary get commits in repository
+     * @name GetCommitsInRef
+     * @summary get commits in ref
      * @request GET:/repos/{owner}/{repository}/commits
      * @secure
      */
-    getCommitsInRepository: (
+    getCommitsInRef: (
       owner: string,
       repository: string,
       query?: {
         /**
          * return items after this value
-         * @format date-time-ns
+         * @format int64
          */
-        after?: string;
+        after?: number;
         /**
          * how many items to return
          * @min -1
@@ -1147,24 +1333,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             name: string;
             /** @format email */
             email: string;
-            /** @format date-time */
-            when: string;
+            /** @format int64 */
+            when: number;
           };
           committer: {
             name: string;
             /** @format email */
             email: string;
-            /** @format date-time */
-            when: string;
+            /** @format int64 */
+            when: number;
           };
           merge_tag: string;
           message: string;
           tree_hash: string;
           parent_hashes: string[];
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         }[],
         any
       >({
@@ -1200,10 +1386,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           description?: string;
           /** @format uuid */
           creator_id: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         },
         void
       >({
@@ -1313,10 +1499,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             description?: string;
             /** @format uuid */
             creator_id: string;
-            /** @format date-time */
-            created_at: string;
-            /** @format date-time */
-            updated_at: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
           }[];
         },
         void
@@ -1357,10 +1543,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           description?: string;
           /** @format uuid */
           creator_id: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         },
         void
       >({
@@ -1431,6 +1617,298 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
+  mergerequest = {
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name ListMergeRequests
+     * @summary get list of merge request in repository
+     * @request GET:/mergerequest/{owner}/{repository}
+     * @secure
+     */
+    listMergeRequests: (
+      owner: string,
+      repository: string,
+      query?: {
+        /**
+         * return items after this value
+         * @format int64
+         */
+        after?: number;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
+        /** @format int */
+        state?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          pagination: {
+            /** Next page is available */
+            has_more: boolean;
+            /** Token used to retrieve the next page */
+            next_offset: string;
+            /**
+             * Number of values found in the results
+             * @min 0
+             */
+            results: number;
+            /**
+             * Maximal number of entries per page
+             * @min 0
+             */
+            max_per_page: number;
+          };
+          results: {
+            /** @format uuid */
+            id: string;
+            /** @format uint64 */
+            sequence: number;
+            /** @format uuid */
+            target_branch: string;
+            /** @format uuid */
+            source_branch: string;
+            /** @format uuid */
+            source_repo_id: string;
+            /** @format uuid */
+            target_repo_id: string;
+            title: string;
+            /** @format int */
+            merge_status: number;
+            description?: string;
+            /** @format uuid */
+            author_id: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
+          }[];
+        },
+        void
+      >({
+        path: `/mergerequest/${owner}/${repository}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name CreateMergeRequest
+     * @summary create merge request
+     * @request POST:/mergerequest/{owner}/{repository}
+     * @secure
+     */
+    createMergeRequest: (
+      owner: string,
+      repository: string,
+      data: {
+        target_branch_name: string;
+        source_branch_name: string;
+        /** @max 50 */
+        title: string;
+        /** @max 500 */
+        description?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          /** @format uint64 */
+          sequence: number;
+          /** @format uuid */
+          target_branch: string;
+          /** @format uuid */
+          source_branch: string;
+          /** @format uuid */
+          source_repo_id: string;
+          /** @format uuid */
+          target_repo_id: string;
+          title: string;
+          /** @format int */
+          merge_status: number;
+          description?: string;
+          /** @format uuid */
+          author_id: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/mergerequest/${owner}/${repository}`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name Merge
+     * @summary merge a mergerequest
+     * @request POST:/mergerequest/{owner}/{repository}/{mrSeq}/merge
+     * @secure
+     */
+    merge: (
+      owner: string,
+      repository: string,
+      mrSeq: number,
+      data: {
+        msg: string;
+        /** use to record the resolution of the conflict, example({"b/a.txt":"left"}) */
+        conflict_resolve?: Record<string, string>;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          hash: string;
+          /** @format uuid */
+          repository_id: string;
+          author: {
+            name: string;
+            /** @format email */
+            email: string;
+            /** @format int64 */
+            when: number;
+          };
+          committer: {
+            name: string;
+            /** @format email */
+            email: string;
+            /** @format int64 */
+            when: number;
+          };
+          merge_tag: string;
+          message: string;
+          tree_hash: string;
+          parent_hashes: string[];
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        }[],
+        void
+      >({
+        path: `/mergerequest/${owner}/${repository}/${mrSeq}/merge`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
+  mergequest = {
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name GetMergeRequest
+     * @summary get merge request
+     * @request GET:/mergequest/{owner}/{repository}/{mrSeq}
+     * @secure
+     */
+    getMergeRequest: (owner: string, repository: string, mrSeq: number, params: RequestParams = {}) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          /** @format uint64 */
+          sequence: number;
+          /** @format uuid */
+          target_branch: string;
+          /** @format uuid */
+          source_branch: string;
+          /** @format uuid */
+          source_repo_id: string;
+          /** @format uuid */
+          target_repo_id: string;
+          title: string;
+          /** @format int */
+          merge_status: number;
+          description?: string;
+          /** @format uuid */
+          author_id: string;
+          changes: {
+            path: string;
+            left?: {
+              path: string;
+              action: 1 | 2 | 3;
+              base_hash?: string;
+              to_hash?: string;
+            };
+            right?: {
+              path: string;
+              action: 1 | 2 | 3;
+              base_hash?: string;
+              to_hash?: string;
+            };
+            is_conflict: boolean;
+          }[];
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/mergequest/${owner}/${repository}/${mrSeq}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name UpdateMergeRequest
+     * @summary update merge request
+     * @request POST:/mergequest/{owner}/{repository}/{mrSeq}
+     * @secure
+     */
+    updateMergeRequest: (
+      owner: string,
+      repository: string,
+      mrSeq: number,
+      data: {
+        title?: string;
+        description?: string;
+        /** @format int */
+        status?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/mergequest/${owner}/${repository}/${mrSeq}`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+  };
   users = {
     /**
      * No description
@@ -1448,9 +1926,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         prefix?: string;
         /**
          * return items after this value
-         * @format date-time
+         * @format int64
          */
-        after?: string;
+        after?: number;
         /**
          * how many items to return
          * @min -1
@@ -1492,10 +1970,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             description?: string;
             /** @format uuid */
             creator_id: string;
-            /** @format date-time */
-            created_at: string;
-            /** @format date-time */
-            updated_at: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
           }[];
         },
         void
@@ -1523,9 +2001,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         prefix?: string;
         /**
          * return items after this value
-         * @format date-time
+         * @format int64
          */
-        after?: string;
+        after?: number;
         /**
          * how many items to return
          * @min -1
@@ -1567,10 +2045,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             description?: string;
             /** @format uuid */
             creator_id: string;
-            /** @format date-time */
-            created_at: string;
-            /** @format date-time */
-            updated_at: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
           }[];
         },
         void
@@ -1615,10 +2093,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           description?: string;
           /** @format uuid */
           creator_id: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         }[],
         void
       >({
@@ -1674,22 +2152,51 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           name: string;
           /** @format email */
           email: string;
-          /** @format date-time */
-          current_sign_in_at?: string;
-          /** @format date-time */
-          last_sign_in_at?: string;
+          /** @format int64 */
+          current_sign_in_at?: number;
+          /** @format int64 */
+          last_sign_in_at?: number;
           /** @format ipv4 */
           current_sign_in_ip?: string;
           /** @format ipv4 */
           last_sign_in_ip?: string;
-          /** @format date-time */
-          created_at: string;
-          /** @format date-time */
-          updated_at: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         },
         void
       >({
         path: `/users/user`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags auth
+     * @name RefreshToken
+     * @summary refresh token for more time
+     * @request GET:/users/refreshtoken
+     * @secure
+     */
+    refreshToken: (params: RequestParams = {}) =>
+      this.request<
+        {
+          /** a JWT token that could be used to authenticate requests */
+          token: string;
+          /**
+           * Unix Epoch in seconds
+           * @format int64
+           */
+          token_expiration?: number;
+        },
+        void
+      >({
+        path: `/users/refreshtoken`,
         method: "GET",
         secure: true,
         format: "json",
@@ -1750,7 +2257,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   };
 }
-
 
 
 const api = new Api()

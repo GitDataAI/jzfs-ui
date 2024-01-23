@@ -96,7 +96,7 @@ const CommitsBrowser:React.FC<CommitsBrowserProps> = ({ repo, reference, after, 
     const [refresh, setRefresh] = useState(true)
     const user = cache.get('user')
     const { response, error, loading,  } = useAPI(async () => {
-        return await repos.getCommitsInRepository(user, repo.name,{refName:reference.name})
+        return await repos.getCommitsInRef(user, repo.name,{refName:reference.name})
     }, [repo.name, reference.name, refresh, after])
     const results =  response;
     
