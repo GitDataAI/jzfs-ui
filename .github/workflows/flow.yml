@@ -3,7 +3,7 @@ name: test
 on:
   create:
     branches: 
-      - deployment/*      #deploy when deployment branch create
+      - deployment/**      #deploy when deployment branch create
   push:
     branches:
       - main              # push to main branch
