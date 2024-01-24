@@ -11,7 +11,7 @@ on:
         required: true
 jobs:
   deployment:
-    if: ${{ startsWith(github.ref, 'refs/heads/deployment/') || github.ref == 'refs/heads/master'  }}
+    if: ${{ startsWith(github.ref, 'refs/heads/deployment/') || github.ref == 'refs/heads/main'  }}
     runs-on: [self-hosted]
     steps:
       - name: Checkout repo
@@ -19,7 +19,9 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v3
-
+        with:
+          node-version: 18
+        
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
@@ -39,13 +41,14 @@ jobs:
 
       - name: Build and push
         run: |
+          ls dist
           docker login -u  ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           docker build -t gitdatateam/jiaozifs-ui:${{ steps.version.outputs.version }} . 
           docker push gitdatateam/jiaozifs-ui:${{ steps.version.outputs.version }}
-        
+          
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v3
         with:
-          exec: helm install jiaozifs-ui ./chart/ --namespace jiaozifs --set-string api_url=${{ secrets.JIAOZI_API_URL }}  --set-string tag=${{ steps.version.outputs.version }}
+          exec: helm upgrade  jiaozifs-ui --install ./chart/ --namespace jiaozifs --set-string api_url=${{ secrets.JIAOZI_API_URL }}  --set-string tag=${{ steps.version.outputs.version }}
           kubeconfig: ${{ secrets.KUBECONTENT }}
           overrule_existing_kubeconfig: "true"
