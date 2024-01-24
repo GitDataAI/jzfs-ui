@@ -11,7 +11,7 @@ on:
         required: true
 jobs:
   deployment:
-    if: ${{ startsWith(github.ref, 'refs/heads/deployment/') || github.ref == 'refs/heads/main'  }}
+    if: ${{ startsWith(github.ref, 'refs/heads/deployment/') ||  startsWith(github.base_ref, 'deployment/') || github.ref == 'refs/heads/main'  }}
     runs-on: [self-hosted]
     steps:
       - name: Checkout repo
