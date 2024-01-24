@@ -1,13 +1,15 @@
 name: test
 
 on:
+  create:
+    branches:
+      - 'deployment/**'   #deploy when deployment branch create
   push:
     branches:
-      - main
-      - 'deployment/**'
+      - main              # push to main branch
   pull_request:
     branches:
-      - '**'
+      - '**'              #run check for any pr, and run deployment for deployment branch
 
 jobs:
   build:
