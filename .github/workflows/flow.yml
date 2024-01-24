@@ -3,7 +3,8 @@ name: test
 on:
   create:
     branches:
-      - 'deployment/**'   #deploy when deployment branch create
+      if: ${{ startsWith(github.ref, 'refs/heads/deployment/')}}
+
   push:
     branches:
       - main              # push to main branch
