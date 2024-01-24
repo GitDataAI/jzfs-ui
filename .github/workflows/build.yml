@@ -15,13 +15,11 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "SHA: ${{ github.sha }}"
           echo "Ref: ${{ github.ref }}"
-          echo "Workflow: ${{ github.workflow }}"
           echo "Action: ${{ github.action }}"
           echo "Actor: ${{ github.actor }}"
           echo "Workflow Run ID: ${{ github.run_id }}"
           echo "Head Repository: ${{ github.head_repository }}"
           echo "Base Repository: ${{ github.base_repository }}"
-          echo "Event JSON Payload: ${{ toJson(github.event) }}"
         
       - name: Checkout repo
         uses: actions/checkout@v3
