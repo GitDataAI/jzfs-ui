@@ -4,3 +4,4 @@
 replicas: 1
 ingress_name: nginx
 api_url: http://api.jiaozifs.com/api/v1
+tag: latest

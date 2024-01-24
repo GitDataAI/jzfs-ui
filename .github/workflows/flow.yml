@@ -1,0 +1,19 @@
+name: test
+
+on:
+  push:
+    branches:
+      - main
+      - 'deployment/**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+  deployment:
+    needs:
+      - build
+    uses: ./.github/workflows/deployment.yml
+    secrets: inherit

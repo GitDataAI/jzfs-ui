@@ -1,0 +1,51 @@
+name: test
+
+on:
+  workflow_call:
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+      KUBECONTENT:
+        required: true
+jobs:
+  deployment:
+    if: ${{ startsWith(github.ref, 'refs/heads/deployment/') || github.ref == 'refs/heads/master'  }}
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Build project
+        run: npm run build
+
+      - name: Get version
+        id: version
+        run: |
+          if [[ -n "$GITHUB_REF" && "$GITHUB_REF" == "refs/tags/"* ]]; then
+            echo "tag version"
+            echo "::set-output name=version::${GITHUB_REF/refs\/tags\//}"
+          else
+            echo "commit version"    
+            echo "::set-output name=version::${{ github.sha }}"
+          fi
+
+      - name: Build and push
+        run: |
+          docker login -u  ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker build -t gitdatateam/jiaozifs-ui:${{ steps.version.outputs.version }} . 
+          docker push gitdatateam/jiaozifs-ui:${{ steps.version.outputs.version }}
+        
+      - name: Deploy
+        uses: WyriHaximus/github-action-helm3@v3
+        with:
+          exec: helm install jiaozifs-ui ./chart/ --namespace jiaozifs --set-string api_url=${{ secrets.JIAOZI_API_URL }}  --set-string tag=${{ steps.version.outputs.version }}
+          kubeconfig: ${{ secrets.KUBECONTENT }}
+          overrule_existing_kubeconfig: "true"
