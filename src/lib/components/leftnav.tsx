@@ -1,10 +1,10 @@
 import { FeedPersonIcon } from "@primer/octicons-react";
 import {   ButtonToolbar, Col, Form, FormControl, NavDropdown, Navbar, Row } from "react-bootstrap"
-import {auth, cache} from "../api";
+import {auth as Auth, cache} from "../api";
 import React, { useCallback, useState } from "react";
 import { useRouter } from "../hooks/router";
 import { useAPIWithPagination } from "../hooks/api";
-import { users } from "../api/interface/Api";
+import { users,auth } from "../api/interface/index";
 import { AlertError, Loading } from "./controls";
 import {Link} from "../../lib/components/nav";
 import { CreateRepositoryButton, CreateRepositoryModal } from "../../pages/repositories/repos-comp";
@@ -95,7 +95,7 @@ const Leftnav = () =>{
             <NavDropdown title={<NavBarTitle />} className="navbar-username" align="end">
                 <NavDropdown.Item
                     onClick={async()=> {
-                        auth.clearCurrentUser();
+                        Auth.clearCurrentUser();
                         window.location = logoutUrl;
                         await auth.logout();
                     }}>
