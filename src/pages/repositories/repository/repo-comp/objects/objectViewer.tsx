@@ -15,7 +15,7 @@ import { RepositoryPageLayout } from "../../../../../lib/components/repository/l
 import { RefContextProvider, useRefs } from "../../../../../lib/hooks/repo";
 import { useStorageConfig } from "../../../../../lib/hooks/storageConfig";
 import { linkToPath } from "../../../../../lib/api";
-import { object, repos } from "../../../../../lib/api/interface/Api";
+import { object, repos } from "../../../../../lib/api/interface/index";
 import { Table } from "react-bootstrap";
 
 // import "../../../styles/ipynb.css";

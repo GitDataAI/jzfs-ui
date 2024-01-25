@@ -5,7 +5,7 @@ import {auth as Auth, AuthenticationError, cache, setup, SETUP_STATE_INITIALIZED
 import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
 import {useAPI} from "../../lib/hooks/api";
-import { auth, users } from "../../lib/api/interface/Api";
+import { auth, users } from "../../lib/api/interface/index";
 import {AiOutlineGithub,AiFillGitlab,AiFillGoogleCircle,AiFillTwitterCircle} from "react-icons/ai";
 
 
@@ -37,7 +37,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                     <Card.Body>
                         <div className="tittle">
                             <h1><img src="/pub/logo.png" alt="" /> JiaoziFS</h1>
-                            <p><h1>企业级 dataspace 研发管理平台</h1></p>
+                            <h1>企业级 dataspace 研发管理平台</h1>
                         </div>
                     </Card.Body>
             </Card>
@@ -60,15 +60,17 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                                         router.push(next ? next : '/repositories');
                                     })
                             } catch(err) {
+                                console.log(err);
+                                
                                 setLoginError(<span>{'Check your username or password,and password must contain at least 8 characters'}</span>)
                     }                            
                         }}>
                             <Form.Group controlId="username" className="mb-3">
-                                <Form.Control type="text" placeholder={"Access username"} autoFocus/>
+                                <Form.Control type="text" placeholder={"Access username"} autoFocus autoComplete="current-password"/>
                             </Form.Group>
 
                             <Form.Group controlId="password" className="mb-3">
-                                <Form.Control type="password" placeholder={"Access password"}/>
+                                <Form.Control type="password" placeholder={"Access password"} autoComplete="current-password"/>
                             </Form.Group>
 
                             {(loginError) && <AlertError error={loginError}/>}

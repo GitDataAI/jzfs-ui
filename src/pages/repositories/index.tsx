@@ -16,7 +16,7 @@ import RepositoryPage from './repository';
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
 import { RepositoryParams } from "../../lib/api/interface";
 import { useAPI } from "../../lib/hooks/api";
-import { users } from "../../lib/api/interface/Api";
+import {users } from "../../lib/api/interface/index";
 
 
 dayjs.extend(relativeTime);
@@ -34,6 +34,7 @@ const RepositoriesPage = () => {
         routerPfx,
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix}})
     );    
+    
 useEffect(()=>{
     if(!cache.get('token')){router.push('/auth/login')}
 })

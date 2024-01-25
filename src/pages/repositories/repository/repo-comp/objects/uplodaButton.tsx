@@ -10,7 +10,7 @@ import {
     Warnings
 } from "../../../../../lib/components/controls";
 import { InitialState, UploadButtonProps, UploadCandidateProps, UploadFileProps, UploadResult, _File } from "../../../interface/repo_interface";
-import { object } from "../../../../../lib/api/interface/Api";
+import { object } from "../../../../../lib/api/interface/index";
 
 const MAX_PARALLEL_UPLOADS = 5;
 

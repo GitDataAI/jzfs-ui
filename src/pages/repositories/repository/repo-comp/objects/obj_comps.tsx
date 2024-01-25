@@ -12,7 +12,7 @@ import {useAPI, useAPIWithPagination} from "../../../../../lib/hooks/api";
 import { getContentType, getFileExtension, FileContents } from "./objectViewer";
 import { BsCloudArrowUp } from "react-icons/bs";
 import { ImportButtonProps, NoGCRulesWarningProps, ReadmeContainerProps, TreeContainerProps } from "../../../interface/repo_interface";
-import { object, repos } from "../../../../../lib/api/interface/Api";
+import { object, repos } from "../../../../../lib/api/interface/index";
 
 const README_FILE_NAME = "README.md";
 const REPOSITORY_AGE_BEFORE_GC = 14;

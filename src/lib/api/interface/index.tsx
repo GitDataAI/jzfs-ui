@@ -1,7 +1,13 @@
 import { cache } from "..";
-import {Api, ApiConfig, ContentType, FullRequestParams, HttpResponse, QueryParamsType, RequestParams } from "./Api";
+import {Api, ApiConfig, FullRequestParams, HttpResponse, QueryParamsType, RequestParams } from "./Api";
 
 type CancelToken = Symbol | string | number;
+export enum ContentType {
+  Json = "application/json",
+  FormData = "multipart/form-data",
+  UrlEncoded = "application/x-www-form-urlencoded",
+  Text = "text/plain",
+}
 
 export class HttpClient<SecurityDataType = unknown> {
     public baseUrl: string = window.JIAOZIFS_API_URL;
@@ -169,12 +175,36 @@ export class HttpClient<SecurityDataType = unknown> {
       });
     };
   }
+  export class JZApi<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+    version: typeof Api.prototype.version;
+    setup: typeof Api.prototype.setup;
+    object: typeof Api.prototype.object;
+    wip: typeof Api.prototype.wip;
+    repos: typeof Api.prototype.repos;
+    mergerequest: typeof Api.prototype.mergerequest;
+    mergequest: typeof Api.prototype.mergequest;
+    users: typeof Api.prototype.users;
+    auth: typeof Api.prototype.auth;
   
-// const api = new Api()
-// export const version = api.version
-// export const setup = api.setup
-// export const object = api.object
-// export const wip = api.wip
-// export const repos = api.repos
-// export const users = api.users
-// export const auth = api.auth
+    constructor(apiconfig: ApiConfig<SecurityDataType> = {}) {
+      super(apiconfig);
+      const apiInstance = new Api<SecurityDataType>();
+      this.version = apiInstance.version;
+      this.setup = apiInstance.setup;
+      this.object = apiInstance.object;
+      this.wip = apiInstance.wip;
+      this.repos = apiInstance.repos;
+      this.mergerequest = apiInstance.mergerequest;
+      this.mergequest = apiInstance.mergequest;
+      this.users = apiInstance.users;
+      this.auth = apiInstance.auth;
+    }
+  }
+const api = new JZApi()
+export const version = api.version
+export const setup = api.setup
+export const object = api.object
+export const wip = api.wip
+export const repos = api.repos
+export const users = api.users
+export const auth = api.auth

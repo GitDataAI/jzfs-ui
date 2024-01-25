@@ -27,7 +27,7 @@ import {Route, Routes} from "react-router-dom";
 import RepositoryCommitPage from "./commit";
 import {RepoError} from "../repo-comp/error/error";
 import {  CommitWidgetProps, CommitsBrowserProps } from "../../interface/repo_interface";
-import { repos } from "../../../../lib/api/interface/Api";
+import { repos } from "../../../../lib/api/interface/index";
 
 
 const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) => {

@@ -1,4 +1,4 @@
-import { Branch, RefType, Repository } from "../../../../lib/api/interface/Api";
+import { Branch, RefType, Repository } from "../../../../lib/api/interface/index";
 
 export interface Ref extends Branch{
     type:RefType.Branch;
