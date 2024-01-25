@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import Layout from "../../lib/components/layout"
 import { useRouter } from "../../lib/hooks/router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { users } from "../../lib/api/interface/Api";
+import { users } from "../../lib/api/interface/index";
 import { AlertError } from "../../lib/components/controls";
 
 const RegisterForm = () => {
@@ -28,6 +28,7 @@ const RegisterForm = () => {
                         </div>
                     </Card.Body>
             </Card>
+            <div className="mobile-display"><img src="/pub/logo192.png" alt="" /><strong>JZFS</strong></div>
             <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
                 <Card.Body>
