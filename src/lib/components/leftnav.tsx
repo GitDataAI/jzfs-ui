@@ -9,38 +9,42 @@ import { AlertError, Loading } from "./controls";
 import {Link} from "../../lib/components/nav";
 import { CreateRepositoryButton, CreateRepositoryModal } from "../../pages/repositories/repos-comp";
 const RepositoryList = (refresh,prefix, after) => {
-
+    const router = useRouter()
     const user = cache.get('user')
+    if(user){
     const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
             // query={prefix, after,amount}
             return  await users.listRepository(user)
  
     }, [refresh, prefix, after]);
-    
     if (loading) return <Loading/>;
     if (error) { 
-       return <AlertError error={error}/>;}
-    if(results){
-    return (
-        <div>
-            {
-                results.map((repo)=>{
-                    return(
-                <Row key={repo.id} style={{margin:10}}>
-                    <Col className={"mb-2 mt-2"}>
-                                    <Link href={{
-                                        pathname: `/repositories/:user/:repoId/objects`,
-                                        params: {repoId: repo.name,user},
-                                    }}>
-                                        <strong>{user+'/'}{repo.name}</strong>
-                                    </Link>
-                    </Col>
-                </Row>
-                    )
-                })
-            }
-        </div>
-    );}
+        return <AlertError error={error}/>;}
+        if(results){
+            return (
+                <div>
+                    {
+                        results.map((repo)=>{
+                            return(
+                        <Row key={repo.id} style={{margin:10}}>
+                            <Col className={"mb-2 mt-2"}>
+                                            <Link href={{
+                                                pathname: `/repositories/:user/:repoId/objects`,
+                                                params: {repoId: repo.name,user},
+                                            }}>
+                                                <strong>{user+'/'}{repo.name}</strong>
+                                            </Link>
+                            </Col>
+                        </Row>
+                            )
+                        })
+                    }
+                </div>
+            );}
+    }else{
+        router.push('/auth/login')
+    }
+
 };
 
 const Leftnav = () =>{

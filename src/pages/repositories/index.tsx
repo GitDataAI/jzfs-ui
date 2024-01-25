@@ -1,5 +1,5 @@
 // 编辑个人仓库页面，为仓库页面与项目详情页面提供路由
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Col,Form,InputGroup,ButtonToolbar,Container} from "react-bootstrap";
 
 import {SearchIcon} from "@primer/octicons-react";
@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import Layout from "../../lib/components/layout";
-import {ActionsBar, useDebouncedState} from "../../lib/components/controls";
+import {ActionsBar, Loading, useDebouncedState} from "../../lib/components/controls";
 import {cache, config, repositories} from '../../lib/api';
 import {useRouter} from "../../lib/hooks/router";
 
@@ -33,11 +33,10 @@ const RepositoriesPage = () => {
     const [prefix, setPrefix] = useDebouncedState(
         routerPfx,
         (prefix: string) => router.push({pathname: `/repositories`, query: {prefix}})
-    );
-    const {response} = useAPI(() => users.listRepositoryOfAuthenticatedUser());
-    console.log(response);
-
-
+    );    
+useEffect(()=>{
+    if(!cache.get('token')){router.push('/auth/login')}
+})
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
         try {
             setCreatingRepo(true);
