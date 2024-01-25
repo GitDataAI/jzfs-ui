@@ -28,6 +28,7 @@ const RegisterForm = () => {
                         </div>
                     </Card.Body>
             </Card>
+            <div className="mobile-display"><img src="/pub/logo192.png" alt="" /><strong>JZFS</strong></div>
             <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
                 <Card.Body>
