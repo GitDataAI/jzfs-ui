@@ -41,6 +41,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                         </div>
                     </Card.Body>
             </Card>
+            <div className="mobile-display"><img src="/pub/logo192.png" alt="" /><strong>JZFS</strong></div>
             <Card className="login-widget jiaozi-login">
                 <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>

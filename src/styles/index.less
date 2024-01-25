@@ -29,7 +29,20 @@ a {
       }
     }
   }
-  
+  @media (max-width: 600px) {
+   display: none;
+  }
+}
+.mobile-display{
+  display: none;
+  transform: translate(200px);
+  img{
+    width: 50px;
+    transform: translate(-6px);
+  }
+  @media (max-width: 600px) {
+    display:block;
+   }
 }
 .login-widget.jiaozi-login.card{
   display:grid;
@@ -99,6 +112,7 @@ a {
   border: 1px solid #95a3a7;
   border-radius: 5px;
  }
+
 }
 
 .waytologin{
