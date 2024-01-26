@@ -153,19 +153,24 @@ export const ImageRenderer: FC<RendererComponent> = ({
   type,
   presign,
 }) => {
-  const refName = branch
-  const query = qs({refName,path,type});
-  const user = cache.get('user') 
+  const [imgSrc, setImgSrc] = useState(null);
+  const refName = branch;
+  const user = cache.get('user');
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const response = await object.getObject(user,repoId,{refName,path,type})
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setImgSrc(url);
+    };
+
+    fetchImage();
+  }, [repoId, branch, path, type]);
 
   return (
-    // http://localhost:3000/api/v1/object/test1/aaa?refName=main&path=logo192.png&type=branch
     <p className="image-container">
-      <img
-        src={`/api/v1/object/${user}/${encodeURIComponent(
-          repoId
-        )}?${query}`}
-        alt={path}
-      />
+      {imgSrc && <img src={imgSrc} alt={path} />}
     </p>
   );
 };
