@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import Layout from "../../lib/components/layout"
 import { useRouter } from "../../lib/hooks/router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { users } from "../../lib/api/interface/Api";
+import { users } from "../../lib/api/interface/index";
 import { AlertError } from "../../lib/components/controls";
 
 const RegisterForm = () => {

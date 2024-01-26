@@ -9,7 +9,7 @@ import {useRouter} from "../../../../../lib/hooks/router";
 import {URINavigator} from "../../../../../lib/components/repository/tree";
 import {appendMoreResults} from "../../repo-comp/changes/changes";
 import {CommitInfoCard} from "../../../../../lib/components/repository/commits";
-import { repos } from "../../../../../lib/api/interface/Api";
+import { repos } from "../../../../../lib/api/interface/index";
 import { Alert, Card, Table } from "react-bootstrap";
 import ChangeList from "./changesrow";
 

@@ -11,7 +11,7 @@ import {RepositoryCreateForm} from "../../../lib/components/repoCreateForm";
 import {useAPI, useAPIWithPagination} from "../../../lib/hooks/api";
 import {Link} from "../../../lib/components/nav";
 import { CreateRepositoryButtonProps, CreateRepositoryModalProps, GetStartedProps, GettingStartedCreateRepoButtonProps, RepositoryListProps } from "../interface/repos_interface";
-import { Repository, users } from "../../../lib/api/interface/Api";
+import { Repository, users } from "../../../lib/api/interface/index";
 import { useRouter } from "../../../lib/hooks/router";
 
 dayjs.extend(relativeTime);

@@ -22,7 +22,7 @@ import {URINavigator} from "../../../../../lib/components/repository/tree";
 import {Tree} from "../../../../../lib/components/repository/changestree";
 import {RepoError} from "../error/error";
 import { ChangesBrowserProps, CommitButtonProps, GetMore, GetMoreUncommittedChanges, Pair, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
-import { object, repos, wip } from "../../../../../lib/api/interface/Api";
+import { object, repos, wip } from "../../../../../lib/api/interface/index";
 import { UploadButton } from "../objects/uplodaButton";
 import ChangeList from "../../commits/commit/changesrow";
 

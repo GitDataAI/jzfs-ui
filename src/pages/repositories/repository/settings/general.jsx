@@ -13,7 +13,7 @@ import {cache, repositories} from "../../../../lib/api";
 import {useRouter} from "../../../../lib/hooks/router";
 import {SettingsLayout} from "./layout";
 import {RepositoryPageLayout} from "../../../../lib/components/repository/layout";
-import { repos } from "../../../../lib/api/interface/Api";
+import { repos } from "../../../../lib/api/interface/index";
 
 const DeleteRepositoryModal = ({repo, show, onSubmit, onCancel}) => {
     const [isDisabled, setIsDisabled] = useState(true);

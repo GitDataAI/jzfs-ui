@@ -34,7 +34,7 @@ import {useRouter} from "../../../../../lib/hooks/router";
 import {RepoError} from "../error/error";
 import { BranchListProps, BranchWidgetParms, CreateBranchButtonProps } from "../../../interface/repo_interface";
 import { Branch } from "../../../../../lib/api/interface";
-import { repos } from "../../../../../lib/api/interface/Api";
+import { repos } from "../../../../../lib/api/interface/index";
 
 const ImportBranchName = 'import-from-inventory';
 
