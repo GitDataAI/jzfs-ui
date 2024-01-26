@@ -21,4 +21,4 @@ spec:
           imagePullPolicy: Always
           args: [{{ .Values.api_url }}]
           ports:
-            - containerPort: 3000
+            - containerPort: 80
