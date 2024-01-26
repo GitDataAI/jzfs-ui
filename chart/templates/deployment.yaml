@@ -19,6 +19,8 @@ spec:
         - name: jiaozifs-ui
           image: gitdatateam/jiaozifs-ui:{{ .Values.tag }}
           imagePullPolicy: Always
-          args: [{{ .Values.api_url }}]
+          env:
+            - name: JIAOZIFS_API_URL
+              value: {{ .Values.api_url }}
           ports:
             - containerPort: 80
