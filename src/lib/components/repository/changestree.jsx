@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState,useEffect } from "react";
 
 import dayjs from "dayjs";
 import {
@@ -38,6 +38,7 @@ import noop from "lodash/noop";
 import {FaDownload} from "react-icons/fa";
 import {CommitInfoCard} from "./commits";
 import { useRouter } from "../../hooks/router";
+import { object } from "../../../lib/api/interface/index";
 
 export const humanSize = (bytes) => {
   if (!bytes) return "0.0 B";
@@ -610,7 +611,7 @@ export const URINavigator = ({
             onError={noop}
             className={"me-1"}
             tooltip={"copy URI to clipboard"}/>}
-         {path=='/'?'': (
+         {path==''?'': (
            <PathLink
            path={path}
            reference={reference}
