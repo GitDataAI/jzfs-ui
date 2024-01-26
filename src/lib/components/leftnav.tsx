@@ -86,7 +86,7 @@ const Leftnav = () =>{
         const NavBarTitle = () => {
             return (
             <>
-                {<div className="user-menu-notification-indicator"></div>}
+                {/* {<div className="user-menu-notification-indicator"></div>} */}
                 <FeedPersonIcon size={28} verticalAlign={"middle"}/> <span style={{marginLeft:6, fontSize:18}}>{user} </span>
             </>
             )
@@ -107,7 +107,7 @@ const Leftnav = () =>{
     
     return(
         <Row className="sidebar">
-        <Navbar bg="dark">
+        <Navbar className="leftNav">
         <NavUserInfo />      
         </Navbar>
         <Form className='flex'>

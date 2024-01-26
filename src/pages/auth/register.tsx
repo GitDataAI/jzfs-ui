@@ -19,16 +19,8 @@ const RegisterForm = () => {
     }
     return(
             <Row className="justify-content-center align-items-center">
-            <Col md={{offset: 2, span: 8}} className="login-box" >
-            <Card className="login-display">
-                    <Card.Body>
-                        <div className="tittle">
-                            <h1><img src="/pub/logo.png" alt="" /> JiaoziFS</h1>
-                            <p><h1>企业级 dataspace 研发管理平台</h1></p>
-                        </div>
-                    </Card.Body>
-            </Card>
-            <div className="mobile-display"><img src="/pub/logo192.png" alt="" /><strong>JZFS</strong></div>
+             <Col md={{offset: 5, span: 7}} className="login-box" >
+        <img src="/pub/jiaozifs.png" alt="" /><br /><strong className="Signtittle">Register To JiaoziFS</strong>
             <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
                 <Card.Body>
@@ -49,14 +41,15 @@ const RegisterForm = () => {
                                     {setRegisterError(<span>{'Please input your e-mail'}</span>)}
                         }
                     }}>
+                        <strong>Username</strong>
                         <Form.Group controlId="username" className="mb-3">
                             <Form.Control type="text" placeholder={"Access username"} autoFocus/>
                         </Form.Group>
-
+                        <strong>Password</strong>
                         <Form.Group controlId="password" className="mb-3">
                             <Form.Control type="password" placeholder={"Access password"}/>
                         </Form.Group>
-
+                        <strong>E-mail</strong>
                         <Form.Group controlId="email" className="mb-3">
                             <Form.Control type="email" placeholder={"Access email"}/>
                         </Form.Group>

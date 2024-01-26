@@ -73,7 +73,7 @@ const TopNav = ({logged = true}) => {
         <Navbar variant="dark" bg="dark" expand="md">
             <Container fluid={true}>
                 <Link component={Navbar.Brand} href="/">
-                    <img src="/logo.png" alt="JiaoziFS" className="logo"/>
+                    <img src="/jiaozifs3.png" alt="JiaoziFS" className="logo"/>
                 </Link>
 
                 <Navbar.Toggle aria-controls="navbarScroll" />
