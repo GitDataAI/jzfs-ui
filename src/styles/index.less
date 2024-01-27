@@ -8,8 +8,24 @@ a {
   color: inherit;    
   text-decoration: none; 
 }
+.logo{
+  margin-left: 20px;
+  margin-right: -10px;
+}
 .login-box{
-  display: flex;
+  display: grid;
+  margin-top: 50px;
+  img{
+    margin-left: 100px;
+    margin-bottom: 20px;
+    height: 100px;
+    width: 100px;
+  }
+  .Signtittle{
+    margin-left: 50px;
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
 }
 .login-display{
   width: 400px;
@@ -33,17 +49,7 @@ a {
    display: none;
   }
 }
-.mobile-display{
-  display: none;
-  transform: translate(200px);
-  img{
-    width: 50px;
-    transform: translate(-6px);
-  }
-  @media (max-width: 600px) {
-    display:block;
-   }
-}
+
 .login-widget.jiaozi-login.card{
   display:grid;
   justify-content: center;
@@ -52,6 +58,7 @@ a {
   height: 450px;
   border: 1px solid #95a3a7;
   border-radius:0 5px 5px 0;
+  margin-top: 10px;
   .card-header{
     height: 80px;
   }
@@ -178,4 +185,8 @@ a {
   background-color: rgba(green, 0.2);
   color: rgba(green, 0.8);
 }
+}
+.leftNav{
+  background-color: #7b848e;
+  border-radius: 5px;
 }

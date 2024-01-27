@@ -751,7 +751,7 @@ td.entry-type-indicator {
   top: 8px;
   left: 10px;
   position: relative;
-  background: linear-gradient(#54a3ff, #006eed);
+  background: linear-gradient(#54a3ff, #f0f1f2);
   border-radius: 50%;
   color: white;
   height: 10px;

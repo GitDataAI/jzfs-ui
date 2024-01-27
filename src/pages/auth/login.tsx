@@ -32,16 +32,8 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     }
     return (
         <Row className="justify-content-center align-items-center">
-            <Col md={{offset: 2, span: 8}} className="login-box" >
-            <Card className="login-display">
-                    <Card.Body>
-                        <div className="tittle">
-                            <h1><img src="/pub/logo.png" alt="" /> JiaoziFS</h1>
-                            <h1>企业级 dataspace 研发管理平台</h1>
-                        </div>
-                    </Card.Body>
-            </Card>
-            <div className="mobile-display"><img src="/pub/logo192.png" alt="" /><strong>JZFS</strong></div>
+            <Col md={{offset: 5, span: 7}} className="login-box" >
+        <img src="/pub/jiaozifs.png" alt="" /><br /><strong className="Signtittle">Sign in To JiaoziFS</strong>
             <Card className="login-widget jiaozi-login">
                 <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>
@@ -66,10 +58,12 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
                     }                            
                         }}>
                             <Form.Group controlId="username" className="mb-3">
+                                <strong>Username</strong>
                                 <Form.Control type="text" placeholder={"Access username"} autoFocus autoComplete="current-password"/>
                             </Form.Group>
 
                             <Form.Group controlId="password" className="mb-3">
+                                <strong>Password</strong>
                                 <Form.Control type="password" placeholder={"Access password"} autoComplete="current-password"/>
                             </Form.Group>
 
