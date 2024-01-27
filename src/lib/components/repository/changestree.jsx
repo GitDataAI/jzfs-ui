@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState,useEffect } from "react";
 
 import dayjs from "dayjs";
 import {
@@ -38,6 +38,7 @@ import noop from "lodash/noop";
 import {FaDownload} from "react-icons/fa";
 import {CommitInfoCard} from "./commits";
 import { useRouter } from "../../hooks/router";
+import { object } from "../../../lib/api/interface/index";
 
 export const humanSize = (bytes) => {
   if (!bytes) return "0.0 B";
@@ -103,7 +104,7 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
           <Dropdown.Item
             onClick={(e) => {
               copyTextToClipboard(
-                `http://localhost:3000/api/v1/object/${user}/${repo.name}?refName=${reference.name}&path=${entry.name}&type=${reference.type}`
+                `${window.JIAOZIFS_API_URL}/api/v1/object/${user}/${repo.name}?refName=${reference.name}&path=${entry.name}&type=${reference.type}`
                 ,
                 ()=>{
                 }
@@ -302,19 +303,29 @@ const OriginModal = ({ show, onHide, entry, repo, reference }) => {
 };
 
 const PathLink = ({ repoId, reference, path, children, presign = false, as = null }) => {
-  const user = cache.get('user')
- const urllinkToPath = ({ repoId,reference, path}) => {
-  return `/api/v1/object/${user}/${repoId}?refName=${reference.name}&path=${path}&type=${reference.type}`;
-};
+  const user = cache.get('user');
+  const [Src, setSrc] = useState(null);
   const name = path.split("/").pop();
-  const link = urllinkToPath({repoId, reference, path});
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const response = await object.getObject(user,repoId,{refName:reference.name,path,type:reference.type})
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setSrc(url);
+    };
+
+fetchImage();
+  }, [repoId, path]);
+
   if (as === null)
     return (
-      <a href={link} download={name}>
+      <a href={Src} download={name}>
         {children}
       </a>
     );
-  return React.createElement(as, { href: link, download: name }, children);
+
+  return React.createElement(as, { href: Src, download:name }, children);
 };
 
 export const EntryRow = ({ repo, reference, path, entry, onDelete, showActions }) => {
@@ -600,13 +611,15 @@ export const URINavigator = ({
             onError={noop}
             className={"me-1"}
             tooltip={"copy URI to clipboard"}/>}
-        {(
-          <a
-              href={downloadUrl}
-              download={path.split('/').pop()}
-              className="btn btn-link btn-sm download-button me-1">
-            <FaDownload />
-          </a>
+         {path==''?'': (
+           <PathLink
+           path={path}
+           reference={reference}
+           repoId={repo.name?repo.name:repo}
+           as={Dropdown.Item}
+         >
+            <a className="btn btn-link btn-sm download-button me-1"><FaDownload /></a>
+         </PathLink>
         )}
       </div>
     </div>
