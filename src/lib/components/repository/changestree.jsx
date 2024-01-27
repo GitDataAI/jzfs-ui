@@ -25,6 +25,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
+import Alert from "react-bootstrap/Alert";
 
 import { cache, commits, linkToPath, objects } from "../../api";
 import { ConfirmationModal } from "../modals";
@@ -735,6 +736,7 @@ export const Tree = ({
 
   return (
     <div className="tree-container">
+    <Alert>After the file is uploaded, you need to commit it before viewing it</Alert>
       <Card>
         <Card.Header>
           <URINavigator path={path} repo={repo} reference={reference} hasCopyButton={true}/>

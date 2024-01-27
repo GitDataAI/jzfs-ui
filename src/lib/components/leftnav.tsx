@@ -112,9 +112,9 @@ const Leftnav = () =>{
         </Navbar>
         <Form className='flex'>
             <Col className="d-flex">
-            <strong>Top Repositories</strong>
+            {/* <strong>Top Repositories</strong> */}
             <ButtonToolbar className="ms-auto mb-2">
-                <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} word={'New'} style={{fontSize: '10px'}}/>
+                {/* <CreateReposi   toryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} word={'New'} style={{fontSize: '10px'}}/> */}
             </ButtonToolbar>            
             </Col>
           <RepositoryList
