@@ -33,7 +33,7 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
     return (
         <Row className="justify-content-center align-items-center">
             <Col md={{offset: 5, span: 7}} className="login-box" >
-        <img src="/pub/jiaozifs.png" alt="" /><br /><strong className="Signtittle">Sign in To JiaoziFS</strong>
+        <img src="/jiaozifs.png" alt="JiaoziFS" /><br /><strong className="Signtittle">Sign in To JiaoziFS</strong>
             <Card className="login-widget jiaozi-login">
                 <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>

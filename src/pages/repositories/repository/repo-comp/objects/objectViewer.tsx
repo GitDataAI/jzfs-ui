@@ -69,7 +69,7 @@ const FileObjectsViewerPage =  () => {
   }, [repoId, ref, path]);
       let content;
   if (loading || load) {
-    content = <Loading />;
+    content = <Alert>After the file is uploaded, you need to commit it before viewing it</Alert> ;
   } else if (error||err) {
     content = <AlertError error={error} />;
   } else {
@@ -151,6 +151,7 @@ export const FileContents: FC<FileContentsProps> = ({
   );
 
   return (
+    
     <Card className={"file-content-card"}>
       <Card.Header className={"file-content-heading"}>
         {titleComponent}
