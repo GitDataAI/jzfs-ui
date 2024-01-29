@@ -16,7 +16,7 @@ metadata:
 spec:
   ingressClassName: {{.Values.ingress_name}}
   rules:
-    - host: ui.jiaozifs.com
+    - host: cloud.jiaozifs.com
       http:
         paths:
           - path: /
