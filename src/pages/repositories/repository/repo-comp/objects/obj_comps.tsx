@@ -4,14 +4,12 @@ import {
     AlertError,
     Loading,
 } from "../../../../../lib/components/controls";
-import {Alert, Button, OverlayTrigger, Tooltip} from "react-bootstrap";
+import {Alert} from "react-bootstrap";
 
 import {Tree} from "../../../../../lib/components/repository/tree";
-import {objects, retention, repositories, NotFoundError, cache} from "../../../../../lib/api";
-import {useAPI, useAPIWithPagination} from "../../../../../lib/hooks/api";
-import { getContentType, getFileExtension, FileContents } from "./objectViewer";
-import { BsCloudArrowUp } from "react-icons/bs";
-import { ImportButtonProps, NoGCRulesWarningProps, ReadmeContainerProps, TreeContainerProps } from "../../../interface/repo_interface";
+import {cache} from "../../../../../lib/api";
+import {useAPI} from "../../../../../lib/hooks/api";
+import {NoGCRulesWarningProps} from "../../../interface/repo_interface";
 import { object, repos } from "../../../../../lib/api/interface/index";
 
 const README_FILE_NAME = "README.md";
@@ -168,17 +166,6 @@ export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) =>
     ) {
       return false;
     }
-    const createdAgo = dayjs().diff(dayjs.unix(repo.creation_date), "days");
-    if (createdAgo > REPOSITORY_AGE_BEFORE_GC) {
-      try {
-        await retention.getGCPolicy(repoId);
-      } catch (e) {
-        if (e instanceof NotFoundError) {
-          return true;
-        }
-      }
-    }
-    return false;
   }, [repoId]);
 
   if (show && response) {

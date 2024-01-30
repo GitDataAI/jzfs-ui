@@ -2,8 +2,8 @@ import React, {useCallback, useState} from "react";
 
 import {ArrowLeftIcon, ClockIcon, InfoIcon, PlusIcon, XIcon} from "@primer/octicons-react";
 
-import {useAPI, useAPIWithPagination} from "../../hooks/api";
-import {AlertError, Loading} from "../controls";
+import {useAPI} from "../../hooks/api";
+import {AlertError} from "../controls";
 import {ObjectsDiff} from "./ObjectsDiff";
 import {TreeItemType} from "../../../constants";
 import * as otfUtils from "../../../util/otfUtil";
@@ -12,14 +12,11 @@ import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
-import {cache, refs} from "../../api";
-import {DeltaLakeDiff} from "./TableDiff";
+import {cache} from "../../api";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { ChangesTreeContainerProps } from "../../../pages/repositories/interface/repo_interface";
-import { GetMoreChanges, MetadataFieldsProps, Pagination, SetIsTableMerge, SetTableDiffState, TreeEntryPaginatorProps, TreeItemRowProps, UseTreeItemTypeProps } from "../interface/comp_interface";
-import { Entry } from "../../../util/otfUtil";
+import { MetadataFieldsProps, SetIsTableMerge, SetTableDiffState, TreeEntryPaginatorProps, TreeItemRowProps, UseTreeItemTypeProps } from "../interface/comp_interface";
 import { wip } from "../../api/interface/Api";
 
 /**
@@ -38,7 +35,7 @@ import { wip } from "../../api/interface/Api";
  * @param relativeTo prefix of the parent item ('' for root elements)
  * @param {(after : string, path : string, useDelimiter :? boolean, amount :? number) => Promise<any> } getMore callback to be called when more items need to be rendered
  */
-export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference, leftDiffRefID, rightDiffRefID, internalRefresh, onRevert, onNavigate, delimiter, relativeTo, getMore,
+export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference, leftDiffRefID, rightDiffRefID, internalRefresh, onRevert, onNavigate, delimiter, relativeTo,
                                 depth=0, setTableDiffExpanded, setTableDiffState, setIsTableMerge, deltaDiffEnabled}) => {
     const [dirExpanded, setDirExpanded] = useState(false); // state of a non-leaf item expansion
     const [afterUpdated, setAfterUpdated] = useState(""); // state of pagination of the item's children
@@ -81,7 +78,7 @@ export const TreeItemRow:React.FC<TreeItemRowProps> = ({ entry, repo, reference,
             response.data.map(child =>
                 (<TreeItemRow key={child.path + "-item"} entry={child} repo={repo} reference={reference} rightDiffRefID={rightDiffRefID} onRevert={onRevert} onNavigate={onNavigate}
                               internalRefresh={internalRefresh} delimiter={delimiter} depth={depth + 1}
-                              relativeTo={entry.path} getMore={getMore} setTableDiffExpanded={onTableDiffExpansion(child, setTableDiffState, setIsTableMerge)} setTableDiffState={setTableDiffState}
+                              relativeTo={entry.path} setTableDiffExpanded={onTableDiffExpansion(child, setTableDiffState, setIsTableMerge)} setTableDiffState={setTableDiffState}
                               setIsTableMerge={setIsTableMerge}
                               deltaDiffEnabled={deltaDiffEnabled}/>))}
             {(loading) &&
@@ -204,9 +201,7 @@ export const ChangesTreeContainer= ({results, delimiter, uriNavigator,
                             }
                         </Card.Header>
                         <Card.Body>
-                            {tableDiffState.isShown
-                                ? <DeltaLakeDiff repo={repo} leftRef={leftDiffRefID} rightRef={rightDiffRefID} tablePath={tableDiffState.expandedTablePath}/>
-                                : <Table borderless size="sm">
+                          <Table borderless size="sm">
                                 <tbody>
                                 {results.map(entry => {
                                     return (
@@ -229,17 +224,12 @@ export const ChangesTreeContainer= ({results, delimiter, uriNavigator,
                                 <TreeEntryPaginator path={""} loading={loading} nextPage={nextPage}
                                                     setAfterUpdated={setAfterUpdated}/>}
                                 </tbody>
-                            </Table>}
+                            </Table>
                         </Card.Body>
                     </Card>
             </div>
     }
 }
-
-export const defaultGetMoreChanges:GetMoreChanges = (repo, leftRefId, rightRefId, delimiter) => (afterUpdated, path, useDelimiter= true, amount = -1) => {
-    return refs.diff(repo.id, leftRefId, rightRefId, afterUpdated, path, useDelimiter ? delimiter : "", amount > 0 ? amount : undefined);
-};
-
 const onTableDiffExpansion : (entry: otfUtils.Entry, setTableDiffState: SetTableDiffState, setIsTableMerge?: SetIsTableMerge) => () => void
 = (entry, setTableDiffState, setIsTableMerge)  => () => {
     const pathParts = entry.path.split('/');

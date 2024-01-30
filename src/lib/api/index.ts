@@ -1,22 +1,6 @@
-import { Repositories } from "./Repositories";
-import { Branches } from "./Branches";
-import { Tags } from "./Tags";
-import { Objects } from "./Objects";
-import { Commits } from "./Commits";
-import { Setup } from "./Setup";
-import { Refs } from "./Refs";
-import { Auth } from "./Auth";
-import { Actions } from "./Actions";
-import { Retention } from "./Retention/index";
-import { Config } from "./Config";
-import { BranchProtectionRules } from "./BranchProtectionRules";
-import { Statistics } from "./Statistics";
-import { Staging } from "./Staging";
-import { OTFDiffs } from "./OTFDiffs";
-import { Import } from "./Import";
-import mergeHeaders from 'merge-headers';
-import { AdditionalHeaders, LinkToPathParams, QueryParts, RequestData, UploadWithProgress, _Headers, _Response } from "./interface";
 
+import { Auth } from "./Auth";
+import mergeHeaders from 'merge-headers';
 export const API_ENDPOINT = '/api/v1';
 export const DEFAULT_LISTING_AMOUNT = 100;
 
@@ -185,19 +169,4 @@ export const uploadWithProgress: UploadWithProgress = (url, file, method = 'POST
     });
 };
 
-export const repositories = new Repositories();
-export const branches = new Branches();
-export const tags = new Tags();
-export const objects = new Objects();
-export const commits = new Commits();
-export const refs = new Refs();
-export const setup = new Setup();
 export const auth = new Auth();
-export const actions = new Actions();
-export const retention = new Retention();
-export const config = new Config();
-export const branchProtectionRules = new BranchProtectionRules();
-export const statistics = new Statistics();
-export const staging = new Staging();
-export const otfDiffs = new OTFDiffs();
-export const imports = new Import();

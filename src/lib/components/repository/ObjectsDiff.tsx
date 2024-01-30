@@ -1,13 +1,6 @@
 import React from "react";
-import {useAPI} from "../../hooks/api";
-import {cache, objects} from "../../api";
-import ReactDiffViewer, {DiffMethod} from "react-diff-viewer-continued";
-import {AlertError, Loading} from "../controls";
-import {humanSize} from "./tree";
-import Alert from "react-bootstrap/Alert";
-import {InfoIcon} from "@primer/octicons-react";
-import {  ContentDiffProps, DiffSizeReportProps, DiffType, NoContentDiffProps, ObjectsDiffProps, ResponseProps, StatDiffProps } from "../interface/comp_interface";
-import { object } from "../../api/interface/Api";
+import {AlertError} from "../controls";
+import {ObjectsDiffProps} from "../interface/comp_interface";
 
 
 export const ObjectsDiff:React.FC<ObjectsDiffProps> = ({entry}) => {

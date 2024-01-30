@@ -1,18 +1,17 @@
 import {Button,Modal,Form,Container,Row,Col,ProgressBar} from "react-bootstrap";
 import React, {useCallback, useEffect, useState } from "react";
 import {useDropzone} from "react-dropzone";
-import {cache, objects} from "../../../../../lib/api";
+import {cache} from "../../../../../lib/api";
 import {CheckboxIcon, UploadIcon, XIcon} from "@primer/octicons-react";
 import {humanSize} from "../../../../../lib/components/repository/tree";
 import pMap from "p-map";
 import {
-    AlertError,
-    Warnings
+    AlertError
 } from "../../../../../lib/components/controls";
-import { InitialState, UploadButtonProps, UploadCandidateProps, UploadFileProps, UploadResult, _File } from "../../../interface/repo_interface";
+import { InitialState,_File } from "../../../interface/repo_interface";
 import { object } from "../../../../../lib/api/interface/index";
 
-const MAX_PARALLEL_UPLOADS = 5;
+const MAX_PARALLEL_UPLOADS = 1;
 
 const destinationPath = (path: string | undefined, file: _File) => {
     return `${path ? path : ""}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;

@@ -1,14 +1,16 @@
 import {useRouter} from "../../../../../lib/hooks/router";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
-import {repositories, RepositoryDeletionError} from "../../../../../lib/api";
+import {cache, RepositoryDeletionError} from "../../../../../lib/api";
 import {TrashIcon} from "@primer/octicons-react";
 import React from "react";
 import {AlertError} from "../../../../../lib/components/controls";
 import { RepoErrorProps, RepositoryInDeletionContainerProps } from "../../../interface/repo_interface";
+import { repos } from "../../../../../lib/api/interface";
 
 const RepositoryInDeletionContainer: (props: RepositoryInDeletionContainerProps) => React.JSX.Element = ({ repoId }) => {
     const router = useRouter();
+    const user = cache.get('user')
     return (
         <Alert variant="warning">
             <Alert.Heading>Repository is undergoing deletion</Alert.Heading>
@@ -18,7 +20,7 @@ const RepositoryInDeletionContainer: (props: RepositoryInDeletionContainerProps)
                 <Button variant="danger" className="mt-3" onClick={
                     async () => {
                         try {
-                            await repositories.delete(repoId);
+                            await repos.deleteRepository(user,repoId);
                         } catch {
                             // continue regardless of error
                         }

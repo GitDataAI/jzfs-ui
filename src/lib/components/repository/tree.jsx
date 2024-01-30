@@ -26,9 +26,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 
-import { cache, commits, linkToPath, objects } from "../../api";
+import { cache, linkToPath} from "../../api";
 import { ConfirmationModal } from "../modals";
-import { Paginator } from "../pagination";
 import { Link } from "../nav";
 import { RefTypeBranch, RefTypeCommit } from "../../../constants";
 import {ClipboardButton, copyTextToClipboard, AlertError, Loading} from "../controls";
@@ -142,14 +141,6 @@ const EntryRowActions = ({ repo, reference, entry, onDelete, presign, presign_ui
         show={showObjectStat}
         onHide={() => setShowObjectStat(false)}
       />
-
-      <OriginModal
-        entry={entry}
-        repo={repo}
-        reference={reference}
-        show={showObjectOrigin}
-        onHide={() => setShowObjectOrigin(false)}
-      />
     </>
   );
 };
@@ -237,70 +228,6 @@ const EntryMetadata = ({ metadata }) => {
     )
 };
 
-const OriginModal = ({ show, onHide, entry, repo, reference }) => {
-  const {
-    response: commit,
-    error,
-    loading,
-  } = useAPI(async () => {
-    if (show) {
-      return await commits.blame(
-        repo.id,
-        reference.id,
-        entry.path,
-        entry.path_type
-      );
-    }
-    return null;
-  }, [show, repo.id, reference.id, entry.path]);
-
-  const pathType = entry.path_type === "object" ? "object" : "prefix";
-
-  let content = <Loading />;
-
-  if (error) {
-    content = <AlertError error={error} />;
-  }
-  if (!loading && !error && commit) {
-    content = (
-      <CommitInfoCard bare={true} repo={repo} commit={commit}/>
-    );
-  }
-
-  if (!loading && !error && !commit) {
-    content = (
-      <>
-        <h5>
-          <small>
-            No commit found, perhaps this is an{" "}
-            <Link
-              className="me-2"
-              href={{
-                pathname: "/repositories/:name/:repoId/changes",
-                params: { repoId: repo.name },
-                query: { ref: reference.name },
-              }}
-            >
-              uncommitted change
-            </Link>
-            ?
-          </small>
-        </h5>
-      </>
-    );
-  }
-
-  return (
-    <Modal show={show} onHide={onHide} size={"lg"}>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          Last commit to modify <>{pathType}</>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{content}</Modal.Body>
-    </Modal>
-  );
-};
 const PathLink = ({ repoId, reference, path, children, presign = false, as = null }) => {
   const user = cache.get('user');
   const [Src, setSrc] = useState(null);

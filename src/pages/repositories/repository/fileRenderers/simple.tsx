@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { humanSize } from "../../../../lib/components/repository/tree";
 import { useAPI } from "../../../../lib/hooks/api";
-import { cache, objects, qs } from "../../../../lib/api";
+import { cache, qs } from "../../../../lib/api";
 import { AlertError, Loading } from "../../../../lib/components/controls";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
