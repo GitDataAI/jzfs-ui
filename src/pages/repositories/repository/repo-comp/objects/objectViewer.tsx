@@ -1,35 +1,19 @@
-import React, { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { FC} from "react";
 import { Box } from "@mui/material";
 import Alert from "react-bootstrap/Alert";
 import Card from "react-bootstrap/Card";
 
 import { useAPI } from "../../../../../lib/hooks/api";
-import { useQuery, useRouter } from "../../../../../lib/hooks/router";
-import { cache, objects } from "../../../../../lib/api";
+import {useRouter } from "../../../../../lib/hooks/router";
+import { cache} from "../../../../../lib/api";
 import { ObjectRenderer } from "../../fileRenderers";
 import { AlertError } from "../../../../../lib/components/controls";
-import { EntryRow, Tree, URINavigator } from "../../../../../lib/components/repository/tree";
-import { RefTypeBranch } from "../../../../../constants";
+import { URINavigator } from "../../../../../lib/components/repository/tree";
 import { RepositoryPageLayout } from "../../../../../lib/components/repository/layout";
 import { RefContextProvider, useRefs } from "../../../../../lib/hooks/repo";
-import { useStorageConfig } from "../../../../../lib/hooks/storageConfig";
-import { linkToPath } from "../../../../../lib/api";
-import { object, repos } from "../../../../../lib/api/interface/index";
-import { Table } from "react-bootstrap";
+import { object } from "../../../../../lib/api/interface/index";
 
-// import "../../../styles/ipynb.css";
-// import "../../../styles/quickstart.css";
 
-type ObjectViewerPathParams = {
-  objectName: string;
-  repoId: string;
-};
-
-interface ObjectViewerQueryString {
-  ref: string;
-  path: string;
-}
 
 interface FileContentsProps {
   repoId: string;

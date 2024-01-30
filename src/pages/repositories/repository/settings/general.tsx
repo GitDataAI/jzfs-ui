@@ -9,7 +9,7 @@ import {TrashIcon} from "@primer/octicons-react";
 import Col from "react-bootstrap/Col";
 import {AlertError, Loading} from "../../../../lib/components/controls";
 import Modal from "react-bootstrap/Modal";
-import {cache, repositories} from "../../../../lib/api";
+import {cache} from "../../../../lib/api";
 import {useRouter} from "../../../../lib/hooks/router";
 import {SettingsLayout} from "./layout";
 import {RepositoryPageLayout} from "../../../../lib/components/repository/layout";

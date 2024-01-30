@@ -2,15 +2,12 @@ import React, {useState} from "react";
 import {RepositoryPageLayout} from "../../../../../lib/components/repository/layout";
 import {AlertError, Loading} from "../../../../../lib/components/controls";
 import {useRefs} from "../../../../../lib/hooks/repo";
-import {useAPI, useAPIWithPagination} from "../../../../../lib/hooks/api";
-import {cache, commits, refs} from "../../../../../lib/api";
-import {ChangesTreeContainer, defaultGetMoreChanges} from "../../../../../lib/components/repository/changes";
+import {useAPI} from "../../../../../lib/hooks/api";
+import {cache} from "../../../../../lib/api";
 import {useRouter} from "../../../../../lib/hooks/router";
-import {URINavigator} from "../../../../../lib/components/repository/tree";
-import {appendMoreResults} from "../../repo-comp/changes/changes";
 import {CommitInfoCard} from "../../../../../lib/components/repository/commits";
 import { repos } from "../../../../../lib/api/interface/index";
-import { Alert, Card, Table } from "react-bootstrap";
+import { Alert} from "react-bootstrap";
 import ChangeList from "./changesrow";
 
 const CommitView = ({ repo, commitId,commitDate, committer,basedhash,message,refname}) => {

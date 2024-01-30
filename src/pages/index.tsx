@@ -4,7 +4,6 @@ import React, { Suspense } from 'react';
 
 const Repositories = React.lazy(() => import('./repositories'));
 const Auth = React.lazy(() => import('./auth'));
-const Setup = React.lazy(() => import('./setup'));
 
 export const IndexPage = () => {
     return (
@@ -15,7 +14,6 @@ export const IndexPage = () => {
                         <Route path="/" element={<Navigate to="/repositories"/>} />
                         <Route path="/repositories/*" element={<Repositories/>} />
                         <Route path="/auth/*" element={<Auth/>} />
-                        <Route path="/setup/*" element={<Setup/>} />
                         <Route path="*" element={<Navigate to="/repositories" replace />} />
                     </Routes>
                 </Suspense>

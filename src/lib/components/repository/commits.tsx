@@ -1,9 +1,8 @@
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {ClipboardButton, LinkButton} from "../controls";
-import {BrowserIcon, LinkIcon, PackageIcon, PlayIcon} from "@primer/octicons-react";
+import {BrowserIcon, LinkIcon, PackageIcon} from "@primer/octicons-react";
 import Table from "react-bootstrap/Table";
 import {MetadataRow, MetadataUIButton} from "../../../pages/repositories/repository/commits/commit/metadata";
-import {Link} from "../nav";
 import dayjs from "dayjs";
 import Card from "react-bootstrap/Card";
 import React from "react";

@@ -11,18 +11,17 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 
-import {branches, cache} from "../../../../../lib/api";
+import {cache} from "../../../../../lib/api";
 
 import {
     ActionGroup,
     ActionsBar, ClipboardButton,
     AlertError, LinkButton,
-    Loading, PrefixSearchWidget, RefreshButton
+    Loading
 } from "../../../../../lib/components/controls";
 import {RepositoryPageLayout} from "../../../../../lib/components/repository/layout";
 import {useRefs} from "../../../../../lib/hooks/repo";
 import {useAPIWithPagination} from "../../../../../lib/hooks/api";
-import {Paginator} from "../../../../../lib/components/pagination";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import RefDropdown from "../../../../../lib/components/repository/refDropdown";
@@ -33,7 +32,7 @@ import {Link} from "../../../../../lib/components/nav";
 import {useRouter} from "../../../../../lib/hooks/router";
 import {RepoError} from "../error/error";
 import { BranchListProps, BranchWidgetParms, CreateBranchButtonProps } from "../../../interface/repo_interface";
-import { Branch } from "../../../../../lib/api/interface";
+import { Branch } from "../../../../../lib/api/interface/Api";
 import { repos } from "../../../../../lib/api/interface/index";
 
 const ImportBranchName = 'import-from-inventory';
@@ -241,7 +240,7 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
                     ))}
                 </ListGroup>
             </Card>
-            <Paginator onPaginate={onPaginate} nextPage={nextPage} after={after}/>
+            {/* <Paginator onPaginate={onPaginate} nextPage={nextPage} after={after}/> */}
         </>
     );
 
@@ -249,10 +248,6 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
         <div className="mb-5">
             <ActionsBar>
                 <ActionGroup orientation="right">
-
-                    
-
-
                     <CreateBranchButton repo={repo} variant="success" onCreate={doRefresh}>
                         <GitBranchIcon/> Create Branch
                     </CreateBranchButton>

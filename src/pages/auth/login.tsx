@@ -1,24 +1,16 @@
 import React, {useState} from "react";
 import Layout from "../../lib/components/layout";
 import {Button,Col,Form,Card,Row} from "react-bootstrap";
-import {auth as Auth, AuthenticationError, cache, setup, SETUP_STATE_INITIALIZED} from "../../lib/api";
+import {auth as Auth, cache,} from "../../lib/api";
 import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
-import {useAPI} from "../../lib/hooks/api";
 import { auth, users } from "../../lib/api/interface/index";
 import {AiOutlineGithub,AiFillGitlab,AiFillGoogleCircle,AiFillTwitterCircle} from "react-icons/ai";
 
 
-interface LoginConfig {
-    login_url: string;
-    login_failed_message?: string;
-    fallback_login_url?: Location | (string & Location);
-    fallback_login_label?: string;
-    login_cookie_names: string[];
-    logout_url: Location | (string & Location);
-}
 
-const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
+
+const LoginForm = () => {
     const router = useRouter();
     const [loginError, setLoginError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
@@ -97,30 +89,9 @@ const LoginForm = ({loginConfig}: {loginConfig: LoginConfig}) => {
 
 
 const LoginPage = () => {
-    const router = useRouter();
-    const { response, error, loading } = useAPI(() => setup.getState());
-    if (loading) {
-        return null;
-    }
-
-    // if we are not initialized, or we are not done with comm prefs, redirect to 'setup' page
-    if (!error && response && (response.state !== SETUP_STATE_INITIALIZED || response.comm_prefs_missing === true)) {
-        router.push({pathname: '/setup', query: router.query,params:{}})
-        return null;
-    }
-    const loginConfig = response?.login_config;
-    if (router.query.redirected)  {
-        if(!error && loginConfig?.login_url) {
-            window.location = loginConfig.login_url;
-            return null;
-        }
-        delete router.query.redirected;
-
-        router.push({pathname: '/auth/login', query: router.query})
-    }
     return (
         <Layout logged={false}>
-            <LoginForm loginConfig={loginConfig}/>
+            <LoginForm/>
         </Layout>
     );
 };

@@ -356,3 +356,5 @@ export interface OperationExpansionSectionProps {
   operationExpanded: boolean;
   onExpand: () => void;
 }
+
+export { Commit };

@@ -3,10 +3,8 @@ import React, {
   useContext,
   useState,
   createContext,
-  useEffect,
 } from "react";
 
-import { config } from "../api";
 
 type StorageConfigContextType = {
   error: Error | null;

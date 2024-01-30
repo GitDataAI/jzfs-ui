@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 
 import dayjs from "dayjs";
-import {BrowserIcon, LinkIcon, PackageIcon, PlayIcon} from "@primer/octicons-react";
+import {BrowserIcon, LinkIcon, PackageIcon} from "@primer/octicons-react";
 
-import {cache, commits} from "../../../../lib/api";
+import {cache} from "../../../../lib/api";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -18,8 +18,7 @@ import {
 } from "../../../../lib/components/controls";
 import {RepositoryPageLayout} from "../../../../lib/components/repository/layout";
 import {useRefs} from "../../../../lib/hooks/repo";
-import {useAPI, useAPIWithPagination} from "../../../../lib/hooks/api";
-import {Paginator} from "../../../../lib/components/pagination";
+import {useAPI} from "../../../../lib/hooks/api";
 import RefDropdown from "../../../../lib/components/repository/refDropdown";
 import {Link} from "../../../../lib/components/nav";
 import {useRouter} from "../../../../lib/hooks/router";
