@@ -180,3 +180,24 @@ a {
   background-color: #7b848e;
   border-radius: 5px;
 }
+.welcome {
+  display: grid;
+  justify-content: center;
+}
+.welcome img {
+  margin: 0 auto;
+}
+.welcome h1 {
+  margin: 0 auto;
+}
+.Progress {
+  width: 50%;
+  position: absolute;
+  bottom: 2rem;
+  left: 25%;
+}
+.Progress .version {
+  display: block;
+  width: 102px;
+  margin: 0 auto;
+}
