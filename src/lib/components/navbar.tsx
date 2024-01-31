@@ -11,7 +11,7 @@ import './style/index.scss'
 
 const NavUserInfo = () => {
     const user = cache.get("user")
-    const logoutUrl = "/auth/login"
+    const logoutUrl = "/login"
 
 
     const NavBarTitle = () => {

@@ -99,6 +99,6 @@ export const RepositoryList = ({refresh,prefix, after,amount=5,onPaginate}) => {
                     </div>
                 );}
         }else{
-            router.push('/auth/login')
+            router.push('/login')
         }
 };

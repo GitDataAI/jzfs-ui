@@ -3,7 +3,8 @@ import {WithLoginConfigContext} from "../lib/hooks/conf";
 import React, { Suspense } from 'react';
 
 const Repositories = React.lazy(() => import('./repositories'));
-const Auth = React.lazy(() => import('./auth'));
+const Login = React.lazy(() => import('./login'));
+const Register = React.lazy(() => import('./register'));
 
 export const IndexPage = () => {
     return (
@@ -13,7 +14,8 @@ export const IndexPage = () => {
                     <Routes>
                         <Route path="/" element={<Navigate to="/repositories"/>} />
                         <Route path="/repositories/*" element={<Repositories/>} />
-                        <Route path="/auth/*" element={<Auth/>} />
+                        <Route path="/login/*" element={<Login/>} />
+                        <Route path="/register/*" element={<Register/>} />
                         <Route path="*" element={<Navigate to="/repositories" replace />} />
                     </Routes>
                 </Suspense>

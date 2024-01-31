@@ -11,11 +11,11 @@ const RegisterForm = () => {
     const { next } = router.query;
     const reghandleclick = (e) =>{
         e.preventDefault();
-        router.push('/auth/register')
+        router.push('/register')
     }
     const loghandleclick = (e) =>{
         e.preventDefault();
-        router.push('/auth/login')
+        router.push('/login')
     }
     return(
             <Row className="justify-content-center align-items-center">
@@ -33,7 +33,7 @@ const RegisterForm = () => {
                         try {
                             await users.register({name: username.value,password:password.value,email:email.value})
                             setRegisterError(null);
-                            router.push(next ? next : '/auth/login');
+                            router.push(next ? next : '/login');
                         } catch(err) {
                             if(password.value.length<8)
                                     {setRegisterError(<span>{'The password must contain at least 8 characters'}</span>)
