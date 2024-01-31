@@ -9,7 +9,9 @@
   --color-bg-unknown: #f1f4ff;
   --color-bg-conflict: #fff3cd;
 }
-
+html{
+  height: 100% !important;
+}
 .gray-out {
   background-color: rgba(255, 255, 255, 0.5);
 }

@@ -70,7 +70,7 @@ const TopNav = ({logged = true}) => {
         );
     }
     return (
-        <Navbar variant="dark" bg="dark" expand="md">
+        <Navbar  expand="md" className="topNav">
             <Container fluid={true}>
                 <Link component={Navbar.Brand} href="/">
                     <img src="/jiaozifs3.png" alt="JiaoziFS" className="logo"/>
@@ -82,7 +82,7 @@ const TopNav = ({logged = true}) => {
                     <Nav className="me-auto my-2 my-lg-0"
                          style={{ maxHeight: '100px' }}
                          navbarScroll>
-                        <TopNavLink href="/repositories">Repositories</TopNavLink>
+                        <TopNavLink href="/repositories">JiaoziFS Cloud</TopNavLink>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

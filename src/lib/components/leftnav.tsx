@@ -7,7 +7,7 @@ import { useAPIWithPagination } from "../hooks/api";
 import { users,auth } from "../api/interface/index";
 import { AlertError, Loading } from "./controls";
 import {Link} from "../../lib/components/nav";
-import {CreateRepositoryModal } from "../../pages/repositories/repos-comp";
+import {CreateRepositoryButton, CreateRepositoryModal } from "../../pages/repositories/repos-comp";
 const RepositoryList = (refresh,prefix, after) => {
     const router = useRouter()
     const user = cache.get('user')
@@ -26,13 +26,13 @@ const RepositoryList = (refresh,prefix, after) => {
                     {
                         results.map((repo)=>{
                             return(
-                        <Row key={repo.id} style={{margin:10}}>
-                            <Col className={"mb-2 mt-2"}>
+                        <Row key={repo.id}>
+                            <Col style={{marginLeft:"22px"}}>
                                             <Link href={{
                                                 pathname: `/repositories/:user/:repoId/objects`,
                                                 params: {repoId: repo.name,user},
                                             }}>
-                                                <strong>{user+'/'}{repo.name}</strong>
+                                                <img src="/pub/jiaozifs3.png" alt="" /><span>{user+'/'}{repo.name}</span>
                                             </Link>
                             </Col>
                         </Row>
@@ -87,7 +87,7 @@ const Leftnav = () =>{
             return (
             <>
                 {/* {<div className="user-menu-notification-indicator"></div>} */}
-                <FeedPersonIcon size={28} verticalAlign={"middle"}/> <span style={{marginLeft:6, fontSize:18}}>{user} </span>
+                <FeedPersonIcon size={28} verticalAlign={"middle"} /> <strong >{user} </strong>
             </>
             )
         }
@@ -107,14 +107,12 @@ const Leftnav = () =>{
     
     return(
         <Row className="sidebar">
-        <Navbar className="leftNav">
+        <Form className='flex Fast-navb'>
         <NavUserInfo />      
-        </Navbar>
-        <Form className='flex'>
             <Col className="d-flex">
-            {/* <strong>Top Repositories</strong> */}
+            <strong style={{marginLeft:'20px',lineHeight:'30px'}}>Top Repositories</strong>
             <ButtonToolbar className="ms-auto mb-2">
-                {/* <CreateReposi   toryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} word={'New'} style={{fontSize: '10px'}}/> */}
+                <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} word={'New'} style={{fontSize: '10px'}}/>
             </ButtonToolbar>            
             </Col>
           <RepositoryList

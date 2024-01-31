@@ -143,6 +143,9 @@ a {
   left: 0;
   height: 100vh;
   width: 20rem;
+  border-right: 2px solid #dbe0fc;
+  margin-right: 10px;
+  background-color: #fff;
 }
 .sidebar .navbar-expand {
   justify-content: center;
@@ -155,13 +158,21 @@ a {
   color: white;
   padding: 0.5rem 1rem;
 }
+.sidebar form .navbar-username {
+  margin: 12px ;
+  margin-left: 22px;
+  margin-bottom: 22px;
+}
 .sidebar form .col {
-  margin-top: -450px;
   flex-wrap: wrap;
   align-content: space-between;
 }
+.sidebar form .col img {
+  margin: 0 5px;
+  width: 20px;
+}
 .sidebar form .col .btn {
-  margin-left: 40px;
+  margin-right: 0px;
 }
 .child {
   margin: 15px;
@@ -179,4 +190,29 @@ a {
 .leftNav {
   background-color: #7b848e;
   border-radius: 5px;
+}
+.welcome {
+  display: grid;
+  justify-content: center;
+}
+.welcome img {
+  margin: 0 auto;
+}
+.welcome h1 {
+  margin: 0 auto;
+}
+.Progress {
+  width: 50%;
+  position: absolute;
+  bottom: 2rem;
+  left: 25%;
+}
+.Progress .version {
+  display: block;
+  width: 102px;
+  margin: 0 auto;
+}
+.topNav {
+  background-color: #f1f1f3;
+  border-bottom: 2px solid #dbe0fc;
 }
