@@ -37,7 +37,7 @@ const RepositoriesPage = () => {
     );    
     
 useEffect(()=>{
-    if(!cache.get('token')){router.push('/auth/login')}
+    if(!cache.get('token')){router.push('/login')}
 })
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
         try {

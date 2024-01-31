@@ -16,11 +16,11 @@ const LoginForm = () => {
     const { next } = router.query;
     const reghandleclick = (e) =>{
         e.preventDefault();
-        router.push('/auth/register')
+        router.push('/register')
     }
     const loghandleclick = (e) =>{
         e.preventDefault();
-        router.push('/auth/login')
+        router.push('/login')
     }
     return (
         <Row className="justify-content-center align-items-center">

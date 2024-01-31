@@ -42,7 +42,7 @@ const RepositoryList = (refresh,prefix, after) => {
                 </div>
             );}
     }else{
-        router.push('/auth/login')
+        router.push('/login')
     }
 
 };
@@ -80,7 +80,7 @@ const Leftnav = () =>{
 
     const NavUserInfo = () => {
         const user = cache.get("user")
-        const logoutUrl = "/auth/login"
+        const logoutUrl = "/login"
     
     
         const NavBarTitle = () => {

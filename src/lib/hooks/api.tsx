@@ -59,7 +59,7 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
     
     useEffect(() => {
         if (login) {
-            const loginPathname = '/auth/login';
+            const loginPathname = '/login';
             if (router.route === loginPathname) {
                 return;
             }
