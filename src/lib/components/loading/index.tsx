@@ -3,7 +3,6 @@ import { ProgressBar } from "react-bootstrap";
 import { useRouter } from "../../hooks/router";
 import { version } from "../../api/interface";
 const Loadingpage = ()  =>{
-    const router = useRouter()
     const [loading,setLoading] = useState(0)
     const [ver,setVer] = useState({})
     const [isFirstVisit, setIsFirstVisit] = useState(true);
@@ -12,9 +11,6 @@ const Loadingpage = ()  =>{
         const response = await version.getVersion()
         setVer(response.data)
         return response
-    }
-    const to =  ()=>{
-        router.push('/repository')
     }
   useEffect(() => {
     if (localStorage.getItem('hasVisited')) {
@@ -26,17 +22,13 @@ const Loadingpage = ()  =>{
         getversion()
     },[])
     useEffect(()=>{
-        if(loading >= 100){
+        if(loading == 100){
             localStorage.setItem('hasVisited','true')
-            setIsFirstVisit(false)
-            setTimeout(()=>{
-                to()
-            },1000)
         }else if(loading<100){
             let randomNum = Math.floor(Math.random() * (5)) + 1;
             setTimeout(()=>{
                 setLoading((loading+randomNum)>100 ? 100 :loading+randomNum)
-            },1000)
+            },500)
         }
     },[loading])
     if (!isFirstVisit) {
