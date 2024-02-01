@@ -109,17 +109,17 @@ const Leftnav = () =>{
         <Row className="sidebar">
         <Form className='flex Fast-navb'>
         <NavUserInfo />      
-            <Col className="d-flex">
+            {/* <Col className="d-flex">
             <strong style={{marginLeft:'20px',lineHeight:'30px'}}>Top Repositories</strong>
             <ButtonToolbar className="ms-auto mb-2">
                 <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} word={'New'} style={{fontSize: '10px'}}/>
             </ButtonToolbar>            
-            </Col>
-          <RepositoryList
+            </Col> */}
+          {/* <RepositoryList
                     prefix={''}
                     refresh={refresh}
                     after={(router.query.after) ? router.query.after : ""}
-                    />
+                    /> */}
         </Form>
         <CreateRepositoryModal
                     onCancel={() => {
