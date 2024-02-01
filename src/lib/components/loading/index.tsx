@@ -47,7 +47,7 @@ const Loadingpage = ()  =>{
            <code>No deployment, installing, maintaining and scaling overhead.</code>
         </div>
       <div className="Progress">
-            <div className="version">{loading>=80?<span>version: {ver.latest_version}</span>:<span>It's getting version from server now</span>}</div>
+            <div className="version">{loading>=80?<span>version: {ver.version}</span>:<span>It's getting version from server now</span>}</div>
             <ProgressBar animated now={loading} />
       </div>
       </>
