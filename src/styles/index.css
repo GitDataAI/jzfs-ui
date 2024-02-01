@@ -15,8 +15,7 @@ a {
   }
 }
 .logo {
-  margin-left: 20px;
-  margin-right: -10px;
+  margin-left: 10px;
 }
 .login-box {
   display: grid;
@@ -238,9 +237,9 @@ a {
   background-color: #95a3a7;
 }
 .Progress .version {
-  display: block;
-  width: 200px;
-  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .topNav {
   background-color: #f1f1f3;
@@ -251,6 +250,6 @@ a {
 }
 .topNav .navbar-brand .nav-link {
   line-height: 30px;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
   font-size: 16px;
 }

@@ -13,12 +13,12 @@ const Loadingpage = ()  =>{
         setVer(response.data)
         return response
     }
-
+    const to =  ()=>{
+        router.push('/repository')
+    }
   useEffect(() => {
     if (localStorage.getItem('hasVisited')) {
         setIsFirstVisit(false)
-    }else{
-        localStorage.setItem('hasVisited','false')
     }
   }, []);
 
@@ -26,18 +26,17 @@ const Loadingpage = ()  =>{
         getversion()
     },[])
     useEffect(()=>{
-        if(loading == 100){
+        if(loading >= 100){
+            localStorage.setItem('hasVisited','true')
+            setIsFirstVisit(false)
             setTimeout(()=>{
-                router.push('/repository')
-                setLoading(100)
-            },3000)
-        }else if(ver.api_version){
-            setLoading(100)
+                to()
+            },1000)
         }else if(loading<100){
-            let randomNum = Math.floor(Math.random() * (3)) + 1;
+            let randomNum = Math.floor(Math.random() * (5)) + 1;
             setTimeout(()=>{
                 setLoading((loading+randomNum)>100 ? 100 :loading+randomNum)
-            },500)
+            },1000)
         }
     },[loading])
     if (!isFirstVisit) {
@@ -56,7 +55,7 @@ const Loadingpage = ()  =>{
            <code>No deployment, installing, maintaining and scaling overhead.</code>
         </div>
       <div className="Progress">
-            {ver?<span className="version">version: {ver.latest_version}</span>:<span className="version">It's getting version from server now</span>}
+            <div className="version">{loading>=80?<span>version: {ver.latest_version}</span>:<span>It's getting version from server now</span>}</div>
             <ProgressBar animated now={loading} />
       </div>
       </>
