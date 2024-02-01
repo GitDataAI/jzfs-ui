@@ -50,12 +50,13 @@ const Loadingpage = ()  =>{
     return (
         <>
         <div className="welcome">
-            <img src="/pub/jiaozifs.png"/>
-            <h1>Welecome to Jiazozi FS Cloud</h1>
-           <h2><code>For data security, please be patient and wait for the environment check to complete.</code></h2>
+            <img src="/jiaozifs.png"/>
+            <h1>Welcome to JiaoziFS Cloud</h1>
+           <code>Get started with a fully functional playground environment and start data versioning at scale today!</code><br/> 
+           <code>No deployment, installing, maintaining and scaling overhead.</code>
         </div>
       <div className="Progress">
-            {ver?<strong className="version">version:{ver.api_version}</strong>:<strong className="version">It's getting version from server now</strong>}
+            {ver?<span className="version">version: {ver.latest_version}</span>:<span className="version">It's getting version from server now</span>}
             <ProgressBar animated now={loading} />
       </div>
       </>

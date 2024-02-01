@@ -24,11 +24,6 @@ html{
   right: 0;
 }
 
-.main-app {
-  display: flex;
-}
-
-
 .navbar-brand {
   padding: 0;
 }
