@@ -32,7 +32,7 @@ const RepositoryList = (refresh,prefix, after) => {
                                                 pathname: `/repositories/:user/:repoId/objects`,
                                                 params: {repoId: repo.name,user},
                                             }}>
-                                                <img src="/pub/jiaozifs3.png" alt="" /><span>{user+'/'}{repo.name}</span>
+                                                <span><img src="/jiaozifs3.png" alt="" />{user+'/'}{repo.name}</span>
                                             </Link>
                             </Col>
                         </Row>

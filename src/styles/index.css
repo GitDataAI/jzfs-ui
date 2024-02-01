@@ -6,6 +6,14 @@ a {
   color: inherit;
   text-decoration: none;
 }
+.main-app {
+  display: flex;
+}
+@media (max-width: 600px) {
+  .main-app {
+    display: grid;
+  }
+}
 .logo {
   margin-left: 20px;
   margin-right: -10px;
@@ -147,6 +155,14 @@ a {
   margin-right: 10px;
   background-color: #fff;
 }
+@media (max-width: 600px) {
+  .sidebar {
+    height: 60vh;
+    margin-left: 5rem;
+    width: 20rem;
+    border: 2px solid #dbe0fc;
+  }
+}
 .sidebar .navbar-expand {
   justify-content: center;
 }
@@ -178,6 +194,12 @@ a {
   margin: 15px;
   width: 100%;
 }
+@media (max-width: 600px) {
+  .child {
+    margin-left: 5rem;
+    border: 2px solid #dbe0fc;
+  }
+}
 .diif-remove span {
   background-color: rgba(255, 0, 0, 0.2);
   text-decoration: line-through;
@@ -192,27 +214,43 @@ a {
   border-radius: 5px;
 }
 .welcome {
+  margin-top: 100px;
   display: grid;
   justify-content: center;
 }
+.welcome code {
+  color: #827a7e;
+  margin: auto  ;
+}
 .welcome img {
+  width: 70px;
   margin: 0 auto;
 }
 .welcome h1 {
-  margin: 0 auto;
+  font-size: 16px;
+  margin: 20px auto;
 }
 .Progress {
-  width: 50%;
-  position: absolute;
-  bottom: 2rem;
-  left: 25%;
+  width: 40%;
+  margin: 10rem auto;
+}
+.Progress .progress-bar {
+  background-color: #95a3a7;
 }
 .Progress .version {
   display: block;
-  width: 102px;
+  width: 200px;
   margin: 0 auto;
 }
 .topNav {
   background-color: #f1f1f3;
   border-bottom: 2px solid #dbe0fc;
+}
+.topNav .navbar-brand {
+  display: flex;
+}
+.topNav .navbar-brand .nav-link {
+  line-height: 30px;
+  margin-left: 1rem;
+  font-size: 16px;
 }

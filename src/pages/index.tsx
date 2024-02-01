@@ -15,6 +15,7 @@ export const IndexPage = () => {
                         <Route path="/" element={<Navigate to="/repositories"/>} />
                         <Route path="/repositories/*" element={<Repositories/>} />
                         <Route path="/login/*" element={<Login/>} />
+                        <Route path="/loading/*" element={<Loadingpage/>} />
                         <Route path="/register/*" element={<Register/>} />
                         <Route path="*" element={<Navigate to="/repositories" replace />} />
                     </Routes>

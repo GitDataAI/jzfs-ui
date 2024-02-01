@@ -66,7 +66,8 @@ useEffect(()=>{
         <Layout>
             <Container fluid="xl" className="mt-3">
                 {<ActionsBar>
-                    <Form style={{minWidth: 300}} onSubmit={e => { e.preventDefault(); }}>
+                    <h2><strong>Repositories Lists</strong></h2>
+                    {/* <Form style={{minWidth: 300}} onSubmit={e => { e.preventDefault(); }}>
                         <Form.Group>
                             <Col>
                                 <InputGroup>
@@ -82,7 +83,7 @@ useEffect(()=>{
                                 </InputGroup>
                             </Col>
                         </Form.Group>
-                    </Form>
+                    </Form> */}
                     <ButtonToolbar className="ms-auto mb-2">
                         <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} />
                     </ButtonToolbar>
