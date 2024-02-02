@@ -1,5 +1,6 @@
 body {
   background-color: #f1f3f8;
+  overflow: hidden;
   background-repeat: repeat;
 }
 a {
@@ -8,6 +9,8 @@ a {
 }
 .main-app {
   display: flex;
+  height: 100vh;
+  overflow: auto;
 }
 @media (max-width: 600px) {
   .main-app {
@@ -153,10 +156,11 @@ a {
   border-right: 2px solid #dbe0fc;
   margin-right: 10px;
   background-color: #fff;
+  overflow-y: scroll;
 }
 @media (max-width: 600px) {
   .sidebar {
-    height: 60vh;
+    height: 30vh;
     margin-left: 5rem;
     width: 20rem;
     border: 2px solid #dbe0fc;
@@ -191,11 +195,12 @@ a {
 }
 .child {
   margin: 15px;
+  margin-bottom: 60px;
   width: 100%;
+  overflow-y: scroll;
 }
 @media (max-width: 600px) {
   .child {
-    margin-left: 5rem;
     border: 2px solid #dbe0fc;
   }
 }

@@ -66,7 +66,7 @@ useEffect(()=>{
         <Layout>
             <Container fluid="xl" className="mt-3">
                 {<ActionsBar>
-                    <h2><strong>Repositories Lists</strong></h2>
+                    <h2><strong>Repository List</strong></h2>
                     {/* <Form style={{minWidth: 300}} onSubmit={e => { e.preventDefault(); }}>
                         <Form.Group>
                             <Col>
