@@ -18,7 +18,7 @@ const RegisterForm = () => {
         router.push('/login')
     }
     return(
-            <Row className="justify-content-center align-items-center">
+            <Row className="justify-content-center align-items-center gx-0">
              <Col md={{offset: 5, span: 7}} className="login-box" >
              <img src="/jiaozifs.png" alt="JiaoziFS" /><br /><strong className="Signtittle">Register To JiaoziFS</strong>
             <Card className="login-widget jiaozi-login register">
