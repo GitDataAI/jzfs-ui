@@ -23,6 +23,7 @@ import { ChangesBrowserProps, CommitButtonProps, Pair, ResultsState, RevertButto
 import { object, repos, wip } from "../../../../../lib/api/interface/index";
 import { UploadButton } from "../objects/uplodaButton";
 import ChangeList from "../../commits/commit/changesrow";
+import { getActions } from "../../../../../util/changes";
 
 
 const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
@@ -158,9 +159,6 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
         done: false,
       };
       const [deleteState, setDeleteState] = useState(initialState);
-    // const getMoreUncommittedChanges:GetMoreUncommittedChanges = (afterUpdated, path, useDelimiter= true, amount = -1) => {
-    //     return wip.getWipChanges(user,repo.name,{refName:reference.name})
-    // }
     const {loading:loaded} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name}))   
     const { response,loading:load} = useAPI(async() =>
     {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:'wip',path:path?path:'/'})}
@@ -192,28 +190,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
             })
     }
 
-    // let onNavigate = (entry: { path: string; }) => {
-    //     return {
-    //         pathname: `/repositories/:user/:repoId/changes`,
-    //         params: {repoId: repo.name,user},
-    //         query: {
-    //             ref: reference.name,
-    //             prefix: entry.path,
-    //         }
-    //     }
-    // }
-
-    // const uriNavigator =  <URINavigator path={prefix} reference={reference} repo={repo}
-    // pathURLBuilder={(params, query) => {
-    //     return {
-    //         pathname: '/repositories/:user/:repoId/changes',
-    //         params: params,
-    //         query: { ref: reference.name, prefix: query.path ?? "" },
-    //     };
-    // } } downloadUrl={undefined}/>
     const changesTreeMessage = <p>Showing changes for branch <strong>{reference.name}</strong></p>
-    // const committedRef = reference.id + "@"
-    // const uncommittedRef = reference.id
 
    const actionErrorDisplay = (actionError) ?
         <AlertError error={actionError} onDismiss={() => setActionError(null)}/> : <></>
@@ -276,6 +253,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
             {deleteState.error && <AlertError error={deleteState.error} onDismiss={() => setDeleteState(initialState)}/>}
             <Tree
                 repo={repo}
+                changes={results}
                 reference={reference}
                 path={(path) ? path : ""}
                 showActions={true}
