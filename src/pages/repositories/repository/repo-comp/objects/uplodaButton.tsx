@@ -14,11 +14,11 @@ import { object } from "../../../../../lib/api/interface/index";
 const MAX_PARALLEL_UPLOADS = 1;
 
 const destinationPath = (path: string | undefined, file: _File) => {
-    return `${path ? path : ""}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
+    return `${path ? path : ""}/${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
   };
   
   const UploadCandidate = ({ repoId, path, file, state,setUploadPath,onRemove = null }) => {
-    const fpath = destinationPath(path, file)
+  const fpath = destinationPath(path, file)
   useEffect(()=>{
     setUploadPath(fpath)
   },[path])
@@ -43,7 +43,7 @@ const destinationPath = (path: string | undefined, file: _File) => {
         <Row className={`upload-item upload-item-${state ? state.status : "none"}`}>
           <Col>
             <span className="path">
-              jzfs:/{repoId}{fpath}
+              jzfs:/{repoId}/{fpath}
             </span>
           </Col>
           <Col xs md="2">
@@ -107,7 +107,6 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
   
     useEffect(() => {
       setCurrentPath(path)
-
     }, [path])
     useEffect(() =>{
       files.length>1? setInputStuts(false):''

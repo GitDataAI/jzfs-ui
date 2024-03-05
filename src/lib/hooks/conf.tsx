@@ -2,7 +2,7 @@ import React, {createContext, useContext, useMemo} from "react";
 
 import {useAPI} from "./api";
 import { LoginConfigProviderProps } from "../components/interface/comp_interface";
-import { setup } from "../api/interface/Api";
+import { setup } from "../api/interface";
 
 
 export const LoginConfigContext = createContext({});
