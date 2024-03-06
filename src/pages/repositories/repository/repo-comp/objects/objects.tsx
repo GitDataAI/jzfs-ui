@@ -1,4 +1,4 @@
-import React, {useEffect,useState } from "react";
+import React, {useContext, useEffect,useState } from "react";
 import { RepositoryPageLayout } from "../../../../../lib/components/repository/layout";
 import RefDropdown from "../../../../../lib/components/repository/refDropdown";
 import {
@@ -16,6 +16,7 @@ import { Button } from "react-bootstrap";
 import { UploadIcon } from "@primer/octicons-react";
 import { Link } from "../../../../../lib/components/nav";
 import { cache } from "../../../../../lib/api";
+import { ActivepageContext } from "../../../../../lib/hooks/conf";
 
 
 const ObjectsBrowser = () => {
@@ -222,7 +223,11 @@ const ObjectsBrowser = () => {
 };
 
 const RepositoryObjectsPage = () => {
+  const activepage = useContext(ActivepageContext)
 
+    useEffect(()=>{
+        activepage.setPage('objects')
+    },[])
   return (
     <RepositoryPageLayout activePage={"objects"}>
       <ObjectsBrowser />

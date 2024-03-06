@@ -2,7 +2,7 @@ import React from "react";
 
 import TopNav from './navbar';
 import { LayoutProps } from "./interface/comp_interface";
-import Leftnav from "./leftnav";
+import Leftnav from "../../pages/leftnav/index";
 
 const Layout:React.FC<LayoutProps> = ({ logged = true, children }) => {
     return (

@@ -14,11 +14,13 @@ import { object } from "../../../../../lib/api/interface/index";
 const MAX_PARALLEL_UPLOADS = 1;
 
 const destinationPath = (path: string | undefined, file: _File) => {
-    return `${path ? path : ""}/${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
+    return `${path=='/' ? '' : path+'/'}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
   };
   
   const UploadCandidate = ({ repoId, path, file, state,setUploadPath,onRemove = null }) => {
   const fpath = destinationPath(path, file)
+  console.log(fpath);
+  
   useEffect(()=>{
     setUploadPath(fpath)
   },[path])
@@ -109,7 +111,7 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
       setCurrentPath(path)
     }, [path])
     useEffect(() =>{
-      files.length>1? setInputStuts(false):''
+      files.length>1?setInputStuts(false):setInputStuts(true)
     },[files])
     const upload = async () => {
       if (files.length < 1) {
@@ -121,7 +123,7 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
           files.length >1?          
-          await uploadFile( repoId, reference.name, file.path, file, wipID):
+          await uploadFile( repoId, reference.name, currentPath+'/'+file.path, file, wipID):
           await uploadFile( repoId, reference.name, uploadpath, file, wipID)
           
         } catch (error: any | null) {

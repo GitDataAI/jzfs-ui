@@ -55,7 +55,7 @@ export const RepositoryPageLayout:React.FC<RepositoryPageLayoutProps> = ({ activ
     // }, [response, setConfigRes]);
 
     return (
-        <Layout>
+<Layout>
             <div>
                 {/* {configRes && !dismissedChecklistForRepo && (
                     <RepoOnboardingChecklistSlider
@@ -73,6 +73,6 @@ export const RepositoryPageLayout:React.FC<RepositoryPageLayoutProps> = ({ activ
                     <div className="mt-4">{children}</div>
                 </Container>
             </div>
-        </Layout>
+</Layout>
     );
 };

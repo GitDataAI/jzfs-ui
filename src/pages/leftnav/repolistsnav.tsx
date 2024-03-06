@@ -1,13 +1,13 @@
 import { FeedPersonIcon } from "@primer/octicons-react";
-import {   ButtonToolbar, Col, Form, NavDropdown, Navbar, Row } from "react-bootstrap"
-import {auth as Auth, cache} from "../api";
+import {   ButtonToolbar, Col, Form, NavDropdown, Row } from "react-bootstrap"
+import {auth as Auth, cache} from "../../lib/api";
 import React, { useCallback, useState } from "react";
-import { useRouter } from "../hooks/router";
-import { useAPIWithPagination } from "../hooks/api";
-import { users,auth } from "../api/interface/index";
-import { AlertError, Loading } from "./controls";
+import { useRouter } from "../../lib/hooks/router";
+import { useAPIWithPagination } from "../../lib/hooks/api";
+import { users,auth } from "../../lib/api/interface/index";
+import { AlertError, Loading } from "../../lib/components/controls";
 import {Link} from "../../lib/components/nav";
-import {CreateRepositoryButton, CreateRepositoryModal } from "../../pages/repositories/repos-comp";
+import {CreateRepositoryButton, CreateRepositoryModal } from "../repositories/repos-comp";
 const RepositoryList = (refresh,prefix, after) => {
     const router = useRouter()
     const user = cache.get('user')
@@ -47,7 +47,7 @@ const RepositoryList = (refresh,prefix, after) => {
 
 };
 
-const Leftnav = () =>{
+const Repolistsnav = () =>{
     const router = useRouter()
     const [refresh, setRefresh] = useState(false);
     const [creatingRepo, setCreatingRepo] = useState(false);
@@ -109,17 +109,17 @@ const Leftnav = () =>{
         <Row className="sidebar">
         <Form className='flex Fast-navb'>
         <NavUserInfo />      
-            {/* <Col className="d-flex">
+            <Col className="d-flex">
             <strong style={{marginLeft:'20px',lineHeight:'30px'}}>Top Repositories</strong>
             <ButtonToolbar className="ms-auto mb-2">
                 <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} word={'New'} style={{fontSize: '10px'}}/>
             </ButtonToolbar>            
-            </Col> */}
-          {/* <RepositoryList
+            </Col>
+          <RepositoryList
                     prefix={''}
                     refresh={refresh}
                     after={(router.query.after) ? router.query.after : ""}
-                    /> */}
+                    />
         </Form>
         <CreateRepositoryModal
                     onCancel={() => {
@@ -139,4 +139,5 @@ const Leftnav = () =>{
     );
   }
 
-export default Leftnav
+
+export default Repolistsnav
