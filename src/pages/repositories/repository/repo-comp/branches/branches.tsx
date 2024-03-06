@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState} from "react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
 
 import {
     GitBranchIcon,
@@ -34,6 +34,7 @@ import {RepoError} from "../error/error";
 import { BranchListProps, BranchWidgetParms, CreateBranchButtonProps } from "../../../interface/repo_interface";
 import { Branch } from "../../../../../lib/api/interface/Api";
 import { repos } from "../../../../../lib/api/interface/index";
+import { ActivepageContext } from "../../../../../lib/hooks/conf";
 
 const ImportBranchName = 'import-from-inventory';
 
@@ -216,13 +217,7 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
     const user = cache.get('user');
     const amount = useRef(5)
     const { results, error, loading, nextPage } = useAPIWithPagination(async () => {
-        return repos.listBranches(user, repo.name
-        //     ,{
-        //     prefix,
-        //     after,
-        //     amount:amount.current,
-        // }
-        );
+        return repos.listBranches(user, repo.name);
     }, [repo.id, refresh, prefix, after]);
     
     const doRefresh = () =>  setRefresh(!refresh);
@@ -284,6 +279,11 @@ const BranchesContainer:React.FC = () => {
 
 
 const RepositoryBranchesPage = () => {
+    const activepage = useContext(ActivepageContext)
+
+    useEffect(()=>{
+        activepage.setPage('branches')
+    },[])
     return (
             <RepositoryPageLayout activePage={'branches'}>
                 <BranchesContainer/>

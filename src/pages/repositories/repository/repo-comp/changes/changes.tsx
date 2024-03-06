@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import {GitCommitIcon, HistoryIcon,} from "@primer/octicons-react";
 
@@ -24,6 +24,7 @@ import { object, repos, wip } from "../../../../../lib/api/interface/index";
 import { UploadButton } from "../objects/uplodaButton";
 import ChangeList from "../../commits/commit/changesrow";
 import { getActions } from "../../../../../util/changes";
+import { ActivepageContext } from "../../../../../lib/hooks/conf";
 
 
 const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
@@ -324,6 +325,11 @@ const ChangesContainer = () => {
 }
 
 const RepositoryChangesPage = () => {
+    const activepage = useContext(ActivepageContext)
+
+    useEffect(()=>{
+        activepage.setPage('changes')
+    },[])
     return (
             <RepositoryPageLayout activePage={'changes'}>
                 <ChangesContainer/>

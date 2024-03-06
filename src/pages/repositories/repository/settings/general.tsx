@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import {useRefs} from "../../../../lib/hooks/repo";
 import Container from "react-bootstrap/Container";
@@ -14,10 +14,13 @@ import {useRouter} from "../../../../lib/hooks/router";
 import {SettingsLayout} from "./layout";
 import {RepositoryPageLayout} from "../../../../lib/components/repository/layout";
 import { repos } from "../../../../lib/api/interface/index";
+import { ActivepageContext } from "../../../../lib/hooks/conf";
 
 const DeleteRepositoryModal = ({repo, show, onSubmit, onCancel}) => {
     const [isDisabled, setIsDisabled] = useState(true);
     const repoNameField = useRef(null);
+    const isclean = useRef()
+    
 
     const compareRepoName = () => {
         setIsDisabled(repoNameField.current.value !== repo.name);
@@ -46,9 +49,10 @@ const DeleteRepositoryModal = ({repo, show, onSubmit, onCancel}) => {
 
                 Please type <strong>{repo.name}</strong> to confirm: <br />
                 <Form.Control className="mt-2" placeholder="Enter repository name to confirm" type="text" autoFocus ref={repoNameField} onChange={compareRepoName}/>
+                <input type="checkbox" ref={isclean}/>Do you want to clean data?
             </Modal.Body>
             <Modal.Footer>
-                <Button disabled={isDisabled} variant="danger" onClick={onSubmit}>I understand the consequences, delete this repository</Button>
+                <Button disabled={isDisabled} variant="danger" onClick={()=>{onSubmit(isclean.current && isclean.current.checked)}}>I understand the consequences, delete this repository</Button>
             </Modal.Footer>
         </Modal>
     );
@@ -105,8 +109,8 @@ const SettingsContainer = () => {
             <DeleteRepositoryModal
                 repo={repo}
                 onCancel={() => { setShowDeleteModal(false) }}
-                onSubmit={() => {
-                    repos.deleteRepository(user,repo.name).then(() => {
+                onSubmit={(isclean:boolean) => {
+                    repos.deleteRepository(user,repo.name, isclean?{is_clean_data:isclean} : '').then(() => {
                         return router.push('/repositories')
                     }).catch(err => {
                         setDeletionError(err)
@@ -120,6 +124,11 @@ const SettingsContainer = () => {
 
 
 const RepositoryGeneralSettingsPage = () => {
+    const activepage = useContext(ActivepageContext)
+
+    useEffect(()=>{
+        activepage.setPage('settings')
+    },[])
     return (
         <RepositoryPageLayout activePage={'settings'}>
             <SettingsLayout activeTab={"general"}>

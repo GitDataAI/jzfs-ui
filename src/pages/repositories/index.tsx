@@ -1,6 +1,6 @@
 
 // 编辑个人仓库页面，为仓库页面与项目详情页面提供路由
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 import {Col,Form,InputGroup,ButtonToolbar,Container} from "react-bootstrap";
 
 import {SearchIcon} from "@primer/octicons-react";
@@ -18,6 +18,7 @@ import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from ".
 import { RepositoryParams } from "../../lib/api/interface";
 import { useAPI } from "../../lib/hooks/api";
 import {users } from "../../lib/api/interface/index";
+import { ActivepageContext } from "../../lib/hooks/conf";
 
 
 dayjs.extend(relativeTime);
@@ -38,6 +39,11 @@ const RepositoriesPage = () => {
     
 useEffect(()=>{
     if(!cache.get('token')){router.push('/login')}
+})
+const activepage = useContext(ActivepageContext)
+
+useEffect(()=>{
+    activepage.setPage('repositories')
 })
     const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
         try {
@@ -112,11 +118,13 @@ useEffect(()=>{
                     />
 
             </Container>
-        </Layout>
+            </Layout>
+
     );
 }
 
 const RepositoriesIndex = () => {
+
     return (
         <Routes>
             <Route path="/" element={<RepositoriesPage/>} />

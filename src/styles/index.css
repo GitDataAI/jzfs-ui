@@ -258,3 +258,31 @@ a {
   margin-left: 0.5rem;
   font-size: 16px;
 }
+.Nav-file {
+  display: block;
+  margin-left: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.Nav-dir {
+  display: flex;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.Nav-dir .Nav-Down {
+  width: 20px;
+  height: 20px;
+}
+.Nav-dir .Nav-Dir {
+  font-size: 16px;
+  margin-right: 5px;
+  color: blue;
+}
+.Child-nav {
+  margin-left: 18px;
+}
+.filerender {
+  display: flex;
+}

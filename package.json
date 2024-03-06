@@ -27,6 +27,7 @@
     "bootstrap": "^5.3.1",
     "dayjs": "^1.11.7",
     "http-proxy-middleware": "^1.1.1",
+    "ipfs-http-client": "^60.0.1",
     "lodash": "^4.17.21",
     "merge-headers": "^1.1.1",
     "p-map": "^6.0.0",
