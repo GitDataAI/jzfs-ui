@@ -52,7 +52,7 @@ const Repolistsnav = () =>{
         <Row className="sidebar">
         <Form className='flex Fast-navb'>
             <Col className="d-flex">
-            <strong style={{marginLeft:'20px',lineHeight:'30px'}}>Top Repositories</strong>           
+            <strong className="Navtittle">Top Repositories</strong>           
             </Col>
           <RepositoryList
                     refresh={refresh}

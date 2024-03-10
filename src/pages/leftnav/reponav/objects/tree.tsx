@@ -8,7 +8,7 @@ import { useRefs } from "../../../../lib/hooks/repo";
 import { Col } from "react-bootstrap";
 
 const RepoTittle = () => {
-  return     <strong style={{marginLeft:'20px',lineHeight:'30px'}}>Objects List</strong>  ;
+  return     <strong className="Navtittle">Objects List</strong>  ;
 };
 
 const NavTreeContent = ({ reference,repo }) => {
