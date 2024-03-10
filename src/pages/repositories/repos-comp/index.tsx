@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Button,Col,Card,Row,Modal} from "react-bootstrap";
+import {Button,Card,Modal} from "react-bootstrap";
 
 import {RepoIcon} from "@primer/octicons-react";
 import dayjs from "dayjs";
@@ -17,7 +17,7 @@ import { Repository } from "../../../lib/api/interface/Api";
 
 dayjs.extend(relativeTime);
 
-export const CreateRepositoryButton: React.FC<CreateRepositoryButtonProps> = ({variant = "success", enabled = false, onClick,word= 'Create Repository',style={}}) => {
+export const CreateRepositoryButton: React.FC<CreateRepositoryButtonProps> = ({variant = "success", enabled = false, onClick,word= 'New Repository',style={}}) => {
     return (
         <Button variant={variant} disabled={!enabled} onClick={onClick} style={style}>
             <RepoIcon/> {word}
@@ -50,33 +50,42 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
     );
 };
 
-export const RepositoryList = ({refresh}:{refresh:boolean}) => {
+export const RepositoryList = ({refresh,setRepoAmount,search}:{refresh:boolean,setRepoAmount:React.Dispatch<React.SetStateAction<number>>,search:string}) => {
     const user = cache.get('user')
     const router = useRouter()
+    const Storage = ({storage})=>{
+        return(
+        <span className="storage">{storage?'pubilc':'private'}</span>
+        )
+    }
     if(user){
         const {results, loading, error} = useAPIWithPagination( async() => {
-                return  await users.listRepository(user)
-     
-        }, [refresh]);
+                return  await users.listRepository(user).then((results)=>{
+                    if(search){
+                        results.data.results = results.data.results.filter((item)=>{
+                            return item.name.toLowerCase().includes(search.toLowerCase());
+                        })
+                    }
+                    setRepoAmount(results.data.results.length)
+                    return results
+                })
+        }, [refresh,search]);
         if (loading) return <Loading/>;
         if (error) { 
             return <AlertError error={error}/>;}
-            if(results){
+            if(results){                
                 return (
                     <div>
-                        {
-                            results.map((repo:Repository)=>{
-                                return(
-                            <Row key={repo.id}>
-                                <Col className={"mb-2 mt-2"}>
-                                    <Card>
+                        {results.map((repo:Repository)=>{   
+                                return(  
+                                    <Card key={repo.id}>
                                         <Card.Body>
                                             <h5>
                                                 <Link href={{
                                                     pathname: `/repositories/:user/:repoId/objects`,
                                                     params: {repoId: repo.name,user},
                                                 }}>
-                                                    {repo.name}
+                                                    {repo.name} <Storage storage={repo.use_public_storage}/>
                                                 </Link>
                                             </h5>
                                             <p>
@@ -88,8 +97,6 @@ export const RepositoryList = ({refresh}:{refresh:boolean}) => {
                                             </p>
                                         </Card.Body>
                                     </Card>
-                                </Col>
-                            </Row>
                                 )
                             })
                         }

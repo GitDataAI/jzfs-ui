@@ -1,20 +1,19 @@
 
-// 编辑个人仓库页面，为仓库页面与项目详情页面提供路由
-import React, {useCallback, useContext, useEffect, useState} from "react";
-import {ButtonToolbar,Container} from "react-bootstrap";
+import React, { ChangeEvent, SyntheticEvent, useCallback, useContext, useEffect, useState } from "react";
+import { ButtonToolbar, Card, Container, Form, FormControl } from "react-bootstrap";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import Layout from "../../lib/components/layout";
-import {ActionsBar} from "../../lib/components/controls";
-import {cache} from '../../lib/api';
-import {useRouter} from "../../lib/hooks/router";
+import { ActionsBar } from "../../lib/components/controls";
+import { cache } from '../../lib/api';
+import { useRouter } from "../../lib/hooks/router";
 
-import {Route, Routes} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import RepositoryPage from './repository';
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
-import {users } from "../../lib/api/interface/index";
+import { users } from "../../lib/api/interface/index";
 import { ActivepageContext } from "../../lib/hooks/conf";
 import { activepage } from "../../lib/hooks/interface";
 
@@ -28,16 +27,30 @@ const RepositoriesPage = () => {
     const [createRepoError, setCreateRepoError] = useState(null);
     const [refresh, setRefresh] = useState(false);
     const [creatingRepo, setCreatingRepo] = useState(false);
+    const [repoamount, setRepoAmount] = useState(0);
+    const [search,setSearch] = useState('')
+    function debounce(func: Function, delay: number) {
+        let timer: NodeJS.Timeout;
+        return  (...args: any[]) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            func.apply(this, args);
+          }, delay);
+        };
+      }
+    const handleChange = (e:ChangeEvent<FormControlElement>)=>{
+        setSearch(e.target.value);
+    }
+    const debouncedHandleChange = debounce(handleChange, 300);
 
-useEffect(()=>{
-    if(!cache.get('token')){router.push('/login')}
-})
-const activepageL:activepage = useContext(ActivepageContext)
-
-useEffect(()=>{
-    activepageL.setPage('repositories')
-})
-    const createRepo = async (repo:{name:string,description:string}, presentRepo = true) => {
+    useEffect(() => {
+        if (!cache.get('token')) { router.push('/login') }
+    })
+    const activepageL: activepage = useContext(ActivepageContext)
+    useEffect(() => {
+        activepageL.setPage('repositories')
+    })
+    const createRepo = async (repo: { name: string, description: string }, presentRepo = true) => {
         const owner = cache.get('user')
         try {
             setCreatingRepo(true);
@@ -45,7 +58,7 @@ useEffect(()=>{
             await users.createRepository(repo);
             setRefresh(!refresh);
             if (presentRepo) {
-                router.push({pathname: `/repositories/:user/:repoId/objects`, params: {repoId: repo.name,user:owner},query:{}});
+                router.push({ pathname: `/repositories/:user/:repoId/objects`, params: { repoId: repo.name, user: owner }, query: {} });
             }
             return true;
         } catch (error: any) {
@@ -65,15 +78,26 @@ useEffect(()=>{
         <Layout>
             <Container fluid="xl" className="mt-3">
                 {<ActionsBar>
-                    <h2><strong>Repository List</strong></h2>
+                    <h2><strong>All</strong></h2>
                     <ButtonToolbar className="ms-auto mb-2">
                         <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} />
                     </ButtonToolbar>
-                </ActionsBar> }
+                </ActionsBar>}
+                <Form inline>
+                    <FormControl type="text" placeholder="Search" className="mr-sm-2" onChange={debouncedHandleChange}/>
+                </Form>
 
+                <Card className="repo-card">
+                    <Card.Header className="repo-card-header">
+                        <strong>{repoamount} repositories</strong>
+                    </Card.Header>
                 <RepositoryList
                     refresh={refresh}
-                    />
+                    setRepoAmount={setRepoAmount}
+                    search={search}
+                />
+                </Card>
+
 
                 <CreateRepositoryModal
                     onCancel={() => {
@@ -81,17 +105,17 @@ useEffect(()=>{
                         setCreateRepoError(null);
                     }}
                     show={showCreateRepositoryModal}
-                    setShow = {setShowCreateRepositoryModal}
+                    setShow={setShowCreateRepositoryModal}
                     error={createRepoError}
-                    setRefresh = {setRefresh}
+                    setRefresh={setRefresh}
                     onSubmit={(repo) => createRepo(repo, true)}
                     samlpleRepoChecked={sampleRepoChecked}
                     inProgress={creatingRepo}
-                    refresh = {refresh}
-                    />
+                    refresh={refresh}
+                />
 
             </Container>
-            </Layout>
+        </Layout>
 
     );
 }
@@ -100,8 +124,8 @@ const RepositoriesIndex = () => {
 
     return (
         <Routes>
-            <Route path="/" element={<RepositoriesPage/>} />
-            <Route path=":user/:repoId/*" element={<RepositoryPage/>} />
+            <Route path="/" element={<RepositoriesPage />} />
+            <Route path=":user/:repoId/*" element={<RepositoryPage />} />
         </Routes>
     );
 };
