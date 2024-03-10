@@ -17,8 +17,8 @@ const NavUserInfo = () => {
     const NavBarTitle = () => {
         return (
         <>
-            {<div className="user-menu-notification-indicator"></div>}
-            <FeedPersonIcon size={28} verticalAlign={"middle"}/>
+            {/* {<div className="user-menu-notification-indicator"></div>} */}
+            <FeedPersonIcon size={28} verticalAlign={"middle"}/><strong >{user} </strong>
         </>
         )
     }
@@ -32,11 +32,6 @@ const NavUserInfo = () => {
                 }}>
                 Logout
             </NavDropdown.Item>
-            <NavDropdown.Divider/>
-            {<>
-            <NavDropdown.Item disabled={true}>
-                <small>JiaoziFS</small>
-            </NavDropdown.Item></>}
         </NavDropdown>
     );
 };
@@ -75,7 +70,9 @@ const TopNav = ({logged = true}) => {
                 <Link component={Navbar.Brand} href="/">
                     <img src="/jiaozifs3.png" alt="JiaoziFS" className="logo"/>
                     <TopNavLink href="/repositories"><strong>JiaoziFS Cloud</strong></TopNavLink>
+                    
                 </Link>
+                <NavUserInfo/>
             </Container>
         </Navbar>
     );

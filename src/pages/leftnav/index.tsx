@@ -15,44 +15,53 @@ if(page === 'objects'){
         return (
             <>
             <RefContextProvider>
-            <RepositoryObjectsNav />
+                <RepositoryObjectsNav />
             </RefContextProvider>
-
             </>
         )
     }
     else if(page === 'repositories'){
         return (
             <>
-            <Repolistsnav></Repolistsnav>
+            <RefContextProvider>
+                <Repolistsnav />
+            </RefContextProvider>
             </>
         )
     }     
     else if(page === 'changes'){
         return (
             <>
-            <Changesnav></Changesnav>
+            <RefContextProvider>
+                <Changesnav/>
+            </RefContextProvider>
             </>
         )
     }     
     else if(page === 'branches'){
         return (
             <>
-            <Branchsnav></Branchsnav>
+            <RefContextProvider>
+                <Branchsnav/>
+            </RefContextProvider>
             </>
         )
     }     
     else if(page === 'commits'){
         return (
             <>
-            <Commitsnav></Commitsnav>
+            <RefContextProvider>
+            <Commitsnav/>
+            </RefContextProvider>
             </>
         )
     }     
     else if(page === 'settings'){
         return (
             <>
-            <Repolistsnav></Repolistsnav>
+            <RefContextProvider>
+                <Repolistsnav />
+            </RefContextProvider>
             </>
         )
     }     
