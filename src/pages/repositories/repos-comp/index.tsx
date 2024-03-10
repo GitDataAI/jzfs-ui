@@ -10,9 +10,10 @@ import {cache} from '../../../lib/api';
 import {RepositoryCreateForm} from "../../../lib/components/repoCreateForm";
 import { useAPIWithPagination} from "../../../lib/hooks/api";
 import {Link} from "../../../lib/components/nav";
-import { CreateRepositoryButtonProps, CreateRepositoryModalProps, GetStartedProps, GettingStartedCreateRepoButtonProps, RepositoryListProps } from "../interface/repos_interface";
+import { CreateRepositoryButtonProps, CreateRepositoryModalProps} from "../interface/repos_interface";
 import {users } from "../../../lib/api/interface/index";
 import { useRouter } from "../../../lib/hooks/router";
+import { Repository } from "../../../lib/api/interface/Api";
 
 dayjs.extend(relativeTime);
 
@@ -49,16 +50,14 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
     );
 };
 
-// export const RepositoryList: React.FC<RepositoryListProps> = ({ onPaginate, prefix, after, refresh, onCreateEmptyRepo, toggleShowActionsBar, creatingRepo, createRepoError }) => {
-export const RepositoryList = ({refresh,prefix, after,amount=5,onPaginate}) => {
+export const RepositoryList = ({refresh}:{refresh:boolean}) => {
     const user = cache.get('user')
     const router = useRouter()
     if(user){
-        const {results, loading, error, nextPage} = useAPIWithPagination( async() => {
-                // query={prefix, after,amount}
+        const {results, loading, error} = useAPIWithPagination( async() => {
                 return  await users.listRepository(user)
      
-        }, [refresh, prefix, after]);
+        }, [refresh]);
         if (loading) return <Loading/>;
         if (error) { 
             return <AlertError error={error}/>;}
@@ -66,7 +65,7 @@ export const RepositoryList = ({refresh,prefix, after,amount=5,onPaginate}) => {
                 return (
                     <div>
                         {
-                            results.map((repo)=>{
+                            results.map((repo:Repository)=>{
                                 return(
                             <Row key={repo.id}>
                                 <Col className={"mb-2 mt-2"}>
@@ -94,8 +93,6 @@ export const RepositoryList = ({refresh,prefix, after,amount=5,onPaginate}) => {
                                 )
                             })
                         }
-            
-                        {/* <Paginator after={after} nextPage={nextPage} onPaginate={onPaginate}/> */}
                     </div>
                 );}
         }else{

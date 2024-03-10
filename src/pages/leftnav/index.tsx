@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { ActivepageContext } from "../../lib/hooks/conf";
 import RepositoryObjectsNav from "./reponav/objects/objectsNav";
 import Repolistsnav from "./repolistsnav";

@@ -19,17 +19,16 @@ import {formatAlertText} from "../../../../../lib/components/repository/errors";
 import {useRouter} from "../../../../../lib/hooks/router";
 import {Tree} from "../../../../../lib/components/repository/changestree";
 import {RepoError} from "../error/error";
-import { ChangesBrowserProps, CommitButtonProps, Pair, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
+import { ChangesBrowserProps, CommitButtonProps, ResultsState, RevertButtonProps, SetState } from "../../../interface/repo_interface";
 import { object, repos, wip } from "../../../../../lib/api/interface/index";
 import { UploadButton } from "../objects/uplodaButton";
 import ChangeList from "../../commits/commit/changesrow";
-import { getActions } from "../../../../../util/changes";
 import { ActivepageContext } from "../../../../../lib/hooks/conf";
 
 
 const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
     const [msg, setMsg] = useState('');
-    const handleDescriptionChange = (e) => {
+    const handleDescriptionChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setMsg(e.target.value);
       };
       
@@ -37,7 +36,6 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
 
     const [committing, setCommitting] = useState(false)
     const [show, setShow] = useState(false)
-    const [metadataFields, setMetadataFields] = useState<Pair[]>([])
     const hide = () => {
         setShow(false)
     }
@@ -45,7 +43,6 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
     const onSubmit = () => {
         const message = textRef.current ?  textRef.current.value : '';
         const metadata: { [key: string]: string } = {};
-        metadataFields.forEach(pair => metadata[pair.key] = pair.value)
         setCommitting(true)
         onCommit({message, metadata}, () => {
             setCommitting(false)
@@ -127,7 +124,6 @@ export async function appendMoreResults(
   ): Promise<ResultsState>{
     let resultsFiltered = resultsState.results
     if (resultsState.prefix !== prefix) {
-        // prefix changed, need to delete previous results
         setAfterUpdated("")
         resultsFiltered = []
     }
@@ -150,7 +146,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     const user = cache.get('user')
     const delimiter = '/'
     const router = useRouter();
-    const { path, after, importDialog } = router.query;
+    const { path, after } = router.query;
     const [showUpload, setShowUpload] = useState(false);
     const [showImport, setShowImport] = useState(false);
 

@@ -4,7 +4,7 @@ import {cache} from '../../api';
 import {Nav, Badge,Form,Button,Alert,Overlay,Popover } from "react-bootstrap";
 import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../../constants";
 import { CommitListProps, RefDropdownProps, RefEntryProps, RefSelectorProps, ref, RepoPaginatorProps, ResponseProps } from "../interface/comp_interface";
-import { Commit } from "../../../pages/repositories/interface/repo_interface";
+import { Commit } from "../../../lib/api/interface/Api"
 import { repos } from "../../api/interface";
 
 
