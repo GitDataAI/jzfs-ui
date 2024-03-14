@@ -194,7 +194,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
                         </Form.Group>
                     </Form>
 
-                    {!!error && <AlertError error={error}/>}
+                    {error && <AlertError error={error as Error}/>}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" disabled={disabled} onClick={hide}>
@@ -211,12 +211,10 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
 };
 
 
-const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate }) => {
-    const router = useRouter()
+const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after}) => {
     const [refresh, setRefresh] = useState(true);
     const user = cache.get('user');
-    const amount = useRef(5)
-    const { results, error, loading, nextPage } = useAPIWithPagination(async () => {
+    const { results, error, loading } = useAPIWithPagination(async () => {
         return repos.listBranches(user, repo.name);
     }, [repo.id, refresh, prefix, after]);
     
@@ -230,9 +228,9 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
         <>
             <Card>
                 <ListGroup variant="flush">
-                    {results.map((branch:Branch) => (
+                    {results && results.map((branch:Branch) => 
                         <BranchWidget key={branch.id} repo={repo} branch={branch} onDelete={doRefresh}/>
-                    ))}
+                    )}
                 </ListGroup>
             </Card>
             {/* <Paginator onPaginate={onPaginate} nextPage={nextPage} after={after}/> */}

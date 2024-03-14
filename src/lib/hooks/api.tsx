@@ -1,5 +1,4 @@
 import {DependencyList, useEffect, useState} from 'react';
-import { AuthenticationError, AuthorizationError} from "../api";
 import {useRouter} from "./router";
 import { APIState, InitialPaginationState, PromiseFunction,} from '../components/interface/comp_interface';
 
@@ -84,7 +83,7 @@ export const useAPI = (promise: PromiseFunction, deps: DependencyList = []) => {
                     response,
                     responseHeaders:null,
                 });
-            } catch (error: unknown | Error | null) {         
+            } catch (error:any) {         
                        
                 if (error.status == 401) {
                     

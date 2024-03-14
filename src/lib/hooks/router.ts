@@ -4,6 +4,7 @@ import {
   useParams,
   generatePath,
 } from "react-router-dom";
+import { urlProps } from "./interface";
 
 export const useQuery = <T>(): Partial<T> => {
   const location = useLocation();
@@ -23,7 +24,7 @@ interface URLDetails {
 type URLBuilderInput = URLDetails | string;
 
 // TODO(elad): Return URL
-export const buildURL = (url: URLBuilderInput): string => {
+export const buildURL = (url: urlProps | string) => {
   if (typeof url === "string") return url;
   // otherwise, assume query, params and pathname  
   const path = generatePath(url.pathname, url.params ? url.params : {});

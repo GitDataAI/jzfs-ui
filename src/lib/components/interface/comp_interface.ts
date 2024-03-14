@@ -2,11 +2,13 @@ import {  ComponentType, Dispatch, JSXElementConstructor, MutableRefObject, Reac
 import { FormControlProps } from "react-bootstrap";
 import { OverlayTriggerRenderProps } from "react-bootstrap/esm/OverlayTrigger";
 import { Placement } from "react-bootstrap/esm/types";
-import { Commit, Reference, Run } from "../../../pages/repositories/interface/repo_interface";
-import { Branch, QueryParams, RepositoryParams } from "../../api/interface";
+import { Commit} from "../../../lib/api/interface/Api";
+import { Branch, Repository } from "../../api/interface/Api";
 import { Link as RouterLink } from 'react-router-dom';
 import { Entry } from "../../../util/otfUtil";
 import { RowAction } from "../repository/treeRows";
+import { urlProps } from "../../hooks/interface";
+import { Reference, Run } from "../../../pages/repositories/interface/repo_interface";
 
 export interface SimpleModalProps {
     children: React.ReactNode;
@@ -84,7 +86,7 @@ export interface CheckboxProps {
 }
 export interface DataTableProps {
     headers: string[];
-    results: Run[] | Commit[] |RepositoryParams[];
+    results: Run[] | Commit[] |Repository[];
     rowFn: (row: any) => React.ReactNode[];
     keyFn?: (row: any) => string;
     actions?: { key: string, buttonFn: (row: any) => React.ReactNode }[];
@@ -120,7 +122,7 @@ export interface TooltipButtonProps {
     size?:'md'| 'sm' | 'lg' | undefined;
 }
 export interface LinkButtonProps {
-    href?: { pathname: string; params?: { repoId: string; commitId?:string}; } | string;
+    href?: { pathname: string; params?:Object;query?:Object; };
     children: React.ReactNode;
     buttonVariant: string;
     tooltip?: string;
@@ -157,7 +159,7 @@ export interface ResponseProps extends Response {
     blockstore_namespace_ValidityRegex: string;
     blockstore_namespace_example: string;
     pagination:Pagination;
-    results: Run[] | Commit[] |RepositoryParams[];
+    results: any;
     size_bytes:number
     diff_type:DiffType
     upgrade_recommended?:boolean;
@@ -168,13 +170,13 @@ export interface PromiseFunction {
 export interface PaginatorProps {
     onPaginate: (page: string | boolean | null) => void;
     nextPage: string | boolean | null | undefined;
-    after?: QueryParams;
+    after?: any;
 }
 export interface InitialPaginationState{
     loading: boolean,
     error: Error | null,
     nextPage?: string | null  | boolean,
-    results?: Run[] | Commit[] |RepositoryParams[]
+    results?: any
 }
 export interface ActionStatusIconProps {
     status: 'completed' | 'failed' | 'running' | 'skipped';
@@ -191,7 +193,7 @@ export interface Config {
 export interface RepositoryCreateFormProps {
     id: string;
     config: Config;
-    onSubmit: ((values: RepositoryParams) => void )| (() => void) |((values: RepositoryParams) => Promise<boolean>);
+    onSubmit: ((values: Repository) => void )| (() => void) |((values: Repository) => Promise<boolean>);
     formValid: boolean;
     setFormValid: (valid: boolean) => void;
     error: Error | null;
@@ -210,7 +212,7 @@ export interface CredentialsTableProps {
     userId: string;
     currentAccessKey: string;
     refresh: boolean;
-    after: QueryParams; 
+    after: any; 
     onPaginate: (page: string | boolean | null) => void; 
 }
 interface Credentials {
@@ -299,12 +301,12 @@ export type WrappedComponentProps = WrapLinkProps & {
 export type WrappedComponent = ComponentType<WrappedComponentProps>;
 
 export interface CompLinkProps extends Omit<React.ComponentProps<typeof RouterLink>, 'to'> {
-    href?: { pathname: string; params?: { repoId: string; commitId?:string; user?:string }; } | string;
+    href?:urlProps | string;
     to?: string;
     children?: ReactNode;
-    components?: any;
+    components?: ReactNode;
     component?: ComponentType<any>;
-    [key: string]: any;
+    active?:boolean
 }
 export interface NavItemProps {
     href: string;
@@ -351,7 +353,7 @@ export interface PolicyDisplayProps {
 }
 
 interface GetMoreResult {
-    results: Run[] | Commit[] |RepositoryParams[];
+    results: Run[] | Commit[] |Repository[];
     pagination: ChangeSummaryPagination
 }
 export interface ChangeSummaryPagination {
@@ -363,12 +365,12 @@ export interface ChangeSummaryProps {
     getMore?: (next_offset: string, prefix: string, arg1: boolean, pageSize: number) => Promise<GetMoreResult>;
 }
 export interface CommitActionsProps {
-    repo: RepositoryParams;
+    repo: Repository;
     commit: Commit;
 }
 export  interface TreeItemRowProps {
     entry: Entry;
-    repo: RepositoryParams;
+    repo: Repository;
     reference: Reference;
     leftDiffRefID: string;
     rightDiffRefID: string;
@@ -393,13 +395,13 @@ export interface TreeEntryPaginatorProps {
 }
 export interface UseTreeItemTypeProps {
     entry: Entry; 
-    repo: RepositoryParams; 
+    repo: Repository; 
     leftDiffRefID: string | Branch; 
     rightDiffRefID: string | Branch; 
     isDeltaEnabled: boolean;
 }
 export interface GetMoreChanges {
-    (repo: RepositoryParams, leftRefId: string, rightRefId: string, delimiter: string): (afterUpdated: QueryParams, path: string, useDelimiter?: boolean, amount?: number) => any;
+    (repo: Repository, leftRefId: string, rightRefId: string, delimiter: string): (afterUpdated: any, path: string, useDelimiter?: boolean, amount?: number) => any;
 }
 
 export interface TableDiffState {
@@ -489,7 +491,7 @@ export enum RefType {
 }
 
 export interface RefSelectorProps {
-    repo: RepositoryParams;
+    repo: Repository;
     selected: ref | string;
     selectRef: (ref: ref) => void;
     withCommits: boolean;
@@ -510,7 +512,7 @@ export interface CommitListProps {
     withWorkspace: boolean;
 }
 export interface RefEntryProps {
-    repo: RepositoryParams;
+    repo: Repository;
     namedRef: string;
     refType: RefType;
     selectRef: (ref: ref) => void;
@@ -526,12 +528,12 @@ export interface Pagination {
 export interface RepoPaginatorProps {
     pagination: Pagination;
     onPaginate: (next: string) => void;
-    results: Run[] | Commit[] |RepositoryParams[];
+    results: Run[] | Commit[] |Repository[];
     from: string;
 }
 export interface RefDropdownProps {
-    repo: RepositoryParams;
-    selected: ref;
+    repo: Repository;
+    selected: { name: string,type: string};
     selectRef: (ref: ref) => void;
     onCancel?: () => void;
     variant?: string;
@@ -542,7 +544,7 @@ export interface RefDropdownProps {
     withTags?: boolean;
 }
 export interface DeltaLakeDiffProps {
-    repo: RepositoryParams;
+    repo: Repository;
     leftRef: string;
     rightRef: string;
     tablePath: string;
@@ -597,7 +599,7 @@ export interface PrefixExpansionSectionProps {
     onClick: () => void;
 }
 export interface OperationMetadataRowProps {
-    otfDiff: RepositoryParams | Run | Commit;
+    otfDiff: Repository | Run | Commit;
     operationExpanded: boolean;
     onExpand: () => void;
     [key: string]: any; 

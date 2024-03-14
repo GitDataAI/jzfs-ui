@@ -1,5 +1,5 @@
 import { RepositoryDeletionError } from "../../../lib/api";
-import { Branch, QueryParams, RepositoryParams } from "../../../lib/api/interface";
+import { Branch, Repository } from "../../../lib/api/interface/Api";
 import { Commit } from "../../../lib/api/interface/Api";
 import { Entry } from "../../../util/otfUtil";
 
@@ -66,10 +66,10 @@ export type StorageConfigContextType = {
   }
   export type OpFn = (progress: any) => void 
   export interface UploadFileProps {
-    (config: StorageConfigContextType, repo: RepositoryParams , reference: Reference , path:string | undefined, file: _File, onProgress: ((progress: any) => void) | null | undefined): Promise<void>;
+    (config: StorageConfigContextType, repo: Repository , reference: Reference , path:string | undefined, file: _File, onProgress: ((progress: any) => void) | null | undefined): Promise<void>;
   }
   export interface UploadCandidateProps {
-    repo: RepositoryParams;
+    repo: Repository;
     reference: Reference;
     path: string | undefined;
     file: _File;
@@ -78,7 +78,7 @@ export type StorageConfigContextType = {
   }
   export interface UploadButtonProps {
     config: StorageConfigContextType;
-    repo: RepositoryParams;
+    repo: Repository;
     reference: Reference;
     path: string | undefined;
     onDone: () => void;
@@ -94,11 +94,11 @@ export type StorageConfigContextType = {
   }
   export interface TreeContainerProps {
     config: StorageConfigContextType;
-    repo: RepositoryParams;
+    repo: Repository;
     reference: Reference;
     path: string;
-    after: QueryParams;
-    onPaginate: (after:QueryParams) => void;
+    after: any;
+    onPaginate: (after:any) => void;
     onRefresh: () => void;
     onUpload: () => void;
     onImport: () => void;
@@ -107,7 +107,7 @@ export type StorageConfigContextType = {
   }
   export interface ReadmeContainerProps {
     config:StorageConfigContextType;
-    repo:RepositoryParams;
+    repo:Repository;
     reference:Reference;
     path?:string;
     refreshDep?:string | boolean;
@@ -116,7 +116,7 @@ export type StorageConfigContextType = {
     repoId: string; 
   }
   export interface CompareListProps {
-      repo: RepositoryParams; // 
+      repo: Repository; // 
       reference: Reference; // 
       compareReference: Reference; // 
       prefix: string;
@@ -129,7 +129,7 @@ export type StorageConfigContextType = {
     type: string; 
   }
   export interface MergeButtonProps {
-    repo: RepositoryParams;
+    repo: Repository;
     onDone: () => void;
     source: string | number | boolean;
     dest: string | number | boolean;
@@ -137,24 +137,24 @@ export type StorageConfigContextType = {
     isTableMerge: boolean;
 }
 export type BranchWidgetParms = {
-   repo: RepositoryParams;
+   repo: Repository;
    branch: Branch;
    onDelete: (id:string) => void
 }
 export interface CreateBranchButtonProps {
-  repo: RepositoryParams;
+  repo: Repository;
   variant?: string;
   onCreate?: () => void;
   children?: React.ReactNode;
 }
 export interface BranchListProps {
-  repo: RepositoryParams;
+  repo: Repository;
   prefix: string;
-  after: QueryParams;
-  onPaginate: (after:QueryParams) => void | (() => void);
+  after: any;
+  onPaginate: (after:any) => void | (() => void);
 }
 export interface UseRefsReturn {
-  repo: RepositoryParams; 
+  repo: Repository; 
   loading: boolean;
   error: Error | null;
 }
@@ -163,7 +163,7 @@ export interface MetadataField {
   value: string;
 }
 export interface CommitButtonProps {
-  repo: RepositoryParams;
+  repo: Repository;
   onCommit: (commit: { message: string; metadata: Record<string, string>; }, callback: () => void) => void;
   enabled?: boolean;
 }
@@ -180,7 +180,7 @@ export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export type GetMore = () => Promise<{ results: { path: string }[]; pagination: any; }>;
 export interface ChangesBrowserProps {
-  repo: RepositoryParams;
+  repo: Repository;
   reference: Reference;
   prefix: string;
   onSelectRef:(ref: any) => void |( () => void);
@@ -197,7 +197,7 @@ export interface ChangesTreeContainerProps {
   uriNavigator: React.JSX.Element;
   leftDiffRefID: string;
   rightDiffRefID: string;
-  repo: RepositoryParams;
+  repo: Repository;
   reference: Reference;
   internalRefresh: boolean;
   prefix: string;
@@ -220,19 +220,19 @@ export interface Tag {
   commit_id: string;
 }
 export interface TagWidgetProps {
-  repo: RepositoryParams;
+  repo: Repository;
   tag: Tag;
   onDelete: (id: string) => void;
 }
 export interface CreateTagButtonProps {
-  repo: RepositoryParams;
+  repo: Repository;
   variant?: string;
   onCreate?: (response: any) => void;
   children?: React.ReactNode;
 }
 export interface TagListProps {
-  repo: RepositoryParams;
-  after: QueryParams; 
+  repo: Repository;
+  after: any; 
   prefix: string; 
   onPaginate: (page: any) => void; 
 }
@@ -255,7 +255,7 @@ export interface Run {
   operation:React.ReactNode
 }
 export interface RunSummaryProps {
-  repo: RepositoryParams;
+  repo: Repository;
   run: Run;
 }
 interface Execution {
@@ -266,17 +266,17 @@ interface Execution {
   end_time: string | number;
 }
 export interface HookLogProps {
-  repo: RepositoryParams;
+  repo: Repository;
   run: Run;
   execution: Execution;
 }
 export interface ExecutionsExplorerProps {
-  repo: RepositoryParams; 
+  repo: Repository; 
   run: Run; 
   executions: Execution[]; 
 }
 export interface ActionBrowserProps {
-  repo: RepositoryParams; 
+  repo: Repository; 
   run: Run; 
   hooks: HooksType; 
   onSelectAction: (action: ActionType | null | string) => void; 
@@ -297,30 +297,30 @@ export interface ActionType {
   actionName : string;
 }
 export interface RunContainerProps {
-  repo: RepositoryParams; 
+  repo: Repository; 
   runId: string; 
   onSelectAction: (action: ActionType | null | string) => void; 
   selectedAction: ActionType | null | string; 
 }
 export interface RunRowProps {
-  repo: RepositoryParams;
+  repo: Repository;
   run: Run;
   onFilterBranch: (branch: string) => void;
   onFilterCommit: (commitId: string) => void;
 }
 export interface RunTableProps {
-  repo: RepositoryParams;
+  repo: Repository;
   runs: Run[];
   nextPage: string | boolean | null | undefined;
-  after: QueryParams;
-  onPaginate:(after: QueryParams) => void | (() => void);
+  after: any;
+  onPaginate:(after: any) => void | (() => void);
   onFilterBranch: (branch: string) => void;
   onFilterCommit: (commitId: string) => void;
 }
 export interface ActionsListProps {
-  repo: RepositoryParams;
+  repo: Repository;
   after: string | undefined;
-  onPaginate:(after: QueryParams) => void | (() => void);
+  onPaginate:(after: any) => void | (() => void);
   branch: string;
   commit: string;
   onFilterBranch: (branch: string) => void;
@@ -331,14 +331,14 @@ export type metadata  = {
 }
 
 export interface CommitWidgetProps {
-  repo: RepositoryParams;
+  repo: Repository;
   commit: Commit;
 }
 export interface CommitsBrowserProps {
-  repo: RepositoryParams;
+  repo: Repository;
   reference: Reference;
-  after: QueryParams;
-  onPaginate:(after: QueryParams) => void | (() => void);
+  after: any;
+  onPaginate:(after: any) => void | (() => void);
   onSelectRef: (ref: any) => void; 
 }
 export interface getKeysOrNullProps{
@@ -348,7 +348,7 @@ export interface CommitMetadataTableProps{
   commit:Commit;
 }
 export interface CommitInfoCardProps {
-  repo: RepositoryParams;
+  repo: Repository;
   commit: Commit;
   bare?: boolean;
 }
@@ -357,4 +357,3 @@ export interface OperationExpansionSectionProps {
   onExpand: () => void;
 }
 
-export { Commit };
