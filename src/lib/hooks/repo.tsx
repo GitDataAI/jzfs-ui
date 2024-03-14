@@ -3,7 +3,7 @@ import React, {useContext, useState, createContext, useEffect} from "react";
 import { NotFoundError, BadRequestError, cache} from "../api";
 import {useRouter} from "./router";
 import {RefTypeBranch} from "../../constants";
-import { repos } from "../api/interface/Api";
+import { repos } from "../api/interface";
 
 
 export const resolveRef = async (user,repoId:string, refId:string) => {

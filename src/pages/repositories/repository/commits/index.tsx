@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import dayjs from "dayjs";
 import {BrowserIcon, LinkIcon, PackageIcon} from "@primer/octicons-react";
@@ -27,6 +27,7 @@ import RepositoryCommitPage from "./commit";
 import {RepoError} from "../repo-comp/error/error";
 import {  CommitWidgetProps, CommitsBrowserProps } from "../../interface/repo_interface";
 import { repos } from "../../../../lib/api/interface/index";
+import { ActivepageContext } from "../../../../lib/hooks/conf";
 
 
 const CommitWidget:React.FC<CommitWidgetProps> = ({ repo,reference, commit }) => {
@@ -174,6 +175,7 @@ const CommitsContainer = () => {
 
 
 const RepositoryCommitsPage = () => {
+   
     return (
         <RepositoryPageLayout activePage={'commits'}>
             <CommitsContainer/>
@@ -182,6 +184,11 @@ const RepositoryCommitsPage = () => {
 };
 
 const RepositoryCommitsIndexPage = () => {
+    const activepage = useContext(ActivepageContext)
+
+    useEffect(()=>{
+        activepage.setPage('commits')
+    },[])
     return (
         <Routes>
             <Route path="" element={<RepositoryCommitsPage/>} />

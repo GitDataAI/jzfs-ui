@@ -25,7 +25,6 @@ const wrapComponent = (component:WrappedComponent):React.FC<WrapLinkProps> => {
                 if (onClick && typeof onClick === "function") {
                     onClick(event);
                 }
-
                 if (!event.defaultPrevented) {
                     handleClick(event);
                 }
@@ -33,7 +32,8 @@ const wrapComponent = (component:WrappedComponent):React.FC<WrapLinkProps> => {
             target,
             replace,
             navigate,
-        };
+            to
+        }
         return React.createElement(component, props);
     });
     linkWrapper.displayName = "linkWrapper";

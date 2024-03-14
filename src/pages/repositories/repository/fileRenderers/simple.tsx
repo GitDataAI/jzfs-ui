@@ -68,7 +68,10 @@ const { response, error, loading } = useAPI(
       const reader = new FileReader();
       response.blob().then(blob => {
         reader.onloadend = () => {
-          setBody(reader.result);
+          // 在这里添加行数
+          const lines = reader.result.split('\n');
+          const linesWithNumbers = lines.map((line, index) => `${index + 1}     ${line}`);
+          setBody(linesWithNumbers.join('\n'));
         };
         reader.readAsText(blob);
       });

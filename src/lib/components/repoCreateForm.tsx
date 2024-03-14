@@ -1,9 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { FloatingLabel } from 'react-bootstrap';
 import Form from "react-bootstrap/Form";
+import { RepositoryCreateFormProps } from '../../pages/repositories/interface/repos_interface';
 
 
-export const RepositoryCreateForm = ( {id, onSubmit,setFormValid} ) => {
+export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ( {id, onSubmit,setFormValid} ) => {
     const [repoName, setRepoName] = useState('');
     const [description, setDescription] = useState('');
     const [storageCfg, setStorageCfg] = useState('');
@@ -25,11 +26,11 @@ export const RepositoryCreateForm = ( {id, onSubmit,setFormValid} ) => {
         setFormValid(false);
       }
     }, [repoName, description]);
-    const handleRepoNameChange = (e) => {
+    const handleRepoNameChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setRepoName(e.target.value);
       };
     
-      const handleDescriptionChange = (e) => {
+      const handleDescriptionChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setDescription(e.target.value);
       };
     
@@ -41,7 +42,7 @@ export const RepositoryCreateForm = ( {id, onSubmit,setFormValid} ) => {
             e.preventDefault();
             onSubmit({
                 name: repoNameField.current? repoNameField.current.value :'',
-                Description: DescriptionField.current ?DescriptionField.current.value : '',
+                description: DescriptionField.current ?DescriptionField.current.value : '',
                 blockstore_config: storageCfgField.current ?storageCfgField.current.value : '',
               });
         }}>

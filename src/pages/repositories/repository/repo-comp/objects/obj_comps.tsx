@@ -11,6 +11,7 @@ import {cache} from "../../../../../lib/api";
 import {useAPI} from "../../../../../lib/hooks/api";
 import {NoGCRulesWarningProps} from "../../../interface/repo_interface";
 import { object, repos } from "../../../../../lib/api/interface/index";
+import { getActions } from "../../../../../util/changes";
 
 const README_FILE_NAME = "README.md";
 const REPOSITORY_AGE_BEFORE_GC = 14;
@@ -55,25 +56,7 @@ export const TreeContainer= ({
   const [deleteState, setDeleteState] = useState(initialState);    
     if (loading || load) return <Loading/>;
     if(commitId){
-    for (let i = 0; i < response.data.length; i++) {
-      let found = changes.data.find(item => item.path === response.data[i].name);
-      if (found) {
-        response.data[i].action = found.action;
-      }
-    }
-    for (let i = 0; i < changes.data.length; i++) {
-      let found = response.data.find(item => item.name === changes.data[i].path);
-      if (!found) {
-        let newObj = {...changes.data[i]};
-        newObj.name = newObj.path
-        for (let key in response.data[0]) {
-          if (!newObj.hasOwnProperty(key)) {
-            newObj[key] = '';
-          }
-        }
-        response.data.push(newObj);
-      }
-    }
+      getActions(changes,response)
 }
 
     if (error) return <AlertError error={error}/>;

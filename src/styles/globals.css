@@ -73,10 +73,14 @@ html{
 }
 
 .navbar a.dropdown-toggle {
-  color: #DDDDDD;
+  color: #343434;
+}
+
+.navbar a.dropdown-toggle svg {
+  margin: 5px;
 }
 .navbar a.dropdown-toggle:hover {
-  color: #FFFFFF;
+  color: #8d8b8b;
 }
 
 .nav-tabs .nav-link.active {

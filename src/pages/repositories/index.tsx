@@ -1,23 +1,21 @@
 
-// 编辑个人仓库页面，为仓库页面与项目详情页面提供路由
-import React, {useCallback, useEffect, useRef, useState} from "react";
-import {Col,Form,InputGroup,ButtonToolbar,Container} from "react-bootstrap";
+import React, { ChangeEvent, SyntheticEvent, useCallback, useContext, useEffect, useState } from "react";
+import { ButtonToolbar, Card, Container, Form, FormControl } from "react-bootstrap";
 
-import {SearchIcon} from "@primer/octicons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import Layout from "../../lib/components/layout";
-import {ActionsBar,useDebouncedState} from "../../lib/components/controls";
-import {cache} from '../../lib/api';
-import {useRouter} from "../../lib/hooks/router";
+import { ActionsBar } from "../../lib/components/controls";
+import { cache } from '../../lib/api';
+import { useRouter } from "../../lib/hooks/router";
 
-import {Route, Routes} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import RepositoryPage from './repository';
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
-import { RepositoryParams } from "../../lib/api/interface";
-import { useAPI } from "../../lib/hooks/api";
-import {users } from "../../lib/api/interface/index";
+import { users } from "../../lib/api/interface/index";
+import { ActivepageContext } from "../../lib/hooks/conf";
+import { activepage } from "../../lib/hooks/interface";
 
 
 dayjs.extend(relativeTime);
@@ -29,24 +27,38 @@ const RepositoriesPage = () => {
     const [createRepoError, setCreateRepoError] = useState(null);
     const [refresh, setRefresh] = useState(false);
     const [creatingRepo, setCreatingRepo] = useState(false);
-    const routerPfx = (router.query.prefix) ? router.query.prefix : "";
-    const amount = useRef(10)
-    const [prefix, setPrefix] = useDebouncedState(
-        routerPfx,
-        (prefix: string) => router.push({pathname: `/repositories`, query: {prefix}})
-    );    
-    
-useEffect(()=>{
-    if(!cache.get('token')){router.push('/login')}
-})
-    const createRepo = async (repo: RepositoryParams, presentRepo = true) => {
+    const [repoamount, setRepoAmount] = useState(0);
+    const [search,setSearch] = useState('')
+    function debounce(func: Function, delay: number) {
+        let timer: NodeJS.Timeout;
+        return  (...args: any[]) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            func.apply(this, args);
+          }, delay);
+        };
+      }
+    const handleChange = (e:ChangeEvent<FormControlElement>)=>{
+        setSearch(e.target.value);
+    }
+    const debouncedHandleChange = debounce(handleChange, 300);
+
+    useEffect(() => {
+        if (!cache.get('token')) { router.push('/login') }
+    })
+    const activepageL: activepage = useContext(ActivepageContext)
+    useEffect(() => {
+        activepageL.setPage('repositories')
+    })
+    const createRepo = async (repo: { name: string, description: string }, presentRepo = true) => {
+        const owner = cache.get('user')
         try {
             setCreatingRepo(true);
             setCreateRepoError(null);
             await users.createRepository(repo);
             setRefresh(!refresh);
             if (presentRepo) {
-                router.push({pathname: `/repositories/:user/:repoId/objects`, params: {repoId: repo.Name,user:owner},query:{}});
+                router.push({ pathname: `/repositories/:user/:repoId/objects`, params: { repoId: repo.name, user: owner }, query: {} });
             }
             return true;
         } catch (error: any) {
@@ -66,35 +78,26 @@ useEffect(()=>{
         <Layout>
             <Container fluid="xl" className="mt-3">
                 {<ActionsBar>
-                    <h2><strong>Repository List</strong></h2>
-                    {/* <Form style={{minWidth: 300}} onSubmit={e => { e.preventDefault(); }}>
-                        <Form.Group>
-                            <Col>
-                                <InputGroup>
-                                    <InputGroup.Text>
-                                        <SearchIcon/>
-                                    </InputGroup.Text>
-                                    <Form.Control
-                                        placeholder="Find a repository..."
-                                        autoFocus
-                                        value={prefix}
-                                        onChange={event =>setPrefix(event.target.value)}
-                                    />
-                                </InputGroup>
-                            </Col>
-                        </Form.Group>
-                    </Form> */}
+                    <h2><strong>All</strong></h2>
                     <ButtonToolbar className="ms-auto mb-2">
                         <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} />
                     </ButtonToolbar>
-                </ActionsBar> }
+                </ActionsBar>}
+                <Form inline>
+                    <FormControl type="text" placeholder="Search" className="mr-sm-2" onChange={debouncedHandleChange}/>
+                </Form>
 
+                <Card className="repo-card">
+                    <Card.Header className="repo-card-header">
+                        <strong>{repoamount} repositories</strong>
+                    </Card.Header>
                 <RepositoryList
-                    prefix={prefix}
                     refresh={refresh}
-                    amount={amount}
-                    after={(router.query.after) ? router.query.after : ""}
-                    />
+                    setRepoAmount={setRepoAmount}
+                    search={search}
+                />
+                </Card>
+
 
                 <CreateRepositoryModal
                     onCancel={() => {
@@ -102,25 +105,27 @@ useEffect(()=>{
                         setCreateRepoError(null);
                     }}
                     show={showCreateRepositoryModal}
-                    setShow = {setShowCreateRepositoryModal}
+                    setShow={setShowCreateRepositoryModal}
                     error={createRepoError}
-                    setRefresh = {setRefresh}
+                    setRefresh={setRefresh}
                     onSubmit={(repo) => createRepo(repo, true)}
                     samlpleRepoChecked={sampleRepoChecked}
                     inProgress={creatingRepo}
-                    refresh = {refresh}
-                    />
+                    refresh={refresh}
+                />
 
             </Container>
         </Layout>
+
     );
 }
 
 const RepositoriesIndex = () => {
+
     return (
         <Routes>
-            <Route path="/" element={<RepositoriesPage/>} />
-            <Route path=":user/:repoId/*" element={<RepositoryPage/>} />
+            <Route path="/" element={<RepositoriesPage />} />
+            <Route path=":user/:repoId/*" element={<RepositoryPage />} />
         </Routes>
     );
 };

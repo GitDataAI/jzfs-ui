@@ -11,7 +11,6 @@
 
 import { cache } from "..";
 
-
 export interface LoginConfig {
   /**
    * RBAC will remain enabled on GUI if "external".  That only works
@@ -61,6 +60,48 @@ export interface SetupState {
     /** URL to use for logging out. */
     logout_url: string;
   };
+}
+
+export interface AkskList {
+  pagination: {
+    /** Next page is available */
+    has_more: boolean;
+    /** Token used to retrieve the next page */
+    next_offset: string;
+    /**
+     * Number of values found in the results
+     * @min 0
+     */
+    results: number;
+    /**
+     * Maximal number of entries per page
+     * @min 0
+     */
+    max_per_page: number;
+  };
+  results: {
+    /** @format uuid */
+    id: string;
+    access_key: string;
+    secret_key: string;
+    description?: string;
+    /** @format int64 */
+    created_at: number;
+    /** @format int64 */
+    updated_at: number;
+  }[];
+}
+
+export interface Aksk {
+  /** @format uuid */
+  id: string;
+  access_key: string;
+  secret_key: string;
+  description?: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface BranchCreation {
@@ -695,171 +736,171 @@ export enum ContentType {
   Text = "text/plain",
 }
 export class HttpClient<SecurityDataType = unknown> {
-    public baseUrl: string = window.JIAOZIFS_API_URL;
-    private securityData: SecurityDataType | null = null;
-    private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
-    private abortControllers = new Map<CancelToken, AbortController>();
-    private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
-  
-    private baseApiParams: RequestParams = {
-      credentials: "same-origin",
-      headers: {},
-      redirect: "follow",
-      referrerPolicy: "no-referrer",
-    };
-  
-    constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-      Object.assign(this, apiConfig);
-    }
-  
-    public setSecurityData = (data: SecurityDataType | null) => {
-      this.securityData = data;
-    };
-  
-    protected encodeQueryParam(key: string, value: any) {
-      const encodedKey = encodeURIComponent(key);
-      return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
-    }
-  
-    protected addQueryParam(query: QueryParamsType, key: string) {
-      return this.encodeQueryParam(key, query[key]);
-    }
-  
-    protected addArrayQueryParam(query: QueryParamsType, key: string) {
-      const value = query[key];
-      return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
-    }
-  
-    protected toQueryString(rawQuery?: QueryParamsType): string {
-      const query = rawQuery || {};
-      const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
-      return keys
-        .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
-        .join("&");
-    }
-  
-    protected addQueryParams(rawQuery?: QueryParamsType): string {
-      const queryString = this.toQueryString(rawQuery);
-      return queryString ? `?${queryString}` : "";
-    }
-  
-    private contentFormatters: Record<ContentType, (input: any) => any> = {
-      [ContentType.Json]: (input: any) =>
-        input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-      [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
-      [ContentType.FormData]: (input: any) =>
-        Object.keys(input || {}).reduce((formData, key) => {
-          const property = input[key];
-          formData.append(
-            key,
-            property instanceof Blob
-              ? property
-              : typeof property === "object" && property !== null
-              ? JSON.stringify(property)
-              : `${property}`,
-          );
-          return formData;
-        }, new FormData()),
-      [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
-    };
-  
-    protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
-      return {
-        ...this.baseApiParams,
-        ...params1,
-        ...(params2 || {}),
-        headers: {
-          ...(this.baseApiParams.headers || {}),
-          ...(params1.headers || {}),
-          ...((params2 && params2.headers) || {}),
-        },
-      };
-    }
-  
-    protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
-      if (this.abortControllers.has(cancelToken)) {
-        const abortController = this.abortControllers.get(cancelToken);
-        if (abortController) {
-          return abortController.signal;
-        }
-        return void 0;
-      }
-  
-      const abortController = new AbortController();
-      this.abortControllers.set(cancelToken, abortController);
-      return abortController.signal;
-    };
-  
-    public abortRequest = (cancelToken: CancelToken) => {
-      const abortController = this.abortControllers.get(cancelToken);
-  
-      if (abortController) {
-        abortController.abort();
-        this.abortControllers.delete(cancelToken);
-      }
-    };
-  
-    public request = async <T = any, E = any>({
-      body,
-      secure,
-      path,
-      type,
-      query,
-      format,
-      baseUrl,
-      cancelToken,
-      ...params
-    }: FullRequestParams): Promise<HttpResponse<T, E>> => {
-      const secureParams =
-        ((typeof secure === "boolean" ? secure : this.baseApiParams.secure) &&
-          this.securityWorker &&
-          (await this.securityWorker(this.securityData))) ||
-        {};
-      const requestParams = this.mergeRequestParams(params, secureParams);
-      const queryString = query && this.toQueryString(query);
-      const payloadFormatter = this.contentFormatters[type || ContentType.Json];
-      const responseFormat = format || requestParams.format;
-      const token = cache.get('token');
-      let headers = {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
-        ...(token?{'Authorization': `Bearer ${token}`}:{})
-      }
-      return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
-        ...requestParams,
-        headers: headers,
-        signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-        body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-      }).then(async (response) => {
-        const r = response as HttpResponse<T, E>;
-        r.data = null as unknown as T;
-        r.error = null as unknown as E;
-  
-        const data = !responseFormat
-          ? r
-          : await response[responseFormat]()
-              .then((data) => {
-                if (r.ok) {
-                  r.data = data;
-                } else {
-                  r.error = data;
-                }
-                return r;
-              })
-              .catch((e) => {
-                r.error = e;
-                return r;
-              });
-  
-        if (cancelToken) {
-          this.abortControllers.delete(cancelToken);
-        }
-  
-        if (!response.ok) throw data;
-        return data;
-      });
+  public baseUrl: string = window.JIAOZIFS_API_URL;
+  private securityData: SecurityDataType | null = null;
+  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
+  private abortControllers = new Map<CancelToken, AbortController>();
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+
+  private baseApiParams: RequestParams = {
+    credentials: "same-origin",
+    headers: {},
+    redirect: "follow",
+    referrerPolicy: "no-referrer",
+  };
+
+  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
+    Object.assign(this, apiConfig);
+  }
+
+  public setSecurityData = (data: SecurityDataType | null) => {
+    this.securityData = data;
+  };
+
+  protected encodeQueryParam(key: string, value: any) {
+    const encodedKey = encodeURIComponent(key);
+    return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
+  }
+
+  protected addQueryParam(query: QueryParamsType, key: string) {
+    return this.encodeQueryParam(key, query[key]);
+  }
+
+  protected addArrayQueryParam(query: QueryParamsType, key: string) {
+    const value = query[key];
+    return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
+  }
+
+  protected toQueryString(rawQuery?: QueryParamsType): string {
+    const query = rawQuery || {};
+    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
+    return keys
+      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .join("&");
+  }
+
+  protected addQueryParams(rawQuery?: QueryParamsType): string {
+    const queryString = this.toQueryString(rawQuery);
+    return queryString ? `?${queryString}` : "";
+  }
+
+  private contentFormatters: Record<ContentType, (input: any) => any> = {
+    [ContentType.Json]: (input: any) =>
+      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
+    [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
+    [ContentType.FormData]: (input: any) =>
+      Object.keys(input || {}).reduce((formData, key) => {
+        const property = input[key];
+        formData.append(
+          key,
+          property instanceof Blob
+            ? property
+            : typeof property === "object" && property !== null
+            ? JSON.stringify(property)
+            : `${property}`,
+        );
+        return formData;
+      }, new FormData()),
+    [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
+  };
+
+  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+    return {
+      ...this.baseApiParams,
+      ...params1,
+      ...(params2 || {}),
+      headers: {
+        ...(this.baseApiParams.headers || {}),
+        ...(params1.headers || {}),
+        ...((params2 && params2.headers) || {}),
+      },
     };
   }
+
+  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+    if (this.abortControllers.has(cancelToken)) {
+      const abortController = this.abortControllers.get(cancelToken);
+      if (abortController) {
+        return abortController.signal;
+      }
+      return void 0;
+    }
+
+    const abortController = new AbortController();
+    this.abortControllers.set(cancelToken, abortController);
+    return abortController.signal;
+  };
+
+  public abortRequest = (cancelToken: CancelToken) => {
+    const abortController = this.abortControllers.get(cancelToken);
+
+    if (abortController) {
+      abortController.abort();
+      this.abortControllers.delete(cancelToken);
+    }
+  };
+
+  public request = async <T = any, E = any>({
+    body,
+    secure,
+    path,
+    type,
+    query,
+    format,
+    baseUrl,
+    cancelToken,
+    ...params
+  }: FullRequestParams): Promise<HttpResponse<T, E>> => {
+    const secureParams =
+      ((typeof secure === "boolean" ? secure : this.baseApiParams.secure) &&
+        this.securityWorker &&
+        (await this.securityWorker(this.securityData))) ||
+      {};
+    const requestParams = this.mergeRequestParams(params, secureParams);
+    const queryString = query && this.toQueryString(query);
+    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
+    const responseFormat = format || requestParams.format;
+    const token = cache.get('token');
+    let headers = {
+      ...(requestParams.headers || {}),
+      ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+      ...(token?{'Authorization': `Bearer ${token}`}:{})
+    }
+    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
+      ...requestParams,
+      headers: headers,
+      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
+      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
+    }).then(async (response) => {
+      const r = response as HttpResponse<T, E>;
+      r.data = null as unknown as T;
+      r.error = null as unknown as E;
+
+      const data = !responseFormat
+        ? r
+        : await response[responseFormat]()
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
+
+      if (cancelToken) {
+        this.abortControllers.delete(cancelToken);
+      }
+
+      if (!response.ok) throw data;
+      return data;
+    });
+  };
+}
 /**
  * @title jiaozifs API
  * @version 1.0.0
@@ -1575,10 +1616,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request DELETE:/repos/{owner}/{repository}
      * @secure
      */
-    deleteRepository: (owner: string, repository: string, params: RequestParams = {}) =>
+    deleteRepository: (
+      owner: string,
+      repository: string,
+      query?: {
+        is_clean_data?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<void, void>({
         path: `/repos/${owner}/${repository}`,
         method: "DELETE",
+        query: query,
         secure: true,
         ...params,
       }),
@@ -2263,7 +2312,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           created_at: number;
           /** @format int64 */
           updated_at: number;
-        }[],
+        },
         void
       >({
         path: `/users/repos`,
@@ -2368,6 +2417,173 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags aksks
+     * @name GetAksk
+     * @summary get aksk
+     * @request GET:/users/aksk
+     * @secure
+     */
+    getAksk: (
+      query?: {
+        /** @format uuid */
+        id?: string;
+        access_key?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          access_key: string;
+          secret_key: string;
+          description?: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/users/aksk`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags aksks
+     * @name CreateAksk
+     * @summary create aksk
+     * @request POST:/users/aksk
+     * @secure
+     */
+    createAksk: (
+      query?: {
+        description?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          access_key: string;
+          secret_key: string;
+          description?: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/users/aksk`,
+        method: "POST",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags aksks
+     * @name DeleteAksk
+     * @summary delete aksk
+     * @request DELETE:/users/aksk
+     * @secure
+     */
+    deleteAksk: (
+      query?: {
+        /** @format uuid */
+        id?: string;
+        access_key?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/users/aksk`,
+        method: "DELETE",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags aksks
+     * @name ListAksks
+     * @summary list aksks
+     * @request GET:/users/aksks
+     * @secure
+     */
+    listAksks: (
+      query?: {
+        /**
+         * return items after this value
+         * @format int64
+         */
+        after?: number;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          pagination: {
+            /** Next page is available */
+            has_more: boolean;
+            /** Token used to retrieve the next page */
+            next_offset: string;
+            /**
+             * Number of values found in the results
+             * @min 0
+             */
+            results: number;
+            /**
+             * Maximal number of entries per page
+             * @min 0
+             */
+            max_per_page: number;
+          };
+          results: {
+            /** @format uuid */
+            id: string;
+            access_key: string;
+            secret_key: string;
+            description?: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
+          }[];
+        },
+        void
+      >({
+        path: `/users/aksks`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
   };
   auth = {
     /**
@@ -2423,13 +2639,3 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   };
 }
-
-
-const api = new Api()
-export const version = api.version
-export const setup = api.setup
-export const object = api.object
-export const wip = api.wip
-export const repos = api.repos
-export const users = api.users
-export const auth = api.auth

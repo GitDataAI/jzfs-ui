@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, useState} from "react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
 
 import {
     GitBranchIcon,
@@ -34,6 +34,7 @@ import {RepoError} from "../error/error";
 import { BranchListProps, BranchWidgetParms, CreateBranchButtonProps } from "../../../interface/repo_interface";
 import { Branch } from "../../../../../lib/api/interface/Api";
 import { repos } from "../../../../../lib/api/interface/index";
+import { ActivepageContext } from "../../../../../lib/hooks/conf";
 
 const ImportBranchName = 'import-from-inventory';
 
@@ -193,7 +194,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
                         </Form.Group>
                     </Form>
 
-                    {!!error && <AlertError error={error}/>}
+                    {error && <AlertError error={error as Error}/>}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" disabled={disabled} onClick={hide}>
@@ -210,19 +211,11 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
 };
 
 
-const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate }) => {
-    const router = useRouter()
+const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after}) => {
     const [refresh, setRefresh] = useState(true);
     const user = cache.get('user');
-    const amount = useRef(5)
-    const { results, error, loading, nextPage } = useAPIWithPagination(async () => {
-        return repos.listBranches(user, repo.name
-        //     ,{
-        //     prefix,
-        //     after,
-        //     amount:amount.current,
-        // }
-        );
+    const { results, error, loading } = useAPIWithPagination(async () => {
+        return repos.listBranches(user, repo.name);
     }, [repo.id, refresh, prefix, after]);
     
     const doRefresh = () =>  setRefresh(!refresh);
@@ -235,9 +228,9 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after, onPaginate
         <>
             <Card>
                 <ListGroup variant="flush">
-                    {results.map((branch:Branch) => (
+                    {results && results.map((branch:Branch) => 
                         <BranchWidget key={branch.id} repo={repo} branch={branch} onDelete={doRefresh}/>
-                    ))}
+                    )}
                 </ListGroup>
             </Card>
             {/* <Paginator onPaginate={onPaginate} nextPage={nextPage} after={after}/> */}
@@ -284,6 +277,11 @@ const BranchesContainer:React.FC = () => {
 
 
 const RepositoryBranchesPage = () => {
+    const activepage = useContext(ActivepageContext)
+
+    useEffect(()=>{
+        activepage.setPage('branches')
+    },[])
     return (
             <RepositoryPageLayout activePage={'branches'}>
                 <BranchesContainer/>

@@ -194,8 +194,8 @@ a {
   margin-right: 0px;
 }
 .child {
-  margin: 15px;
-  margin-bottom: 60px;
+  margin: 0.5rem;
+  margin-bottom: 5rem;
   width: 100%;
   overflow-y: scroll;
 }
@@ -257,4 +257,58 @@ a {
   line-height: 30px;
   margin-left: 0.5rem;
   font-size: 16px;
+}
+.Nav-file {
+  display: block;
+  margin-left: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.Nav-dir {
+  display: flex;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.Nav-dir .Nav-Down {
+  width: 20px;
+  height: 20px;
+}
+.Nav-dir .Nav-Dir {
+  font-size: 16px;
+  margin-right: 5px;
+  color: blue;
+}
+.Child-nav {
+  margin-left: 18px;
+}
+.filerender {
+  display: flex;
+}
+.storage {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem;
+  margin-left: 0.5rem;
+  color: #878686;
+  border: 1px solid #dcdbdb;
+  border-radius: 2px;
+  background-color: #e5e5e5;
+}
+.repo-card {
+  margin-top: 2rem;
+}
+.repo-card .repo-card-header {
+  border-radius: 5px 5px 0 0;
+}
+.repo-card .repo-card-header strong {
+  font-size: 0.9rem;
+  color: #878686;
+}
+.repo-card .card {
+  border-radius: 0;
+}
+.Navtittle {
+  margin: 1.5rem;
 }

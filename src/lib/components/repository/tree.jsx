@@ -556,25 +556,33 @@ export const URINavigator = ({
         )}
         </div>
       <div className="object-viewer-buttons">
-        {hasCopyButton &&
-        <ClipboardButton
+
+        {path=='/'?(<ClipboardButton
             text={`jzfs://${repo.name}/${reference.id}/${path}`}
             variant="link"
             size="sm"
             onSuccess={noop}
             onError={noop}
             className={"me-1"}
-            tooltip={"copy URI to clipboard"}/>}
-        {path=='/'?'': (
+            tooltip={"copy URI to clipboard"}/>): 
+            (<div style={{'display': 'flex',marginTop:'-5px'}}>
+            <ClipboardButton
+            text={`jzfs://${repo.name}/${reference.id}/${path}`}
+            variant="link"
+            size="sm"
+            onSuccess={noop}
+            onError={noop}
+            className={"me-1"}
+            tooltip={"copy URI to clipboard"}/>
            <PathLink
            path={path}
            reference={reference}
            repoId={repo.name?repo.name:repo}
            as={Dropdown.Item}
          >
-            <a className="btn btn-link btn-sm download-button me-1"><FaDownload /></a>
-         </PathLink>
-        )}
+            <a className="btn btn-link btn-sm download-button me-1" style={{marginBottom:'3px'}}><FaDownload /></a>
+         </PathLink></div>)
+         }
       </div>
     </div>
   );
