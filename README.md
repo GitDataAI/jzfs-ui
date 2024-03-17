@@ -55,13 +55,13 @@ JiaoZiFS's versatility shines across different industries – making it the mult
 
 deploy the system to your server,you can get help from this repository:
 ```bash
-https://github.com/jiaozifs/jiaozifs
+https://github.com/GitDataAI/jiaozifs
 ```
 
 clone jiaozifs-ui repository to your server:
 
 ```bash
-git clone git@github.com:jiaozifs/jiaozifs-ui.git
+git clone git@github.com:GitDataAI/jiaozifs-ui.git
 ```
 
 Before you run the project for the first time, run the following script to install packages from `package.json`:
@@ -87,9 +87,9 @@ docker run -it -p 12345:80 -e JIAOZIFS_API_URL=http://api.jiaozifs.com/api/v1 gi
 ----
 ### Contributors
 
+<a href="https://github.com/TsumikiQAQ" target="_blank"><img src="https://avatars.githubusercontent.com/u/116857998?v=4" width="5%" height="5%"/> </a>
 <a href="https://github.com/hunjixin" target="_blank"><img src="https://avatars.githubusercontent.com/u/41407352?v=4" width="5%" height="5%"/> </a>
 <a href="https://github.com/Brownjy" target="_blank"><img src="https://avatars.githubusercontent.com/u/54040689?v=4" width="5%" height="5%"/> </a>
-<a href="https://github.com/TsumikiQAQ" target="_blank"><img src="https://avatars.githubusercontent.com/u/116857998?v=4" width="5%" height="5%"/> </a>
 <a href="https://github.com/taoshengshi" target="_blank"><img src="https://avatars.githubusercontent.com/u/33315004?v=4" width="5%" height="5%"/> </a>
 <a href="https://github.com/gitdata001" target="_blank"><img src="https://avatars.githubusercontent.com/u/157772574?v=4" width="5%" height="5%"/> </a>
 
