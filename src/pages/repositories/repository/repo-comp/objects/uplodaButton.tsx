@@ -107,6 +107,10 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
       onHide();
     };
   
+    const joinDir= (path: String)=>{
+      return currentPath == "/" ? path : currentPath + path
+    }
+    
     useEffect(() => {
       setCurrentPath(path)
     }, [path])
@@ -123,7 +127,7 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
           files.length >1?          
-          await uploadFile( repoId, reference.name, currentPath+'/'+file.path, file, wipID):
+          await uploadFile( repoId, reference.name, joinDir(file.path), file, wipID):
           await uploadFile( repoId, reference.name, uploadpath, file, wipID)
           
         } catch (error: any | null) {
