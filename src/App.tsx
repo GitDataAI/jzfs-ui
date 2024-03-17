@@ -3,9 +3,7 @@ import {IndexPage} from './pages';
 
 function App() {
   useEffect(()=>{
-    return(()=>{
-      console.log('testing');
-      
+    return(()=>{      
       localStorage.removeItem('hasVisited')
     })
   },[])
