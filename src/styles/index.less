@@ -195,6 +195,32 @@ a {
       }
     }
   }
+  .card{
+    border: none;
+    .Nav-Card{
+      display: grid;
+      justify-content: flex-start;
+      .active{
+        background: none;
+        color: black;
+        border-left: 3px solid #658fd3;
+      }
+      button:hover{
+        background: none;
+        color: black;
+        border-left: 3px solid #658fd3;
+
+      }
+      button{
+        background:none;
+        color: black;
+        border: none;
+        margin-bottom: 0.2rem;
+        font-weight: 600;
+        border-radius: 0;
+      }
+    }
+  }
 }
 .child{
   margin: 0.5rem;
@@ -257,7 +283,7 @@ a {
   border-bottom: 2px solid rgb(219, 224, 252);
   .navbar-brand{
     display: flex;
-    .nav-link{
+    strong{
       line-height: 30px;
       margin-left: 0.5rem;
       font-size: 16px;

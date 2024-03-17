@@ -50,26 +50,31 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
     );
 };
 
-export const RepositoryList = ({refresh,setRepoAmount,search}:{refresh:boolean,setRepoAmount:React.Dispatch<React.SetStateAction<number>>,search:string}) => {
+export const RepositoryList = ({refresh,setRepoAmount,search,filter=''}:{refresh:boolean,setRepoAmount:React.Dispatch<React.SetStateAction<number>>,search:string,filter:string}) => {
     const user = cache.get('user')
     const router = useRouter()
+    
     const Storage = ({storage})=>{
         return(
-        <span className="storage">{storage?'pubilc':'private'}</span>
+        <span className="storage">{storage?'public':'private'}</span>
         )
     }
     if(user){
         const {results, loading, error} = useAPIWithPagination( async() => {
                 return  await users.listRepository(user).then((results)=>{
-                    if(search){
+                    if(search && !filter ){
                         results.data.results = results.data.results.filter((item)=>{
                             return item.name.toLowerCase().includes(search.toLowerCase());
+                        })
+                    }else if(filter && !search){
+                        results.data.results = results.data.results.filter((item)=>{
+                            return item.use_public_storage == (filter == 'Public')
                         })
                     }
                     setRepoAmount(results.data.results.length)
                     return results
                 })
-        }, [refresh,search]);
+        }, [refresh,search,filter]);
         if (loading) return <Loading/>;
         if (error) { 
             return <AlertError error={error}/>;}

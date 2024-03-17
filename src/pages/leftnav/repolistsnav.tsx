@@ -1,62 +1,28 @@
-import {   Col, Form, Row } from "react-bootstrap"
-import { cache} from "../../lib/api";
+import {   Button, Card, Col, Form, Row } from "react-bootstrap"
 import React, { useState } from "react";
 import { useRouter } from "../../lib/hooks/router";
-import { useAPIWithPagination } from "../../lib/hooks/api";
-import { users } from "../../lib/api/interface/index";
-import { AlertError, Loading } from "../../lib/components/controls";
-import {Link} from "../../lib/components/nav";
-import { Repository } from "../../lib/api/interface/Api";
-const RepositoryList = ({refresh}:{refresh:boolean}) => {
-    const router = useRouter()
-    const user = cache.get('user')
-    if(user){
-    const {results, loading, error} = useAPIWithPagination( async() => {
-            return  await users.listRepository(user)
- 
-    }, [refresh]);
-    if (loading) return <Loading/>;
-    if (error) { 
-        return <AlertError error={error}/>;}
-        if(results){
-            return (
-                <div>
-                    {
-                        results.map((repo:Repository)=>{
-                            return(
-                        <Row key={repo.id}>
-                            <Col style={{marginLeft:"22px"}}>
-                                            <Link href={{
-                                                pathname: `/repositories/:user/:repoId/objects`,
-                                                params: {repoId: repo.name,user},
-                                            }}>
-                                                <span><img src="/jiaozifs3.png" alt="" />{user+'/'}{repo.name}</span>
-                                            </Link>
-                            </Col>
-                        </Row>
-                            )
-                        })
-                    }
-                </div>
-            );}
-    }else{
-        router.push('/login')
-    }
-
-};
 
 const Repolistsnav = () =>{
-    const [refresh, setRefresh] = useState(false);
-  
+    const router = useRouter()
+    const [fil, setFil] = useState('');
+    
+    const linkTo =(query:string)=>{
+        setFil(query)
+        router.push({ pathname: `/repositories/`, query: {fil:query} });
+    }
     return(
         <Row className="sidebar">
         <Form className='flex Fast-navb'>
             <Col className="d-flex">
             <strong className="Navtittle">Top Repositories</strong>           
             </Col>
-          <RepositoryList
-                    refresh={refresh}
-                    />
+        <Card>
+            <Card.Body className="Nav-Card">
+                <Button onClick={()=>linkTo('') } className={fil==''?'active':''}>All</Button>
+                <Button onClick={()=>linkTo('Public')} className={fil=='Public'?'active':''}>Public</Button>
+                <Button onClick={()=>linkTo('Private')} className={fil=='Private'?'active':''}>Private</Button>
+            </Card.Body>
+        </Card>
         </Form>
         </Row>
     );

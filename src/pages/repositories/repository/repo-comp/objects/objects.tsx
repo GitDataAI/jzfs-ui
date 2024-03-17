@@ -30,7 +30,6 @@ const ObjectsBrowser = () => {
   const [refreshToken, setRefreshToken] = useState(false);
   const refresh = () => setRefreshToken(!refreshToken);
   const parts = (path && path.split("/")) || [];
-  const searchSuffix = parts.pop();
   let searchPrefix = parts.join("/");
   const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";

@@ -1,11 +1,9 @@
 import React from "react";
 import {auth, cache} from "../api";
-import {useRouter} from "../hooks/router";
 import {Link} from "./nav";
-import {Navbar, Nav, NavDropdown} from "react-bootstrap";
+import {Navbar, NavDropdown} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import {FeedPersonIcon} from "@primer/octicons-react";
-import { TopNavLinkProps } from "./interface/comp_interface";
 import './style/index.scss'
 
 
@@ -36,16 +34,6 @@ const NavUserInfo = () => {
     );
 };
 
-const TopNavLink: React.FC<TopNavLinkProps> = ({ href, children }) => {
-    const router = useRouter();
-    const isActive = (prefix:string) => router.route.indexOf(prefix) === 0;
-    
-    return (
-        <Link component={Nav.Link} active={isActive(href)} href={href}>
-            {children}
-        </Link>
-    );
-};
 
 const TopNav = ({logged = true}) => {
     if (!logged) {
@@ -69,8 +57,7 @@ const TopNav = ({logged = true}) => {
             <Container fluid={true}>
                 <Link component={Navbar.Brand} href="/">
                     <img src="/jiaozifs3.png" alt="JiaoziFS" className="logo"/>
-                    <TopNavLink href="/repositories"><strong>JiaoziFS Cloud</strong></TopNavLink>
-                    
+                    <strong>JiaoziFS Cloud</strong>
                 </Link>
                 <NavUserInfo/>
             </Container>

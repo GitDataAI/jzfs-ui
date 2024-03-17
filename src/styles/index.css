@@ -193,6 +193,31 @@ a {
 .sidebar form .col .btn {
   margin-right: 0px;
 }
+.sidebar .card {
+  border: none;
+}
+.sidebar .card .Nav-Card {
+  display: grid;
+  justify-content: flex-start;
+}
+.sidebar .card .Nav-Card .active {
+  background: none;
+  color: black;
+  border-left: 3px solid #658fd3;
+}
+.sidebar .card .Nav-Card button:hover {
+  background: none;
+  color: black;
+  border-left: 3px solid #658fd3;
+}
+.sidebar .card .Nav-Card button {
+  background: none;
+  color: black;
+  border: none;
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+  border-radius: 0;
+}
 .child {
   margin: 0.5rem;
   margin-bottom: 5rem;
@@ -253,7 +278,7 @@ a {
 .topNav .navbar-brand {
   display: flex;
 }
-.topNav .navbar-brand .nav-link {
+.topNav .navbar-brand strong {
   line-height: 30px;
   margin-left: 0.5rem;
   font-size: 16px;

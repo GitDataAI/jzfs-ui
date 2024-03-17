@@ -5,7 +5,7 @@ import {auth as Auth, cache,} from "../../lib/api";
 import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
 import { auth, users } from "../../lib/api/interface/index";
-import {AiOutlineGithub,AiFillGitlab,AiFillGoogleCircle,AiFillTwitterCircle} from "react-icons/ai";
+// import {AiOutlineGithub,AiFillGitlab,AiFillGoogleCircle,AiFillTwitterCircle} from "react-icons/ai";
 
 
 

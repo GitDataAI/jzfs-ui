@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 import { ProgressBar } from "react-bootstrap";
-import { useRouter } from "../../hooks/router";
 import { version } from "../../api/interface";
 const Loadingpage = ()  =>{
     const [loading,setLoading] = useState(0)
