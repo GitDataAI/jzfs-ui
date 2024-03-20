@@ -11,7 +11,7 @@ import {
 import { InitialState,_File } from "../../../interface/repo_interface";
 import { object } from "../../../../../lib/api/interface/index";
 
-const MAX_PARALLEL_UPLOADS = 1;
+const MAX_PARALLEL_UPLOADS = 5;
 
 const destinationPath = (path: string | undefined, file: _File) => {
     return `${path=='/' ? '' : path+'/'}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
@@ -19,7 +19,6 @@ const destinationPath = (path: string | undefined, file: _File) => {
   
   const UploadCandidate = ({ repoId, path, file, state,setUploadPath,onRemove = null }) => {
   const fpath = destinationPath(path, file)
-  console.log(fpath);
   
   useEffect(()=>{
     setUploadPath(fpath)
@@ -63,13 +62,13 @@ const destinationPath = (path: string | undefined, file: _File) => {
     )
   };
   
-  async function uploadFile( repository: string, branch: string, path: string, file: File, wipID: string) {
+  async function uploadFile( repository: string, branch: string, path: string, file: File) {
     const user = cache.get('user');
-    await object.uploadObject(user, repository,{refName:branch,path},{content:file});
+    await object.uploadObject(user, repository,{refName:branch,path,isReplace:true},{content:file});
 }
 
   
-export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, onHide, show = false}) => {
+export const UploadButton = ({repoId, reference, path, onDone, onClick, onHide, show = false}) => {
     const initialState: InitialState = {
       inProgress: false,
       error : null,
@@ -123,9 +122,8 @@ export const UploadButton = ({repoId, reference, path,wipID, onDone, onClick, on
         try {
           setFileStates(next => ( {...next, [file.path]: {status: 'uploading', percent: 0}}))
           files.length >1?          
-          await uploadFile( repoId, reference.name, currentPath+'/'+file.path, file, wipID):
-          await uploadFile( repoId, reference.name, uploadpath, file, wipID)
-          
+          await uploadFile( repoId, reference.name, file.path, file):
+          await uploadFile( repoId, reference.name, uploadpath, file)
         } catch (error: any | null) {
           setFileStates(next => ( {...next, [file.path]: {status: 'error'}}))
           setUploadState({ ...initialState, error });
