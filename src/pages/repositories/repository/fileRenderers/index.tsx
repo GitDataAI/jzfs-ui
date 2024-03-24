@@ -153,7 +153,6 @@ export const ObjectRenderer: FC<RendererComponent> = (props: RendererComponent) 
    
     if (fileType !== FileType.DATA && props.sizeBytes > MAX_FILE_SIZE)
         return Renderers[FileType.TOO_LARGE](props)
-    console.log(Renderers[fileType](props));
     
     return Renderers[fileType](props)
 }

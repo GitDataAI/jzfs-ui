@@ -116,7 +116,6 @@ export const ReadmeContainer = ({
 
   const fileExtension = getFileExtension(readmePath);
   const contentType = getContentType(response?.headers);
-  console.log(fileExtension);
   
 
     return (

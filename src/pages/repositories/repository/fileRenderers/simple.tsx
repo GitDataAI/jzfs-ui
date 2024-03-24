@@ -178,17 +178,28 @@ export const ImageRenderer: FC<RendererComponent> = ({
 
 export const PDFRenderer: FC<RendererComponent> = ({
   repoId,
-  refId,
+  branch,
   path,
-  presign,
+  type
 }) => {
-  const query = qs({ path, presign });
+  const user = cache.get('user')
+  const [imgSrc, setImgSrc] = useState(null);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const response = await object.getObject(user,repoId,{refName:branch,path,type})
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setImgSrc(url);
+    };
+
+    fetchImage();
+  }, [repoId, branch, path, type]);
+
   return (
     <div className="m-3 object-viewer-pdf">
       <object
-        data={`/api/v1/repositories/${encodeURIComponent(
-          repoId
-        )}/refs/${encodeURIComponent(refId)}/objects?${query}`}
+        data={imgSrc}
         type="application/pdf"
       ></object>
     </div>
