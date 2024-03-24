@@ -337,3 +337,10 @@ a {
 .Navtittle {
   margin: 1.5rem;
 }
+.AKSK-List button {
+  width: 9rem;
+  margin: 0.5rem auto;
+}
+.AKSK-List .card {
+  margin: 0.5rem auto;
+}

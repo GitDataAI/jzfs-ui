@@ -173,6 +173,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
+        wip.updateWip(user,repo.name,{refName:reference.name},{})
         setInternalRefresh(!internalRefresh)
     }
     
@@ -210,7 +211,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
 
                 <ActionGroup orientation="right">
 
-                    <RefreshButton onClick={refresh}/>
+                    <RefreshButton enabled={results.length > 0} onClick={refresh}/>
 
                     <RevertButton enabled={results.length > 0} onRevert={() => {
                         wip.revertWipChanges(repo.name, user,{refName:reference.name})

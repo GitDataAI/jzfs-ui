@@ -93,6 +93,7 @@ export interface DataTableProps {
     emptyState?: React.ReactNode;
 }
 export interface RefreshButtonProps {
+    enabled: boolean;
     onClick: () => void;
     size?:'md' | 'sm' | 'lg' | undefined;
     variant?: string;

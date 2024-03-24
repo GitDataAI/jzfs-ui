@@ -11,7 +11,7 @@ import {
 import { InitialState,_File } from "../../../interface/repo_interface";
 import { object } from "../../../../../lib/api/interface/index";
 
-const MAX_PARALLEL_UPLOADS = 5;
+const MAX_PARALLEL_UPLOADS = 100;
 
 const destinationPath = (path: string | undefined, file: _File) => {
     return `${path=='/' ? '' : path+'/'}${file.path.replace(/\\/g, '/').replace(/^\//, '')}`;
