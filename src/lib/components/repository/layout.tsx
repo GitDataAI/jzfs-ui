@@ -19,7 +19,7 @@ const RepoNav = () => {
     const repoId = (repo) ? repo.name : '#';
     const user = cache.get('user')
     return (
-        <Breadcrumb>
+        <Breadcrumb className="to-repo">
             <Link href={{pathname: '/repositories'}} component={Breadcrumb.Item}>
                 Repositories
             </Link>
@@ -35,7 +35,7 @@ export const RepositoryPageLayout:React.FC<RepositoryPageLayoutProps> = ({ activ
     return (
 <Layout>
             <div>
-                <RepoNav/>
+                <RepoNav />
                 <RepositoryNavTabs active={activePage}/>
                 <Container fluid={fluid}>
                     <div className="mt-4">{children}</div>

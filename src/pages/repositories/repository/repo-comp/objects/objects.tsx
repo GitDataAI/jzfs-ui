@@ -11,7 +11,7 @@ import {useRefs} from "../../../../../lib/hooks/repo";
 import {useRouter} from "../../../../../lib/hooks/router";
 import { Box } from "@mui/material";
 import { RepoError } from "../error/error";
-import { NoGCRulesWarning, TreeContainer } from "./obj_comps";
+import { NoGCRulesWarning, ReadmeContainer, TreeContainer } from "./obj_comps";
 import { Button } from "react-bootstrap";
 import { UploadIcon } from "@primer/octicons-react";
 import { Link } from "../../../../../lib/components/nav";
@@ -209,13 +209,13 @@ const ObjectsBrowser = () => {
           }}
           onRefresh={refresh}
         />
-{/* 
+
         <ReadmeContainer
           reference={reference}
           repo={repo}
           path={path}
           refreshDep={refreshToken}
-        /> */}
+        />
       </Box>
     </>
   );

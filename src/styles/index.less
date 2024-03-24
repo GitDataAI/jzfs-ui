@@ -155,11 +155,10 @@ a {
   left: 0;
   height: 100vh;
   width: 20rem;
-  border-right: 2px solid rgb(219, 224, 252);
   margin-right: 10px;
   background-color: #fff;
   overflow-y: scroll;
-
+  
   @media (max-width: 600px) {
     height: 30vh;
     margin-left: 5rem;
@@ -222,6 +221,10 @@ a {
     }
   }
 }
+.sidebar::-webkit-scrollbar{
+  display: none;
+}
+
 .child{
   margin: 0.5rem;
   margin-bottom: 5rem;
@@ -365,6 +368,6 @@ a {
    
   }
 }
-.Settings{
+.to-repo{
+  margin: 0.9rem;
 }
-

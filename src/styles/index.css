@@ -153,7 +153,6 @@ a {
   left: 0;
   height: 100vh;
   width: 20rem;
-  border-right: 2px solid #dbe0fc;
   margin-right: 10px;
   background-color: #fff;
   overflow-y: scroll;
@@ -217,6 +216,9 @@ a {
   margin-bottom: 0.2rem;
   font-weight: 600;
   border-radius: 0;
+}
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 .child {
   margin: 0.5rem;
@@ -352,4 +354,7 @@ a {
   width: 8rem;
   margin: auto;
   margin-right: 4rem;
+}
+.to-repo {
+  margin: 0.9rem;
 }
