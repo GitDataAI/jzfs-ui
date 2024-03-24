@@ -217,8 +217,15 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after}) => {
     const { results, error, loading } = useAPIWithPagination(async () => {
         return repos.listBranches(user, repo.name);
     }, [repo.id, refresh, prefix, after]);
-    
-    const doRefresh = () =>  setRefresh(!refresh);
+    const {setPage,setRefresh:setRefre,refresh:refre} = useContext(ActivepageContext)
+
+    useEffect(()=>{
+        setPage('branches')
+    },[])
+    const doRefresh = () =>  {
+        setRefresh(!refresh)
+        setRefre(!refre)
+    };
 
     let content;
 
@@ -277,11 +284,7 @@ const BranchesContainer:React.FC = () => {
 
 
 const RepositoryBranchesPage = () => {
-    const activepage = useContext(ActivepageContext)
 
-    useEffect(()=>{
-        activepage.setPage('branches')
-    },[])
     return (
             <RepositoryPageLayout activePage={'branches'}>
                 <BranchesContainer/>

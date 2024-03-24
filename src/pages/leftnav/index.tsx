@@ -8,7 +8,6 @@ import Commitsnav from "./reponav/commits/objectsNav";
 import Branchsnav from "./reponav/branchs/changesNav";
 
 const Leftnav = () => {
-
 const {page} = useContext(ActivepageContext)
 
 if(page === 'objects'){

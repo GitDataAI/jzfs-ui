@@ -64,6 +64,11 @@ const SettingsContainer = () => {
     const [showingDeleteModal, setShowDeleteModal] = useState(false);
     const [ deletionError, setDeletionError ] = useState(null);
     const user = cache.get('user')
+    const {setPage,setRefresh,refresh} = useContext(ActivepageContext)
+
+    useEffect(()=>{
+        setPage('settings')
+    },[])
     if (loading) return <Loading/>;
     if (error) return <AlertError error={error}/>;
     if (deletionError) return <AlertError error={deletionError}/>;
@@ -116,7 +121,9 @@ const SettingsContainer = () => {
                         setDeletionError(err)
                         setShowDeleteModal(true)
                     })
-                }}
+                    setRefresh(!refresh)
+                }
+            }
                 show={showingDeleteModal}/>
         </div>
     );
@@ -124,11 +131,7 @@ const SettingsContainer = () => {
 
 
 const RepositoryGeneralSettingsPage = () => {
-    const activepage = useContext(ActivepageContext)
-
-    useEffect(()=>{
-        activepage.setPage('settings')
-    },[])
+   
     return (
         <RepositoryPageLayout activePage={'settings'}>
             <SettingsLayout activeTab={"general"}>
