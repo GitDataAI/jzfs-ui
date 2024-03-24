@@ -337,10 +337,19 @@ a {
 .Navtittle {
   margin: 1.5rem;
 }
-.AKSK-List button {
-  width: 9rem;
+.AKSK-List .row button {
+  width: 12rem;
   margin: 0.5rem auto;
 }
 .AKSK-List .card {
   margin: 0.5rem auto;
+}
+.AKSK-List .card .card-body {
+  display: flex;
+}
+.AKSK-List .card .card-body button {
+  height: 2.5rem;
+  width: 8rem;
+  margin: auto;
+  margin-right: 4rem;
 }

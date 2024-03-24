@@ -22,7 +22,7 @@ export const SettingsLayout = ({ children, activeTab }) => {
             <Container fluid="xl">
                 <Row className="mt-5">
                     <Col md={{span: 3}}>
-                        <Card>
+                        <Card className="Settings">
                             <Card.Header>
                                 <Card.Title>Settings</Card.Title>
                             </Card.Header>

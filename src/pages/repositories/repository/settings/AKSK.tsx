@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { RepositoryPageLayout } from "../../../../lib/components/repository/layout"
 import { SettingsLayout } from "./layout"
-import { Button, Card,  Container, Form, Modal, Row } from "react-bootstrap"
+import { Button, Card,  Col,  Container, Form, Modal, Row } from "react-bootstrap"
 import Loading from "../../../../lib/components/loading"
 import { AlertError } from "../../../../lib/components/controls"
 import { Link } from "react-router-dom"
@@ -73,12 +73,13 @@ const AKSK =()=>{
 
         <Container className="AKSK-List">
             <Row>
-            <Button onClick={()=>{setShowCreateAKSKModal(true)}}>Create AKSK</Button>
+            <Button onClick={()=>{setShowCreateAKSKModal(true)}}>Create Access key</Button>
             </Row>
             {response.data.results.map((AKSK:Aksk)=>{   
                                 return(  
                                     <Card key={AKSK.id}>
                                         <Card.Body>
+                                        <Col>
                                         Access key:
                                             <h5>
                                                 <Link to={""}>
@@ -97,8 +98,11 @@ const AKSK =()=>{
                                                     {AKSK.description}
                                                 </small>
                                             </p>
+                                        </Col>
+                                       
+                                            <Button variant="danger" onClick={()=>setShowAlertModal(true)}>Delete</Button>
+
                                         </Card.Body>
-                                        <Button variant="danger" onClick={()=>setShowAlertModal(true)}>Delete</Button>
                                      <AlertModal 
                                     AK={AKSK.access_key}
                                     onCancel={() => { setShowAlertModal(false) }}
