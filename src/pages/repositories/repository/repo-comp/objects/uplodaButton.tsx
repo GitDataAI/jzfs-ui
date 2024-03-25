@@ -106,6 +106,10 @@ export const UploadButton = ({repoId, reference, path, onDone, onClick, onHide, 
       onHide();
     };
   
+    const joinDir= (path: String)=>{
+      return currentPath == "/" ? path : currentPath + path
+    }
+    
     useEffect(() => {
       setCurrentPath(path)
     }, [path])
