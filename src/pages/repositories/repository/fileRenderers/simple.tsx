@@ -58,6 +58,7 @@ export const TextDownloader= ({
 }) => {
 const user = cache.get('user') 
 const [body,setBody] = useState()
+
 const { response, error, loading } = useAPI(
       () =>  object.getObject(user, repoId,{refName:branch,path,type:type}),
     [repoId, branch, path]
@@ -68,10 +69,7 @@ const { response, error, loading } = useAPI(
       const reader = new FileReader();
       response.blob().then(blob => {
         reader.onloadend = () => {
-          // 在这里添加行数
-          const lines = reader.result.split('\n');
-          const linesWithNumbers = lines.map((line, index) => `${index + 1}     ${line}`);
-          setBody(linesWithNumbers.join('\n'));
+          setBody(reader.result);
         };
         reader.readAsText(blob);
       });
@@ -87,8 +85,8 @@ const { response, error, loading } = useAPI(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const component =body? body :'loading';
-  return <><pre>{component}</pre></>;
+  const component =onReady(body? body :'loading');
+  return <>{component}</>;
 };
 
 export const MarkdownRenderer: FC<RendererComponentWithText> = ({
@@ -180,17 +178,28 @@ export const ImageRenderer: FC<RendererComponent> = ({
 
 export const PDFRenderer: FC<RendererComponent> = ({
   repoId,
-  refId,
+  branch,
   path,
-  presign,
+  type
 }) => {
-  const query = qs({ path, presign });
+  const user = cache.get('user')
+  const [imgSrc, setImgSrc] = useState(null);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const response = await object.getObject(user,repoId,{refName:branch,path,type})
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setImgSrc(url);
+    };
+
+    fetchImage();
+  }, [repoId, branch, path, type]);
+
   return (
     <div className="m-3 object-viewer-pdf">
       <object
-        data={`/api/v1/repositories/${encodeURIComponent(
-          repoId
-        )}/refs/${encodeURIComponent(refId)}/objects?${query}`}
+        data={imgSrc}
         type="application/pdf"
       ></object>
     </div>

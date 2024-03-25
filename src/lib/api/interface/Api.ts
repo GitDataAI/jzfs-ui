@@ -62,6 +62,32 @@ export interface SetupState {
   };
 }
 
+export interface Group {
+  /** @format uuid */
+  id: string;
+  name: string;
+  policies: string[];
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
+}
+
+export interface Member {
+  /** @format uuid */
+  id: string;
+  /** @format uuid */
+  user_id: string;
+  /** @format uuid */
+  repo_id: string;
+  /** @format uuid */
+  group_id: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
+}
+
 export interface AkskList {
   pagination: {
     /** Next page is available */
@@ -83,7 +109,6 @@ export interface AkskList {
     /** @format uuid */
     id: string;
     access_key: string;
-    secret_key: string;
     description?: string;
     /** @format int64 */
     created_at: number;
@@ -97,6 +122,17 @@ export interface Aksk {
   id: string;
   access_key: string;
   secret_key: string;
+  description?: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
+}
+
+export interface SafeAksk {
+  /** @format uuid */
+  id: string;
+  access_key: string;
   description?: string;
   /** @format int64 */
   created_at: number;
@@ -300,6 +336,7 @@ export interface BranchList {
 export interface CreateRepository {
   description?: string;
   name: string;
+  visible?: boolean;
   /** block storage config url encoded json */
   blockstore_config?: string;
 }
@@ -332,6 +369,7 @@ export interface RepositoryList {
     name: string;
     /** @format uuid */
     owner_id: string;
+    visible: boolean;
     head: string;
     use_public_storage: boolean;
     storage_adapter_params?: string;
@@ -352,6 +390,7 @@ export interface Repository {
   name: string;
   /** @format uuid */
   owner_id: string;
+  visible: boolean;
   head: string;
   use_public_storage: boolean;
   storage_adapter_params?: string;
@@ -1059,6 +1098,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         refName: string;
         /** relative to the ref */
         path: string;
+        /** indicate to replace existing object or not */
+        isReplace?: boolean;
       },
       data: {
         /**
@@ -1123,6 +1164,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: "DELETE",
         query: query,
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags objects
+     * @name GetFiles
+     * @summary get files by pattern
+     * @request GET:/object/{owner}/{repository}/files
+     * @secure
+     */
+    getFiles: (
+      owner: string,
+      repository: string,
+      query: {
+        /** branch/tag to the ref */
+        refName: string;
+        /** glob pattern for match file path */
+        pattern?: string;
+        /** files to retrieve from wip/branch/tag/commit, default branch */
+        type: "branch" | "wip" | "tag" | "commit";
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<string[], void>({
+        path: `/object/${owner}/${repository}/files`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
         ...params,
       }),
   };
@@ -1586,6 +1658,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           name: string;
           /** @format uuid */
           owner_id: string;
+          visible: boolean;
           head: string;
           use_public_storage: boolean;
           storage_adapter_params?: string;
@@ -1656,6 +1729,513 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name ListMergeRequests
+     * @summary get list of merge request in repository
+     * @request GET:/repos/{owner}/{repository}/mergerequest
+     * @secure
+     */
+    listMergeRequests: (
+      owner: string,
+      repository: string,
+      query?: {
+        /**
+         * return items after this value
+         * @format int64
+         */
+        after?: number;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
+        /** @format int */
+        state?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          pagination: {
+            /** Next page is available */
+            has_more: boolean;
+            /** Token used to retrieve the next page */
+            next_offset: string;
+            /**
+             * Number of values found in the results
+             * @min 0
+             */
+            results: number;
+            /**
+             * Maximal number of entries per page
+             * @min 0
+             */
+            max_per_page: number;
+          };
+          results: {
+            /** @format uuid */
+            id: string;
+            /** @format uint64 */
+            sequence: number;
+            /** @format uuid */
+            target_branch: string;
+            /** @format uuid */
+            source_branch: string;
+            /** @format uuid */
+            source_repo_id: string;
+            /** @format uuid */
+            target_repo_id: string;
+            title: string;
+            /** @format int */
+            merge_status: number;
+            description?: string;
+            /** @format uuid */
+            author_id: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
+          }[];
+        },
+        void
+      >({
+        path: `/repos/${owner}/${repository}/mergerequest`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name CreateMergeRequest
+     * @summary create merge request
+     * @request POST:/repos/{owner}/{repository}/mergerequest
+     * @secure
+     */
+    createMergeRequest: (
+      owner: string,
+      repository: string,
+      data: {
+        target_branch_name: string;
+        source_branch_name: string;
+        /** @max 50 */
+        title: string;
+        /** @max 500 */
+        description?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          /** @format uint64 */
+          sequence: number;
+          /** @format uuid */
+          target_branch: string;
+          /** @format uuid */
+          source_branch: string;
+          /** @format uuid */
+          source_repo_id: string;
+          /** @format uuid */
+          target_repo_id: string;
+          title: string;
+          /** @format int */
+          merge_status: number;
+          description?: string;
+          /** @format uuid */
+          author_id: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/repos/${owner}/${repository}/mergerequest`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name Merge
+     * @summary merge a mergerequest
+     * @request POST:/repos/{owner}/{repository}/mergerequest/{mrSeq}/merge
+     * @secure
+     */
+    merge: (
+      owner: string,
+      repository: string,
+      mrSeq: number,
+      data: {
+        msg: string;
+        /** use to record the resolution of the conflict, example({"b/a.txt":"left"}) */
+        conflict_resolve?: Record<string, string>;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          hash: string;
+          /** @format uuid */
+          repository_id: string;
+          author: {
+            name: string;
+            /** @format email */
+            email: string;
+            /** @format int64 */
+            when: number;
+          };
+          committer: {
+            name: string;
+            /** @format email */
+            email: string;
+            /** @format int64 */
+            when: number;
+          };
+          merge_tag: string;
+          message: string;
+          tree_hash: string;
+          parent_hashes: string[];
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        }[],
+        void
+      >({
+        path: `/repos/${owner}/${repository}/mergerequest/${mrSeq}/merge`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name GetMergeRequest
+     * @summary get merge request
+     * @request GET:/repos/{owner}/{repository}/mergerequest/{mrSeq}
+     * @secure
+     */
+    getMergeRequest: (owner: string, repository: string, mrSeq: number, params: RequestParams = {}) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          /** @format uint64 */
+          sequence: number;
+          /** @format uuid */
+          target_branch: string;
+          /** @format uuid */
+          source_branch: string;
+          /** @format uuid */
+          source_repo_id: string;
+          /** @format uuid */
+          target_repo_id: string;
+          title: string;
+          /** @format int */
+          merge_status: number;
+          description?: string;
+          /** @format uuid */
+          author_id: string;
+          changes: {
+            path: string;
+            left?: {
+              path: string;
+              action: 1 | 2 | 3;
+              base_hash?: string;
+              to_hash?: string;
+            };
+            right?: {
+              path: string;
+              action: 1 | 2 | 3;
+              base_hash?: string;
+              to_hash?: string;
+            };
+            is_conflict: boolean;
+          }[];
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/repos/${owner}/${repository}/mergerequest/${mrSeq}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags mergerequest
+     * @name UpdateMergeRequest
+     * @summary update merge request
+     * @request POST:/repos/{owner}/{repository}/mergerequest/{mrSeq}
+     * @secure
+     */
+    updateMergeRequest: (
+      owner: string,
+      repository: string,
+      mrSeq: number,
+      data: {
+        title?: string;
+        description?: string;
+        /** @format int */
+        status?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/repos/${owner}/${repository}/mergerequest/${mrSeq}`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags repo
+     * @name ChangeVisible
+     * @summary change repository visible(true for public, false for private)
+     * @request POST:/repos/{owner}/{repository}/visible
+     * @secure
+     */
+    changeVisible: (
+      owner: string,
+      repository: string,
+      query: {
+        visible: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/repos/${owner}/${repository}/visible`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags listMembers
+     * @name ListMembers
+     * @summary get list of members in repository
+     * @request GET:/repos/{owner}/{repository}/members
+     * @secure
+     */
+    listMembers: (owner: string, repository: string, params: RequestParams = {}) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          /** @format uuid */
+          user_id: string;
+          /** @format uuid */
+          repo_id: string;
+          /** @format uuid */
+          group_id: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        }[],
+        void
+      >({
+        path: `/repos/${owner}/${repository}/members`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags member
+     * @name UpdateMemberGroup
+     * @summary update member by user id and change group role
+     * @request POST:/repos/{owner}/{repository}/member
+     * @secure
+     */
+    updateMemberGroup: (
+      owner: string,
+      repository: string,
+      query: {
+        /** @format uuid */
+        user_id: string;
+        /** @format uuid */
+        group_id: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/repos/${owner}/${repository}/member`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags member
+     * @name RevokeMember
+     * @summary Revoke member in repository
+     * @request DELETE:/repos/{owner}/{repository}/member
+     * @secure
+     */
+    revokeMember: (
+      owner: string,
+      repository: string,
+      query: {
+        /** @format uuid */
+        user_id: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/repos/${owner}/${repository}/member`,
+        method: "DELETE",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags member
+     * @name InviteMember
+     * @summary invite member
+     * @request POST:/repos/{owner}/{repository}/member/invite
+     * @secure
+     */
+    inviteMember: (
+      owner: string,
+      repository: string,
+      query: {
+        /** @format uuid */
+        user_id: string;
+        /** @format uuid */
+        group_id: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/repos/${owner}/${repository}/member/invite`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags repo
+     * @name ListPublicRepository
+     * @summary list public repository in all system
+     * @request GET:/repos/public
+     * @secure
+     */
+    listPublicRepository: (
+      query?: {
+        /** return items prefixed with this value */
+        prefix?: string;
+        /**
+         * return items after this value
+         * @format int64
+         */
+        after?: number;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          pagination: {
+            /** Next page is available */
+            has_more: boolean;
+            /** Token used to retrieve the next page */
+            next_offset: string;
+            /**
+             * Number of values found in the results
+             * @min 0
+             */
+            results: number;
+            /**
+             * Maximal number of entries per page
+             * @min 0
+             */
+            max_per_page: number;
+          };
+          results: {
+            /** @format uuid */
+            id: string;
+            name: string;
+            /** @format uuid */
+            owner_id: string;
+            visible: boolean;
+            head: string;
+            use_public_storage: boolean;
+            storage_adapter_params?: string;
+            storage_namespace?: string;
+            description?: string;
+            /** @format uuid */
+            creator_id: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
+          }[];
+        },
+        void
+      >({
+        path: `/repos/public`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
         ...params,
       }),
 
@@ -1818,8 +2398,19 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<
         {
+          /** @format uuid */
+          id: string;
+          /** @format uuid */
+          repository_id: string;
+          commit_hash: string;
           name: string;
-          source: string;
+          description?: string;
+          /** @format uuid */
+          creator_id: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
         },
         void
       >({
@@ -1829,298 +2420,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         secure: true,
         type: ContentType.Json,
         format: "json",
-        ...params,
-      }),
-  };
-  mergerequest = {
-    /**
-     * No description
-     *
-     * @tags mergerequest
-     * @name ListMergeRequests
-     * @summary get list of merge request in repository
-     * @request GET:/mergerequest/{owner}/{repository}
-     * @secure
-     */
-    listMergeRequests: (
-      owner: string,
-      repository: string,
-      query?: {
-        /**
-         * return items after this value
-         * @format int64
-         */
-        after?: number;
-        /**
-         * how many items to return
-         * @min -1
-         * @max 1000
-         * @default 100
-         */
-        amount?: number;
-        /** @format int */
-        state?: number;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<
-        {
-          pagination: {
-            /** Next page is available */
-            has_more: boolean;
-            /** Token used to retrieve the next page */
-            next_offset: string;
-            /**
-             * Number of values found in the results
-             * @min 0
-             */
-            results: number;
-            /**
-             * Maximal number of entries per page
-             * @min 0
-             */
-            max_per_page: number;
-          };
-          results: {
-            /** @format uuid */
-            id: string;
-            /** @format uint64 */
-            sequence: number;
-            /** @format uuid */
-            target_branch: string;
-            /** @format uuid */
-            source_branch: string;
-            /** @format uuid */
-            source_repo_id: string;
-            /** @format uuid */
-            target_repo_id: string;
-            title: string;
-            /** @format int */
-            merge_status: number;
-            description?: string;
-            /** @format uuid */
-            author_id: string;
-            /** @format int64 */
-            created_at: number;
-            /** @format int64 */
-            updated_at: number;
-          }[];
-        },
-        void
-      >({
-        path: `/mergerequest/${owner}/${repository}`,
-        method: "GET",
-        query: query,
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags mergerequest
-     * @name CreateMergeRequest
-     * @summary create merge request
-     * @request POST:/mergerequest/{owner}/{repository}
-     * @secure
-     */
-    createMergeRequest: (
-      owner: string,
-      repository: string,
-      data: {
-        target_branch_name: string;
-        source_branch_name: string;
-        /** @max 50 */
-        title: string;
-        /** @max 500 */
-        description?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<
-        {
-          /** @format uuid */
-          id: string;
-          /** @format uint64 */
-          sequence: number;
-          /** @format uuid */
-          target_branch: string;
-          /** @format uuid */
-          source_branch: string;
-          /** @format uuid */
-          source_repo_id: string;
-          /** @format uuid */
-          target_repo_id: string;
-          title: string;
-          /** @format int */
-          merge_status: number;
-          description?: string;
-          /** @format uuid */
-          author_id: string;
-          /** @format int64 */
-          created_at: number;
-          /** @format int64 */
-          updated_at: number;
-        },
-        void
-      >({
-        path: `/mergerequest/${owner}/${repository}`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags mergerequest
-     * @name Merge
-     * @summary merge a mergerequest
-     * @request POST:/mergerequest/{owner}/{repository}/{mrSeq}/merge
-     * @secure
-     */
-    merge: (
-      owner: string,
-      repository: string,
-      mrSeq: number,
-      data: {
-        msg: string;
-        /** use to record the resolution of the conflict, example({"b/a.txt":"left"}) */
-        conflict_resolve?: Record<string, string>;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<
-        {
-          hash: string;
-          /** @format uuid */
-          repository_id: string;
-          author: {
-            name: string;
-            /** @format email */
-            email: string;
-            /** @format int64 */
-            when: number;
-          };
-          committer: {
-            name: string;
-            /** @format email */
-            email: string;
-            /** @format int64 */
-            when: number;
-          };
-          merge_tag: string;
-          message: string;
-          tree_hash: string;
-          parent_hashes: string[];
-          /** @format int64 */
-          created_at: number;
-          /** @format int64 */
-          updated_at: number;
-        }[],
-        void
-      >({
-        path: `/mergerequest/${owner}/${repository}/${mrSeq}/merge`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-  };
-  mergequest = {
-    /**
-     * No description
-     *
-     * @tags mergerequest
-     * @name GetMergeRequest
-     * @summary get merge request
-     * @request GET:/mergequest/{owner}/{repository}/{mrSeq}
-     * @secure
-     */
-    getMergeRequest: (owner: string, repository: string, mrSeq: number, params: RequestParams = {}) =>
-      this.request<
-        {
-          /** @format uuid */
-          id: string;
-          /** @format uint64 */
-          sequence: number;
-          /** @format uuid */
-          target_branch: string;
-          /** @format uuid */
-          source_branch: string;
-          /** @format uuid */
-          source_repo_id: string;
-          /** @format uuid */
-          target_repo_id: string;
-          title: string;
-          /** @format int */
-          merge_status: number;
-          description?: string;
-          /** @format uuid */
-          author_id: string;
-          changes: {
-            path: string;
-            left?: {
-              path: string;
-              action: 1 | 2 | 3;
-              base_hash?: string;
-              to_hash?: string;
-            };
-            right?: {
-              path: string;
-              action: 1 | 2 | 3;
-              base_hash?: string;
-              to_hash?: string;
-            };
-            is_conflict: boolean;
-          }[];
-          /** @format int64 */
-          created_at: number;
-          /** @format int64 */
-          updated_at: number;
-        },
-        void
-      >({
-        path: `/mergequest/${owner}/${repository}/${mrSeq}`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags mergerequest
-     * @name UpdateMergeRequest
-     * @summary update merge request
-     * @request POST:/mergequest/{owner}/{repository}/{mrSeq}
-     * @secure
-     */
-    updateMergeRequest: (
-      owner: string,
-      repository: string,
-      mrSeq: number,
-      data: {
-        title?: string;
-        description?: string;
-        /** @format int */
-        status?: number;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, void>({
-        path: `/mergequest/${owner}/${repository}/${mrSeq}`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
         ...params,
       }),
   };
@@ -2178,6 +2477,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             name: string;
             /** @format uuid */
             owner_id: string;
+            visible: boolean;
             head: string;
             use_public_storage: boolean;
             storage_adapter_params?: string;
@@ -2253,6 +2553,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             name: string;
             /** @format uuid */
             owner_id: string;
+            visible: boolean;
             head: string;
             use_public_storage: boolean;
             storage_adapter_params?: string;
@@ -2289,6 +2590,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: {
         description?: string;
         name: string;
+        visible?: boolean;
         /** block storage config url encoded json */
         blockstore_config?: string;
       },
@@ -2301,6 +2603,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           name: string;
           /** @format uuid */
           owner_id: string;
+          visible: boolean;
           head: string;
           use_public_storage: boolean;
           storage_adapter_params?: string;
@@ -2342,11 +2645,33 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, void>({
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          name: string;
+          /** @format email */
+          email: string;
+          /** @format int64 */
+          current_sign_in_at?: number;
+          /** @format int64 */
+          last_sign_in_at?: number;
+          /** @format ipv4 */
+          current_sign_in_ip?: string;
+          /** @format ipv4 */
+          last_sign_in_ip?: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
         path: `/users/register`,
         method: "POST",
         body: data,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -2440,7 +2765,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           /** @format uuid */
           id: string;
           access_key: string;
-          secret_key: string;
           description?: string;
           /** @format int64 */
           created_at: number;
@@ -2567,7 +2891,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             /** @format uuid */
             id: string;
             access_key: string;
-            secret_key: string;
             description?: string;
             /** @format int64 */
             created_at: number;
@@ -2580,6 +2903,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/users/aksks`,
         method: "GET",
         query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+  };
+  groups = {
+    /**
+     * No description
+     *
+     * @tags group
+     * @name ListRepoGroup
+     * @summary list groups for repo
+     * @request GET:/groups/repo
+     * @secure
+     */
+    listRepoGroup: (params: RequestParams = {}) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          name: string;
+          policies: string[];
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        }[],
+        void
+      >({
+        path: `/groups/repo`,
+        method: "GET",
         secure: true,
         format: "json",
         ...params,

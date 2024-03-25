@@ -12,6 +12,7 @@ import {useAPI} from "../../../../../lib/hooks/api";
 import {NoGCRulesWarningProps} from "../../../interface/repo_interface";
 import { object, repos } from "../../../../../lib/api/interface/index";
 import { getActions } from "../../../../../util/changes";
+import { FileContents, getContentType, getFileExtension } from "./objectViewer";
 
 const README_FILE_NAME = "README.md";
 const REPOSITORY_AGE_BEFORE_GC = 14;
@@ -87,47 +88,51 @@ export const TreeContainer= ({
     );
 }
 
-// export const ReadmeContainer = ({
-//   repo,
-//   reference,
-//   path = "",
-//   refreshDep = "",
-// }) => {
-//   let readmePath = "";
+export const ReadmeContainer = ({
+  repo,
+  reference,
+  path = "/",
+  refreshDep,
+}) => {
+  let readmePath = "";
 
-//   if (path) {
-//     readmePath = path.endsWith("/")
-//       ? `${path}${README_FILE_NAME}`
-//       : `${path}/${README_FILE_NAME}`;
-//   } else {
-//     readmePath = README_FILE_NAME;
-//   }
-//   const { response, error, loading } = useAPI(
-//     () => object.headObject(repo.id, reference.id, readmePath),
-//     [path, refreshDep]
-//   );
+  if (path) {
+    readmePath = path.endsWith("/")
+      ? `${path}${README_FILE_NAME}`
+      : `${path}${README_FILE_NAME}`;
+  } else {
+    readmePath = README_FILE_NAME;
+  }
+  const user = cache.get('user')
+  
+  const { response, error, loading } = useAPI(
+    () => object.headObject(user,repo.name, {refName:reference.name,path:readmePath,type:reference.type}),
+    [path, refreshDep]
+  );
 
-//   if (loading || error) {
-//     return <></>; // no file found.
-//   }
+  if (loading || error) {
+    return <></>; // no file found.
+  }
 
-//   const fileExtension = getFileExtension(readmePath);
-//   const contentType = getContentType(response?.headers);
+  const fileExtension = getFileExtension(readmePath);
+  const contentType = getContentType(response?.headers);
+  
 
-//     return (
-//         <FileContents 
-//             repoId={repo.id} 
-//             reference={reference}
-//             path={readmePath}
-//             fileExtension={fileExtension}
-//             contentType={contentType}
-//             error={error}
-//             loading={loading}
-//             showFullNavigator={false}
-//             presign={true}
-//         />
-//     );
-// }
+    return (
+        <FileContents 
+            repo={repo} 
+            reference={reference}
+            path={readmePath}
+            fileExtension={fileExtension}
+            contentType={contentType}
+            type={reference.type}
+            error={error}
+            loading={loading}
+            showFullNavigator={false}
+            presign={true}
+        />
+    );
+}
 
 export const NoGCRulesWarning: React.FC<NoGCRulesWarningProps> = ({ repoId }) => {
   const user = cache.get('user')

@@ -153,7 +153,6 @@ a {
   left: 0;
   height: 100vh;
   width: 20rem;
-  border-right: 2px solid #dbe0fc;
   margin-right: 10px;
   background-color: #fff;
   overflow-y: scroll;
@@ -192,6 +191,38 @@ a {
 }
 .sidebar form .col .btn {
   margin-right: 0px;
+}
+.sidebar .card {
+  border: none;
+}
+.sidebar .card .Nav-Card {
+  display: grid;
+  justify-content: flex-start;
+}
+.sidebar .card .Nav-Card svg {
+  margin: 5px;
+}
+.sidebar .card .Nav-Card .active {
+  background: none;
+  color: black;
+  border-left: 3px solid #658fd3;
+}
+.sidebar .card .Nav-Card button:hover {
+  background: none;
+  color: black;
+  border-left: 3px solid #658fd3;
+}
+.sidebar .card .Nav-Card button {
+  background: none;
+  color: black;
+  border: none;
+  text-align: left;
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+  border-radius: 0;
+}
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 .child {
   margin: 0.5rem;
@@ -253,7 +284,7 @@ a {
 .topNav .navbar-brand {
   display: flex;
 }
-.topNav .navbar-brand .nav-link {
+.topNav .navbar-brand strong {
   line-height: 30px;
   margin-left: 0.5rem;
   font-size: 16px;
@@ -311,4 +342,23 @@ a {
 }
 .Navtittle {
   margin: 1.5rem;
+}
+.AKSK-List .row button {
+  width: 12rem;
+  margin: 0.5rem auto;
+}
+.AKSK-List .card {
+  margin: 0.5rem auto;
+}
+.AKSK-List .card .card-body {
+  display: flex;
+}
+.AKSK-List .card .card-body button {
+  height: 2.5rem;
+  width: 8rem;
+  margin: auto;
+  margin-right: 4rem;
+}
+.to-repo {
+  margin: 0.9rem;
 }

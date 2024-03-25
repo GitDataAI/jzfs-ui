@@ -1,62 +1,38 @@
-import {   Col, Form, Row } from "react-bootstrap"
-import { cache} from "../../lib/api";
+import {   Button, Card, Col, Form, Row } from "react-bootstrap"
 import React, { useState } from "react";
 import { useRouter } from "../../lib/hooks/router";
-import { useAPIWithPagination } from "../../lib/hooks/api";
-import { users } from "../../lib/api/interface/index";
-import { AlertError, Loading } from "../../lib/components/controls";
-import {Link} from "../../lib/components/nav";
-import { Repository } from "../../lib/api/interface/Api";
-const RepositoryList = ({refresh}:{refresh:boolean}) => {
-    const router = useRouter()
-    const user = cache.get('user')
-    if(user){
-    const {results, loading, error} = useAPIWithPagination( async() => {
-            return  await users.listRepository(user)
- 
-    }, [refresh]);
-    if (loading) return <Loading/>;
-    if (error) { 
-        return <AlertError error={error}/>;}
-        if(results){
-            return (
-                <div>
-                    {
-                        results.map((repo:Repository)=>{
-                            return(
-                        <Row key={repo.id}>
-                            <Col style={{marginLeft:"22px"}}>
-                                            <Link href={{
-                                                pathname: `/repositories/:user/:repoId/objects`,
-                                                params: {repoId: repo.name,user},
-                                            }}>
-                                                <span><img src="/jiaozifs3.png" alt="" />{user+'/'}{repo.name}</span>
-                                            </Link>
-                            </Col>
-                        </Row>
-                            )
-                        })
-                    }
-                </div>
-            );}
-    }else{
-        router.push('/login')
-    }
+import { IoHomeOutline } from "react-icons/io5";
+import { GoRepo ,GoRepoForked,GoArchive,GoMirror,GoRepoTemplate } from "react-icons/go";
+import { RiGitRepositoryPrivateLine } from "react-icons/ri";
+import { TbSourceCode } from "react-icons/tb";
 
-};
 
 const Repolistsnav = () =>{
-    const [refresh, setRefresh] = useState(false);
-  
+    const router = useRouter()
+    const [fil, setFil] = useState('');
+    
+    const linkTo =(query:string)=>{
+        setFil(query)
+        router.push({ pathname: `/repositories/`, query: {fil:query} });
+    }
     return(
         <Row className="sidebar">
         <Form className='flex Fast-navb'>
             <Col className="d-flex">
             <strong className="Navtittle">Top Repositories</strong>           
             </Col>
-          <RepositoryList
-                    refresh={refresh}
-                    />
+        <Card>
+            <Card.Body className="Nav-Card">
+                <Button onClick={()=>linkTo('') } className={fil==''?'active':''}><IoHomeOutline />All</Button>
+                <Button onClick={()=>linkTo('Public')} className={fil=='Public'?'active':''}><GoRepo />Public</Button>
+                <Button onClick={()=>linkTo('Private')} className={fil=='Private'?'active':''}><RiGitRepositoryPrivateLine />Private</Button>
+                <Button disabled onClick={()=>linkTo('Sources')} className={fil=='Sources'?'active':''}><TbSourceCode />Sources</Button>
+                <Button disabled onClick={()=>linkTo('Forks')} className={fil=='Forks'?'active':''}><GoRepoForked />Forks</Button>
+                <Button disabled onClick={()=>linkTo('Archived')} className={fil=='Archived'?'active':''}><GoArchive />Archived</Button>
+                <Button disabled onClick={()=>linkTo('Mirrors')} className={fil=='Mirrors'?'active':''}><GoMirror />Mirrors</Button>
+                <Button disabled onClick={()=>linkTo('Templates')} className={fil=='Templates'?'active':''}><GoRepoTemplate />Templates</Button>
+            </Card.Body>
+        </Card>
         </Form>
         </Row>
     );

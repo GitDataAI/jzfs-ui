@@ -126,8 +126,8 @@ const EntryRow = ({repo, reference, entry}) => {
   
     return (
       <>
-        <tr className={entry.is_dir?dirClass:fileClass} ref={fNode}>
-          <td className={diffstyle}>
+        <div className={entry.is_dir?dirClass:fileClass} ref={fNode}>
+          <div className={diffstyle}>
           <span onClick={handleClick}>{entry.is_dir === true ? (
             <>
               {show?<AiFillCaretDown  className="Nav-Down"/>:<AiFillCaretRight  className="Nav-Down"/>}
@@ -138,8 +138,8 @@ const EntryRow = ({repo, reference, entry}) => {
             )}
             {button}</span>
            {show && <ChildEntryRow/>}
-          </td>
-        </tr>
+          </div>
+        </div>
       </>
     );
   }
@@ -149,7 +149,7 @@ export const Objectlist =({entrises,repo,reference})=>{
         <>
         {   
             entrises.map((entry)=>{
-               return <EntryRow entry={entry} repo={repo} reference={reference} />
+               return <EntryRow key={entry.hash} entry={entry} repo={repo} reference={reference} />
             })
         }
         </>

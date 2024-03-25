@@ -114,6 +114,7 @@ export const FileContents: FC<FileContentsProps> = ({
   const urllinkToPath = ({ repoId,reference, path}) => {
     return `/api/v1/object/${user}/${repoId}?refName=${reference}&path=${path}&type=${type}`;
   };
+  
   const objectUrl = urllinkToPath({ repoId:repo.name, reference:reference.name , path});
   if (loading || error) {
     return <></>;

@@ -508,11 +508,14 @@ export const URINavigator = ({
         {relativeTo === "" ? (
           (<>
             <strong>{"jzfs://"}</strong>
-            <Link href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
+            <Link 
+            key={repo.name}
+            href={{ pathname: "/repositories/:user/:repoId/objects", params }}>
               {repo.name}
             </Link>
             <strong>{"/"}</strong>
               <Link
+                key={reference.type}
                 href={{pathname: "/repositories/:user/:repoId/objects",params,query:{path:'',type:reference.type,ref:reference.name}}}>
               {reference.type === RefTypeCommit
                 ? reference.id.substr(0, 12)
@@ -522,6 +525,7 @@ export const URINavigator = ({
             <>
             <strong>{"/"}</strong>
             <Link
+              key={path}
               href={{pathname: "/repositories/:user/:repoId/objects",params,
               query:{type:reference.type,path: path,is_dir:true,ref:reference.name}}}>
               {path}
@@ -532,13 +536,14 @@ export const URINavigator = ({
               index==0 ? dir = part.name : dir = dir + "/" + part.name
             return index == parts.length - 1 ?(
             <>
-            <strong>{"/"}</strong>
-            <span>{part.name}</span>
+            <strong key={'/'+part.name}>{"/"}</strong>
+            <span key={part.name}>{part.name}</span>
             </>
             ):(
             <>
             <strong>{"/"}</strong>
             <Link
+              key={part.name}
               href={{pathname: "/repositories/:user/:repoId/objects",params,
               query:{type:reference.type,path: dir,is_dir:true,ref:reference.name}}}>
               {part.name}
@@ -550,7 +555,7 @@ export const URINavigator = ({
           </>)
         ) : (
           <>
-            <Link href={pathURLBuilder(params, {path})}>{relativeTo}</Link>
+            <Link key={relativeTo} href={pathURLBuilder(params, {path})}>{relativeTo}</Link>
             <strong>{"/"}</strong>
           </>
         )}
@@ -698,7 +703,7 @@ export const Tree = ({
     <div className="tree-container">
       <Card>
         <Card.Header>
-          <URINavigator path={path} repo={repo} reference={reference} hasCopyButton={true}/>
+          <URINavigator key={repo.id} path={path} repo={repo} reference={reference} hasCopyButton={true}/>
         </Card.Header>
         <Card.Body>{body}</Card.Body>
       </Card>

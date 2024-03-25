@@ -149,7 +149,11 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     const { path, after } = router.query;
     const [showUpload, setShowUpload] = useState(false);
     const [showImport, setShowImport] = useState(false);
+    const {setPage,setRefresh,refresh:refre} = useContext(ActivepageContext)
 
+    useEffect(()=>{
+        setPage('changes')
+    },[])
     const initialState = {
         inProgress: false,
         error: null,
@@ -173,7 +177,9 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
     
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
+        wip.updateWip(user,repo.name,{refName:reference.name},{})
         setInternalRefresh(!internalRefresh)
+        setRefresh(!refre)
     }
     
     if (error) return <AlertError error={error}/>
@@ -210,7 +216,7 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
 
                 <ActionGroup orientation="right">
 
-                    <RefreshButton onClick={refresh}/>
+                    <RefreshButton enabled={results.length > 0} onClick={refresh}/>
 
                     <RevertButton enabled={results.length > 0} onRevert={() => {
                         wip.revertWipChanges(repo.name, user,{refName:reference.name})
@@ -321,11 +327,6 @@ const ChangesContainer = () => {
 }
 
 const RepositoryChangesPage = () => {
-    const activepage = useContext(ActivepageContext)
-
-    useEffect(()=>{
-        activepage.setPage('changes')
-    },[])
     return (
             <RepositoryPageLayout activePage={'changes'}>
                 <ChangesContainer/>

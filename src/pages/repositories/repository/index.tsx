@@ -9,6 +9,7 @@ import RepositoryGeneralSettingsPage from "./settings/general";
 import RepositoryObjectsViewPage from "./repo-comp/objects/objectViewer";
 import { RefContextProvider } from "../../../lib/hooks/repo";
 import { StorageConfigProvider } from "../../../lib/hooks/storageConfig";
+import AKSKPage from "./settings/AKSK";
 
 const RepositoryPage = () => {
   return (
@@ -23,10 +24,14 @@ const RepositoryPage = () => {
           <Route
             path="settings/*"
             element={<RepositoryGeneralSettingsPage />}
-          />
+            />
           <Route
             path="settings/general/*"
             element={<RepositoryGeneralSettingsPage />}
+          />
+          <Route
+            path="settings/AKSK/*"
+            element={<AKSKPage />}
           />
           <Route path="/" element={<Navigate to=":user/" />} />
         </Routes>

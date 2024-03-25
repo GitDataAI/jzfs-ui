@@ -10,18 +10,18 @@ export default ({ command }) => {
     
     plugins: [
       replace({
-          preventAssignment: true,
-          include: ['src/**/*.jsx', 'src/**/*.js'],
-          values: {
-            __buildVersion: process.env.VERSION || 'dev',
-          }
+        preventAssignment: true,
+        include: ['src/**/*.jsx', 'src/**/*.js'],
+        values: {
+          __buildVersion: process.env.VERSION || 'dev',
+        }
       }),
       react()
     ],
     publicDir: './pub',
   };
 
-  // in development
+  // 在开发环境
   if (command === 'serve' || command === 'test') {
     return {
       ...baseConfig,
@@ -45,11 +45,28 @@ export default ({ command }) => {
           }
         }
       },
-      build: {
-        sourcemap: 'inline',
-      },
     };
   } 
-  // while building
-  return baseConfig;
+  return {
+    ...baseConfig,
+    build: {
+      minify: true, 
+      sourcemap: 'inline',
+      cacheDir: '.vite/cache',
+      rollupOptions: {
+        external: ['react', 'react-dom'],
+        output: {
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+          },
+        },
+      },
+      terserOptions: {
+        compress: {
+          drop_console: true, 
+        },
+      },
+    },
+  };
 };

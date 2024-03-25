@@ -155,11 +155,10 @@ a {
   left: 0;
   height: 100vh;
   width: 20rem;
-  border-right: 2px solid rgb(219, 224, 252);
   margin-right: 10px;
   background-color: #fff;
   overflow-y: scroll;
-
+  
   @media (max-width: 600px) {
     height: 30vh;
     margin-left: 5rem;
@@ -195,7 +194,41 @@ a {
       }
     }
   }
+  .card{
+    border: none;
+    .Nav-Card{
+      display: grid;
+      justify-content: flex-start;
+      svg{
+        margin: 5px;
+      }
+      .active{
+        background: none;
+        color: black;
+        border-left: 3px solid #658fd3;
+      }
+      button:hover{
+        background: none;
+        color: black;
+        border-left: 3px solid #658fd3;
+
+      }
+      button{
+        background:none;
+        color: black;
+        border: none;
+        text-align: left;
+        margin-bottom: 0.2rem;
+        font-weight: 600;
+        border-radius: 0;
+      }
+    }
+  }
 }
+.sidebar::-webkit-scrollbar{
+  display: none;
+}
+
 .child{
   margin: 0.5rem;
   margin-bottom: 5rem;
@@ -257,7 +290,7 @@ a {
   border-bottom: 2px solid rgb(219, 224, 252);
   .navbar-brand{
     display: flex;
-    .nav-link{
+    strong{
       line-height: 30px;
       margin-left: 0.5rem;
       font-size: 16px;
@@ -317,4 +350,28 @@ a {
 }
 .Navtittle{
   margin: 1.5rem;
+}
+.AKSK-List{
+  .row{
+    button{
+      width: 12rem;
+      margin: 0.5rem auto;
+    }
+  }
+  .card{
+    margin: 0.5rem auto ;
+    .card-body{
+      display: flex;
+      button{
+        height:2.5rem;
+        width: 8rem;
+        margin: auto;
+        margin-right: 4rem;
+      }
+    }
+   
+  }
+}
+.to-repo{
+  margin: 0.9rem;
 }

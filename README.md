@@ -3,9 +3,11 @@
 A UI of JiaoZiFS(A version control file system for data centric applications & teams).
 
 <p align="left">
-  <a href="https://codecov.io/gh/jiaozifs/jiaozifs"><img src="https://codecov.io/gh/gitdataai/jiaozifs-ui/branch/main/graph/badge.svg" /></a>
-  <a href="https://goreportcard.com/report/github.com/jiaozifs/jiaozifs-ui"><img src="https://goreportcard.com/badge/github.com/gitdataai/jiaozifs-ui" /></a>  
-  <a href=""><img src="https://img.shields.io/badge/golang-%3E%3D1.22.0-blue.svg" /></a>
+  <a href="https://www.npmjs.com/package/npm">
+       <img src="https://camo.githubusercontent.com/ae8e4bb0c53259a19bfe3a79d29797a2d7b38cf50251ac18a60c9e91846c5aa0/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6e706d2e737667" alt="npm package" />
+    </a>
+    <a href="http://www.typescriptlang.org/"><img src="https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg?style=flat-square" height="20"></a>
+
   <br/>
 </p>
 

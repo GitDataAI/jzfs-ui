@@ -1,5 +1,5 @@
 
-import React, { ChangeEvent, SyntheticEvent, useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { ButtonToolbar, Card, Container, Form, FormControl } from "react-bootstrap";
 
 import dayjs from "dayjs";
@@ -11,11 +11,12 @@ import { cache } from '../../lib/api';
 import { useRouter } from "../../lib/hooks/router";
 
 import { Route, Routes } from "react-router-dom";
-import RepositoryPage from './repository';
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
 import { users } from "../../lib/api/interface/index";
 import { ActivepageContext } from "../../lib/hooks/conf";
 import { activepage } from "../../lib/hooks/interface";
+
+const RepositoryPage = React.lazy(() => import('./repository'));
 
 
 dayjs.extend(relativeTime);
@@ -29,6 +30,7 @@ const RepositoriesPage = () => {
     const [creatingRepo, setCreatingRepo] = useState(false);
     const [repoamount, setRepoAmount] = useState(0);
     const [search,setSearch] = useState('')
+    const [filter, setFilter] = useState('')
     function debounce(func: Function, delay: number) {
         let timer: NodeJS.Timeout;
         return  (...args: any[]) => {
@@ -38,7 +40,7 @@ const RepositoriesPage = () => {
           }, delay);
         };
       }
-    const handleChange = (e:ChangeEvent<FormControlElement>)=>{
+    const handleChange:React.ChangeEventHandler<HTMLInputElement> = (e)=>{
         setSearch(e.target.value);
     }
     const debouncedHandleChange = debounce(handleChange, 300);
@@ -67,6 +69,10 @@ const RepositoriesPage = () => {
             return false;
         }
     };
+    useEffect(()=>{
+        let fil = router.query.fil
+        setFilter(fil?fil:'')
+    },[router])
 
     const createRepositoryButtonCallback = useCallback(() => {
         setSampleRepoChecked(false);
@@ -78,12 +84,12 @@ const RepositoriesPage = () => {
         <Layout>
             <Container fluid="xl" className="mt-3">
                 {<ActionsBar>
-                    <h2><strong>All</strong></h2>
+                    <h2><strong>{filter?filter:'All'}</strong></h2>
                     <ButtonToolbar className="ms-auto mb-2">
                         <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} />
                     </ButtonToolbar>
                 </ActionsBar>}
-                <Form inline>
+                <Form>
                     <FormControl type="text" placeholder="Search" className="mr-sm-2" onChange={debouncedHandleChange}/>
                 </Form>
 
@@ -95,6 +101,7 @@ const RepositoriesPage = () => {
                     refresh={refresh}
                     setRepoAmount={setRepoAmount}
                     search={search}
+                    filter={filter}
                 />
                 </Card>
 

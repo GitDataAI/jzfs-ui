@@ -332,8 +332,10 @@ export const PrefixSearchWidget:React.FC<PrefixSearchWidgetProps> = ({ onFilter,
     )
 }
 
-export const RefreshButton:React.FC<RefreshButtonProps> = ({ onClick, size = "md", variant = "light", tooltip = "Refresh", icon = <SyncIcon/> }) => {
-    return (
+export const RefreshButton:React.FC<RefreshButtonProps> = ({ enabled, onClick, size = "", variant = "light", tooltip = "Update", icon = <SyncIcon/> }) => {
+    
+    if(enabled)
+         return (
         <TooltipButton
             tooltip={tooltip}
             variant={variant}
