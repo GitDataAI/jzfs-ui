@@ -53,15 +53,6 @@ export default ({ command }) => {
       minify: true, 
       sourcemap: 'inline',
       cacheDir: '.vite/cache',
-      rollupOptions: {
-        external: ['react', 'react-dom'],
-        output: {
-          globals: {
-            react: 'React',
-            'react-dom': 'ReactDOM',
-          },
-        },
-      },
       terserOptions: {
         compress: {
           drop_console: true, 
