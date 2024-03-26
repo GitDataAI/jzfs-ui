@@ -68,7 +68,7 @@ export const RepositoryList = ({refresh,setRepoAmount,search,filter=''}:{refresh
                         })
                     }else if(filter && !search){
                         results.data.results = results.data.results.filter((item)=>{
-                            return item.use_public_storage == (filter == 'Public')
+                            return item.visible == (filter == 'Public')
                         })
                     }
                     setRepoAmount(results.data.results.length)
@@ -90,7 +90,7 @@ export const RepositoryList = ({refresh,setRepoAmount,search,filter=''}:{refresh
                                                     pathname: `/repositories/:user/:repoId/objects`,
                                                     params: {repoId: repo.name,user},
                                                 }}>
-                                                    {repo.name} <Storage storage={repo.use_public_storage}/>
+                                                    {repo.name} <Storage storage={repo.visible}/>
                                                 </Link>
                                             </h5>
                                             <p>

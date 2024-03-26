@@ -228,7 +228,7 @@ const EntryMetadata = ({ metadata }) => {
     )
 };
 
-const PathLink = ({ repoId, reference, path, children, presign = false, as = null }) => {
+export const PathLink = ({ repoId, reference, path, children, presign = false, as = null }) => {
   const user = cache.get('user');
   const [Src, setSrc] = useState(null);
   const name = path.split("/").pop();
@@ -240,8 +240,7 @@ const PathLink = ({ repoId, reference, path, children, presign = false, as = nul
       const url = URL.createObjectURL(blob);
       setSrc(url);
     };
-
-fetchImage();
+    fetchImage();
   }, [repoId, path]);
 
   if (as === null)

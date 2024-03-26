@@ -12,11 +12,12 @@ import {useRouter} from "../../../../../lib/hooks/router";
 import { Box } from "@mui/material";
 import { RepoError } from "../error/error";
 import { NoGCRulesWarning, ReadmeContainer, TreeContainer } from "./obj_comps";
-import { Button } from "react-bootstrap";
+import { Button, Dropdown, Form, Row } from "react-bootstrap";
 import { UploadIcon } from "@primer/octicons-react";
 import { Link } from "../../../../../lib/components/nav";
 import { cache } from "../../../../../lib/api";
 import { ActivepageContext } from "../../../../../lib/hooks/conf";
+import { repos } from "../../../../../lib/api/interface";
 
 
 const ObjectsBrowser = () => {
@@ -28,15 +29,56 @@ const ObjectsBrowser = () => {
   const [showImport, setShowImport] = useState(false);
   const [filepath,setFilepath] = useState(path);
   const [refreshToken, setRefreshToken] = useState(false);
+  const [TagName, setTagName] = useState('')
+  const [TagType, setTagType] = useState('')
+  const [TagMessage, setTagMessage] = useState('')
+  const [hiddenTagForm, setHiddenTagForm] = useState(true)
   const refresh = () => setRefreshToken(!refreshToken);
+  const [ZipSrc, setZipSrc] = useState<string>('');
+  const [CarSrc, setCarSrc] = useState<string>('');
+
   const parts = (path && path.split("/")) || [];
   let searchPrefix = parts.join("/");
   const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";
+  const ShowTagForm=()=>{
+    setHiddenTagForm(!hiddenTagForm)
+  }
+  const handleSubmit=()=>{
+    repos.createTag(user,repo.name,{
+      name:TagName,
+      target:TagType,
+      message:TagMessage
+    })
+  }
+  useEffect(() => {
+    const fetchImage = async () => {
+      const response = await repos.getArchive(user,repo.name,{archive_type:'zip',refType:reference.type,refName:reference.name})
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    setZipSrc(url);
+    };
+ repo && fetchImage();
+  }, [reference, repo]);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+    const response = await repos.getArchive(user,repo.name,{archive_type:'car',refType:reference.type,refName:reference.name})
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    setCarSrc(url);
+    };
+    repo && fetchImage();
+  }, [reference, repo]);
+
   useEffect(() => {
     setFilepath(path)
     refresh()
   }, [path]); 
+
+  useEffect(() => {
+    reference && setTagType(reference.name)   
+  }, [reference]); 
 
   if (loading) return <Loading />;
   if (error) return <RepoError error={error} />;
@@ -66,7 +108,7 @@ const ObjectsBrowser = () => {
         </ActionGroup>
 
         <ActionGroup orientation="right">
-          <RefreshButton onClick={refresh} />
+
         <Button
         variant={"light"}
         >
@@ -77,6 +119,7 @@ const ObjectsBrowser = () => {
         <UploadIcon />Edit
           </Link>
         </Button>
+      
           
         </ActionGroup>
       </ActionsBar>
@@ -142,24 +185,22 @@ const ObjectsBrowser = () => {
         </ActionGroup>
 
         <ActionGroup orientation="right">
-          {/* <PrefixSearchWidget
-            text="Search by Prefix"
-            key={filepath}
-            defaultValue={searchSuffix}
-            onFilter={(prefix: string) => {
-              let query = { path: "",ref:"" };
-              if (searchPrefix !== undefined) query.path = searchPrefix;
-              if (prefix) query.path += prefix;
-              if (reference) query.ref = reference.name;
-              const url = {
-                pathname: `/repositories/:user/:repoId/objects`,
-                query,
-                params: { repoId: repo.name,user },
-              };
-              router.push(url);
-            }}
-          /> */}
-          <RefreshButton onClick={refresh} />
+        <Dropdown >
+                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                DownLoad
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+
+                <Dropdown.Item  href={ZipSrc} download={reference.name+'.zip'}>
+                  DownLoad {reference.name}.Zip
+                </Dropdown.Item>
+
+                <Dropdown.Item href={CarSrc} download={reference.name+'.car'}>
+                  DownLoad {reference.name}.Car
+                </Dropdown.Item>
+
+                </Dropdown.Menu>
+          </Dropdown>
         <Button
         variant={"light"}
         >
@@ -169,6 +210,12 @@ const ObjectsBrowser = () => {
             }}>
         <UploadIcon />Edit
           </Link>
+        </Button>
+        <Button
+        variant={"light"}
+        onClick={ShowTagForm}
+        >
+        <UploadIcon />Create Tag
         </Button>
           
         </ActionGroup>
@@ -217,6 +264,41 @@ const ObjectsBrowser = () => {
           refreshDep={refreshToken}
         />
       </Box>
+      <Form className="TagForm" onSubmit={handleSubmit} hidden={hiddenTagForm}>
+        <h4>Create Tag</h4>
+      <Form.Group controlId="tagName">
+        <Form.Label>Tag Name:</Form.Label>
+        <Form.Control
+          type="text"
+          value={TagName}
+          onChange={(e)=>{
+            setTagName(e.target.value)
+          }}        />
+      </Form.Group>
+      <Form.Group controlId="tagType">
+        <Form.Label>Tag Target:</Form.Label>
+        <Form.Control
+          type="text"
+          defaultValue={reference.name}
+          disabled={true}
+        />
+      </Form.Group>
+      <Form.Group controlId="tagMessage">
+        <Form.Label>Tag Message:</Form.Label>
+        <Form.Control
+          as="textarea"
+          value={TagMessage}
+          onChange={(e)=>{
+            setTagMessage(e.target.value)
+          }}
+        />
+      </Form.Group>
+      <Row>
+      <Button variant="primary" type="submit">
+        Submit
+      </Button>
+      </Row>
+    </Form>
     </>
   );
 };

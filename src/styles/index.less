@@ -1,5 +1,4 @@
 body{
-  background-color: #f1f3f8;
   // background-image:url(../../pub/modern-2721466_1280.png);
   overflow: hidden;
   background-repeat: repeat;
@@ -200,7 +199,7 @@ a {
       display: grid;
       justify-content: flex-start;
       svg{
-        margin: 5px;
+        margin: 3px 3px 5px 5px;
       }
       .active{
         background: none;
@@ -228,10 +227,10 @@ a {
 .sidebar::-webkit-scrollbar{
   display: none;
 }
-
 .child{
   margin: 0.5rem;
   margin-bottom: 5rem;
+  padding-top: 0.8rem;
   width: 100%;
   overflow-y: scroll;
   @media (max-width: 600px) {
@@ -336,20 +335,21 @@ a {
   background-color:#e5e5e5 ;
 }
 .repo-card{
-    margin-top: 2rem;
+    margin-top: 1rem;
   .repo-card-header{
     border-radius: 5px 5px 0 0;
     strong{
       font-size: 0.9rem;
-      color: #878686;
     }
   }
   .card{
     border-radius: 0;
+    border: 0.5px solid #eeeeee;
   }
 }
 .Navtittle{
-  margin: 1.5rem;
+  margin: 2rem 2rem 1.3rem 2rem;
+  font-size: 20px;
 }
 .AKSK-List{
   .row{
@@ -374,4 +374,40 @@ a {
 }
 .to-repo{
   margin: 0.9rem;
+  font-size: 18px;
+}
+.repoTittle{
+  font-size: 20px;
+}
+.repo-create{
+  .form-floating{
+    margin: 5px 0;
+  }
+  .repo-Visable{
+    border: 1px solid rgb(219, 224, 252) ;
+    padding: 5px;
+    border-radius: 5px;
+  }
+}
+.TagForm{
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.9);
+  top: 15%;
+  left: 30%;
+  width: 40%;
+  height: 45%;
+  padding: 3rem;
+  border: 1px solid rgb(219, 224, 252) ;
+  h4{
+    margin: auto;
+    width: 8rem;
+  }
+  div{
+    margin: 20px auto;
+
+  }
+  button{
+    margin: auto;
+    width: 6rem;
+  }
 }

@@ -152,6 +152,11 @@ export enum RefType {
   Commit = "commit",
 }
 
+export enum ArchiveType {
+  Zip = "zip",
+  Car = "car",
+}
+
 export interface CreateMergeRequest {
   target_branch_name: string;
   source_branch_name: string;
@@ -281,6 +286,63 @@ export interface MergeRequestList {
     /** @format int64 */
     updated_at: number;
   }[];
+}
+
+export interface TagList {
+  pagination: {
+    /** Next page is available */
+    has_more: boolean;
+    /** Token used to retrieve the next page */
+    next_offset: string;
+    /**
+     * Number of values found in the results
+     * @min 0
+     */
+    results: number;
+    /**
+     * Maximal number of entries per page
+     * @min 0
+     */
+    max_per_page: number;
+  };
+  results: {
+    /** @format uuid */
+    id: string;
+    /** @format uuid */
+    repository_id: string;
+    name: string;
+    /** @format uuid */
+    creator_id: string;
+    target: string;
+    message?: string;
+    /** @format int64 */
+    created_at: number;
+    /** @format int64 */
+    updated_at: number;
+  }[];
+}
+
+export interface TagCreation {
+  name: string;
+  /** target branch name or commit hex, first try branch and then commit */
+  target: string;
+  message?: string;
+}
+
+export interface Tag {
+  /** @format uuid */
+  id: string;
+  /** @format uuid */
+  repository_id: string;
+  name: string;
+  /** @format uuid */
+  creator_id: string;
+  target: string;
+  message?: string;
+  /** @format int64 */
+  created_at: number;
+  /** @format int64 */
+  updated_at: number;
 }
 
 export interface Branch {
@@ -774,6 +836,7 @@ export enum ContentType {
   UrlEncoded = "application/x-www-form-urlencoded",
   Text = "text/plain",
 }
+
 export class HttpClient<SecurityDataType = unknown> {
   public baseUrl: string = window.JIAOZIFS_API_URL;
   private securityData: SecurityDataType | null = null;
@@ -940,6 +1003,7 @@ export class HttpClient<SecurityDataType = unknown> {
     });
   };
 }
+
 /**
  * @title jiaozifs API
  * @version 1.0.0
@@ -1457,6 +1521,36 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   };
   repos = {
+    /**
+     * No description
+     *
+     * @tags repos
+     * @name GetArchive
+     * @summary get repo files archive
+     * @request GET:/repos/{owner}/{repository}/archive
+     * @secure
+     */
+    getArchive: (
+      owner: string,
+      repository: string,
+      query: {
+        /** download zip or car files */
+        archive_type: "zip" | "car";
+        /** ref type only allow branch or tag */
+        refType: "branch" | "wip" | "tag" | "commit";
+        /** ref(branch/tag) name */
+        refName: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<File, void>({
+        path: `/repos/${owner}/${repository}/archive`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
     /**
      * No description
      *
@@ -2415,6 +2509,195 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         void
       >({
         path: `/repos/${owner}/${repository}/branch`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags tags
+     * @name ListTags
+     * @summary list tags
+     * @request GET:/repos/{owner}/{repository}/tags
+     * @secure
+     */
+    listTags: (
+      owner: string,
+      repository: string,
+      query?: {
+        /** return items prefixed with this value */
+        prefix?: string;
+        /**
+         * return items after this value
+         * @format int64
+         */
+        after?: number;
+        /**
+         * how many items to return
+         * @min -1
+         * @max 1000
+         * @default 100
+         */
+        amount?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          pagination: {
+            /** Next page is available */
+            has_more: boolean;
+            /** Token used to retrieve the next page */
+            next_offset: string;
+            /**
+             * Number of values found in the results
+             * @min 0
+             */
+            results: number;
+            /**
+             * Maximal number of entries per page
+             * @min 0
+             */
+            max_per_page: number;
+          };
+          results: {
+            /** @format uuid */
+            id: string;
+            /** @format uuid */
+            repository_id: string;
+            name: string;
+            /** @format uuid */
+            creator_id: string;
+            target: string;
+            message?: string;
+            /** @format int64 */
+            created_at: number;
+            /** @format int64 */
+            updated_at: number;
+          }[];
+        },
+        void
+      >({
+        path: `/repos/${owner}/${repository}/tags`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags tags
+     * @name GetTag
+     * @summary get tag
+     * @request GET:/repos/{owner}/{repository}/tag
+     * @secure
+     */
+    getTag: (
+      owner: string,
+      repository: string,
+      query: {
+        refName: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          /** @format uuid */
+          repository_id: string;
+          name: string;
+          /** @format uuid */
+          creator_id: string;
+          target: string;
+          message?: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/repos/${owner}/${repository}/tag`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags tags
+     * @name DeleteTag
+     * @summary delete tag
+     * @request DELETE:/repos/{owner}/{repository}/tag
+     * @secure
+     */
+    deleteTag: (
+      owner: string,
+      repository: string,
+      query: {
+        refName: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, void>({
+        path: `/repos/${owner}/${repository}/tag`,
+        method: "DELETE",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags tags
+     * @name CreateTag
+     * @summary create tag
+     * @request POST:/repos/{owner}/{repository}/tag
+     * @secure
+     */
+    createTag: (
+      owner: string,
+      repository: string,
+      data: {
+        name: string;
+        /** target branch name or commit hex, first try branch and then commit */
+        target: string;
+        message?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          /** @format uuid */
+          id: string;
+          /** @format uuid */
+          repository_id: string;
+          name: string;
+          /** @format uuid */
+          creator_id: string;
+          target: string;
+          message?: string;
+          /** @format int64 */
+          created_at: number;
+          /** @format int64 */
+          updated_at: number;
+        },
+        void
+      >({
+        path: `/repos/${owner}/${repository}/tag`,
         method: "POST",
         body: data,
         secure: true,

@@ -24,6 +24,7 @@ import { object, repos, wip } from "../../../../../lib/api/interface/index";
 import { UploadButton } from "../objects/uplodaButton";
 import ChangeList from "../../commits/commit/changesrow";
 import { ActivepageContext } from "../../../../../lib/hooks/conf";
+import { Dropdown } from "react-bootstrap";
 
 
 const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = false}) => {
@@ -161,9 +162,11 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
       };
       const [deleteState, setDeleteState] = useState(initialState);
     const {loading:loaded} = useAPI(()=>wip.getWip(repo.name,user,{refName:reference.name}))   
+
     const { response,loading:load} = useAPI(async() =>
     {return await repos.getEntriesInRef(user,repo.name,{ref:reference.name,type:'wip',path:path?path:'/'})}
     ,[repo.name,internalRefresh,path])
+
     const { error , loading } = useAPI(async () => {
         if (!repo) return
         return await appendMoreResults(resultsState, prefix, afterUpdated, setAfterUpdated, setResultsState,
@@ -174,10 +177,12 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
         if(loading || load || loaded)
             setTimeout(()=>refresh(), 100);
     },[])
-    
+    const update=()=>{
+        wip.updateWip(user,repo.name,{refName:reference.name},{})
+        setInternalRefresh(!internalRefresh)
+    }
     const refresh = () => {
         setResultsState({prefix: prefix, results:[], pagination:{}})
-        wip.updateWip(user,repo.name,{refName:reference.name},{})
         setInternalRefresh(!internalRefresh)
         setRefresh(!refre)
     }
@@ -213,10 +218,10 @@ const ChangesBrowser: React.FC<ChangesBrowserProps> = ({repo, reference, prefix,
                         onCancel={undefined} 
                         />
                 </ActionGroup>
-
+                
                 <ActionGroup orientation="right">
 
-                    <RefreshButton enabled={results.length > 0} onClick={refresh}/>
+                    <RefreshButton enabled={results.length > 0} onClick={update}/>
 
                     <RevertButton enabled={results.length > 0} onRevert={() => {
                         wip.revertWipChanges(repo.name, user,{refName:reference.name})

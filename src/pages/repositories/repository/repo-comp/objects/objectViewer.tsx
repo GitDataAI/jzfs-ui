@@ -132,7 +132,7 @@ export const FileContents: FC<FileContentsProps> = ({
       filepath
     />
   ) : (
-    <span>{path}</span>
+    <span>{path.split('/')[1]}</span>
   );
 
   return (

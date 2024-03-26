@@ -19,22 +19,22 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
         const fetchRefs = async () => {
             try {
                 let response;
-            //     if (refType === RefTypeTag && repo.name) {
-            //         response = await tags.list(repo.id, pagination.prefix, pagination.after, pagination.amount);
-            //     } else {
+                if (refType === RefTypeTag && repo.name) {
+                    response = await repos.listTags(user, repo.name);
+                } else {
                     if(repo.name)
                         await repos.listBranches(user,repo.name).then(  (data)=>{
                         response =   data.data
                 });
                 
-                // }
+                }
                     setRefs({loading: false, payload: response, error: null});
             } catch (error) {
                 setRefs({loading: false, payload: null, error: error as Error});
             }
         };
         fetchRefs();
-    }, [refType, repo.id, pagination])
+    }, [refType, repo, pagination])
 
     // used for commit listing
     const initialCommitList = {branch: selected, commits: null, loading: false};

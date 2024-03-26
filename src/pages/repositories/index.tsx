@@ -52,7 +52,7 @@ const RepositoriesPage = () => {
     useEffect(() => {
         activepageL.setPage('repositories')
     })
-    const createRepo = async (repo: { name: string, description: string }, presentRepo = true) => {
+    const createRepo = async (repo: { name: string, description: string ,visible:boolean}, presentRepo = true) => {
         const owner = cache.get('user')
         try {
             setCreatingRepo(true);
@@ -84,7 +84,7 @@ const RepositoriesPage = () => {
         <Layout>
             <Container fluid="xl" className="mt-3">
                 {<ActionsBar>
-                    <h2><strong>{filter?filter:'All'}</strong></h2>
+                    <h2 className="repoTittle"><strong>{filter?filter:'All'}</strong></h2>
                     <ButtonToolbar className="ms-auto mb-2">
                         <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} />
                     </ButtonToolbar>

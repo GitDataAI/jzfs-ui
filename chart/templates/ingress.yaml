@@ -15,8 +15,6 @@ metadata:
     release:  jiaozifs-ui
 spec:
   ingressClassName: {{.Values.ingress_name}}
-  tls:
-    - secretName: {{.Values.cert}}
   rules:
     - host: cloud.jiaozifs.com
       http:

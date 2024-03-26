@@ -19,7 +19,7 @@ const Repolistsnav = () =>{
         <Row className="sidebar">
         <Form className='flex Fast-navb'>
             <Col className="d-flex">
-            <strong className="Navtittle">Top Repositories</strong>           
+            <strong className="Navtittle">Repositories</strong>           
             </Col>
         <Card>
             <Card.Body className="Nav-Card">

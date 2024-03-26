@@ -32,8 +32,6 @@ export class Auth {
             const logininfo  = await response.json()
             const user = await this.getUserInfo(logininfo.token)
             cache.set('user', user.name)
-            
-            console.log(window.localStorage);
             return response.json()
         }).catch(async(err)=>{
                 const errorBody = await extractError(err);

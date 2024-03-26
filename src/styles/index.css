@@ -1,5 +1,4 @@
 body {
-  background-color: #f1f3f8;
   overflow: hidden;
   background-repeat: repeat;
 }
@@ -200,7 +199,7 @@ a {
   justify-content: flex-start;
 }
 .sidebar .card .Nav-Card svg {
-  margin: 5px;
+  margin: 3px 3px 5px 5px;
 }
 .sidebar .card .Nav-Card .active {
   background: none;
@@ -227,6 +226,7 @@ a {
 .child {
   margin: 0.5rem;
   margin-bottom: 5rem;
+  padding-top: 0.8rem;
   width: 100%;
   overflow-y: scroll;
 }
@@ -328,20 +328,21 @@ a {
   background-color: #e5e5e5;
 }
 .repo-card {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 .repo-card .repo-card-header {
   border-radius: 5px 5px 0 0;
 }
 .repo-card .repo-card-header strong {
   font-size: 0.9rem;
-  color: #878686;
 }
 .repo-card .card {
   border-radius: 0;
+  border: 0.5px solid #eeeeee;
 }
 .Navtittle {
-  margin: 1.5rem;
+  margin: 2rem 2rem 1.3rem 2rem;
+  font-size: 20px;
 }
 .AKSK-List .row button {
   width: 12rem;
@@ -361,4 +362,37 @@ a {
 }
 .to-repo {
   margin: 0.9rem;
+  font-size: 18px;
+}
+.repoTittle {
+  font-size: 20px;
+}
+.repo-create .form-floating {
+  margin: 5px 0;
+}
+.repo-create .repo-Visable {
+  border: 1px solid #dbe0fc;
+  padding: 5px;
+  border-radius: 5px;
+}
+.TagForm {
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.9);
+  top: 15%;
+  left: 30%;
+  width: 40%;
+  height: 45%;
+  padding: 3rem;
+  border: 1px solid #dbe0fc;
+}
+.TagForm h4 {
+  margin: auto;
+  width: 8rem;
+}
+.TagForm div {
+  margin: 20px auto;
+}
+.TagForm button {
+  margin: auto;
+  width: 6rem;
 }
