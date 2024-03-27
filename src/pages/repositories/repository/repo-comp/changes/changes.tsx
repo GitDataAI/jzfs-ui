@@ -81,12 +81,12 @@ const CommitButton: React.FC<CommitButtonProps> = ({repo, onCommit, enabled = fa
                     <Button variant="secondary" onClick={hide}>
                         Cancel
                     </Button>
-                    <Button variant="success" disabled={committing} onClick={onSubmit}>
+                    <Button variant="primary" disabled={committing} onClick={onSubmit}>
                         Commit Changes
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Button variant="success" disabled={!enabled} onClick={() => setShow(true)}>
+            <Button variant="primary" disabled={!enabled} onClick={() => setShow(true)}>
                 <GitCommitIcon/> Commit Changes{' '}
             </Button>
         </>
