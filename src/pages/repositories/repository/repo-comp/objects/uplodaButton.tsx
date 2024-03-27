@@ -212,7 +212,7 @@ export const UploadButton = ({repoId, reference, path, onDone, onClick, onHide, 
           <Button variant="secondary" onClick={hide}>
               Cancel
           </Button>
-          <Button variant="success" disabled={uploadState.inProgress || files.length < 1} onClick={() => {
+          <Button variant="primary" disabled={uploadState.inProgress || files.length < 1} onClick={() => {
               if (uploadState.inProgress) return;
               upload()
           }}>

@@ -12,7 +12,7 @@ import {useRouter} from "../../../../../lib/hooks/router";
 import { Box } from "@mui/material";
 import { RepoError } from "../error/error";
 import { NoGCRulesWarning, ReadmeContainer, TreeContainer } from "./obj_comps";
-import { Button, Dropdown, Form, Row } from "react-bootstrap";
+import { Button, Dropdown, FloatingLabel, Form, Modal, Row } from "react-bootstrap";
 import { UploadIcon } from "@primer/octicons-react";
 import { Link } from "../../../../../lib/components/nav";
 import { cache } from "../../../../../lib/api";
@@ -32,7 +32,7 @@ const ObjectsBrowser = () => {
   const [TagName, setTagName] = useState('')
   const [TagType, setTagType] = useState('')
   const [TagMessage, setTagMessage] = useState('')
-  const [hiddenTagForm, setHiddenTagForm] = useState(true)
+  const [show, setShow] = useState(false)
   const refresh = () => setRefreshToken(!refreshToken);
   const [ZipSrc, setZipSrc] = useState<string>('');
   const [CarSrc, setCarSrc] = useState<string>('');
@@ -42,14 +42,15 @@ const ObjectsBrowser = () => {
   const user = cache.get('user')
   searchPrefix = searchPrefix && searchPrefix + "/";
   const ShowTagForm=()=>{
-    setHiddenTagForm(!hiddenTagForm)
+    setShow(!show)
   }
-  const handleSubmit=()=>{
-    repos.createTag(user,repo.name,{
+  const handleSubmit=async ()=>{
+    await repos.createTag(user,repo.name,{
       name:TagName,
       target:TagType,
       message:TagMessage
     })
+    ShowTagForm()
   }
   useEffect(() => {
     const fetchImage = async () => {
@@ -264,27 +265,26 @@ const ObjectsBrowser = () => {
           refreshDep={refreshToken}
         />
       </Box>
-      <Form className="TagForm" onSubmit={handleSubmit} hidden={hiddenTagForm}>
+      <Modal show={show} onHide={ShowTagForm} size="lg">
+            <Modal.Body>
+            <Form className="TagForm" >
         <h4>Create Tag</h4>
-      <Form.Group controlId="tagName">
-        <Form.Label>Tag Name:</Form.Label>
+        <FloatingLabel label="Tag Name:" controlId="tagNameControl">
         <Form.Control
           type="text"
           value={TagName}
           onChange={(e)=>{
             setTagName(e.target.value)
           }}        />
-      </Form.Group>
-      <Form.Group controlId="tagType">
-        <Form.Label>Tag Target:</Form.Label>
+          </FloatingLabel>
+        <FloatingLabel label="Tag Target:" controlId="tagTypeControl">
         <Form.Control
           type="text"
           defaultValue={reference.name}
           disabled={true}
         />
-      </Form.Group>
-      <Form.Group controlId="tagMessage">
-        <Form.Label>Tag Message:</Form.Label>
+       </FloatingLabel>
+      <FloatingLabel label="Tag Message:" controlId="tagMessageControl">
         <Form.Control
           as="textarea"
           value={TagMessage}
@@ -292,13 +292,23 @@ const ObjectsBrowser = () => {
             setTagMessage(e.target.value)
           }}
         />
-      </Form.Group>
+        </FloatingLabel>
       <Row>
-      <Button variant="primary" type="submit">
-        Submit
-      </Button>
+     
       </Row>
     </Form>
+            </Modal.Body>
+            <Modal.Footer>
+            <Button variant="primary" type="submit" onClick={handleSubmit}>
+              Create Tag
+            </Button>
+              <Button variant="secondary" onClick={(e) => {
+                e.preventDefault();
+                ShowTagForm();
+              }}>Cancel</Button>
+            </Modal.Footer>
+        </Modal>
+     
     </>
   );
 };

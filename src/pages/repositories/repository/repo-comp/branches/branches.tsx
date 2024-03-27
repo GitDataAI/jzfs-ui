@@ -168,7 +168,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
     return (
         <>
             <Modal show={show} onHide={hide} enforceFocus={false}>
-                <Modal.Header closeButton>
+                <Modal.Header  closeButton>
                     Create Branch
                 </Modal.Header>
                 <Modal.Body>
@@ -200,7 +200,7 @@ const CreateBranchButton: React.FC<CreateBranchButtonProps> = ({ repo, variant =
                     <Button variant="secondary" disabled={disabled} onClick={hide}>
                         Cancel
                     </Button>
-                    <Button variant="success" onClick={onSubmit} disabled={disabled}>
+                    <Button variant="primary" onClick={onSubmit} disabled={disabled}>
                         Create
                     </Button>
                 </Modal.Footer>
@@ -248,7 +248,7 @@ const BranchList: React.FC<BranchListProps> = ({ repo, prefix, after}) => {
         <div className="mb-5">
             <ActionsBar>
                 <ActionGroup orientation="right">
-                    <CreateBranchButton repo={repo} variant="success" onCreate={doRefresh}>
+                    <CreateBranchButton repo={repo} variant="primary" onCreate={doRefresh}>
                         <GitBranchIcon/> Create Branch
                     </CreateBranchButton>
 

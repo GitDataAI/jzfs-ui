@@ -86,7 +86,7 @@ const RepositoriesPage = () => {
                 {<ActionsBar>
                     <h2 className="repoTittle"><strong>{filter?filter:'All'}</strong></h2>
                     <ButtonToolbar className="ms-auto mb-2">
-                        <CreateRepositoryButton variant={"success"} enabled={true} onClick={createRepositoryButtonCallback} />
+                        <CreateRepositoryButton variant="primary" enabled={true} onClick={createRepositoryButtonCallback} />
                     </ButtonToolbar>
                 </ActionsBar>}
                 <Form>

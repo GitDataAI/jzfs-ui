@@ -291,7 +291,7 @@ a {
 }
 .Nav-file {
   display: block;
-  margin-left: 20px;
+  margin-left: 2rem;
   font-weight: 600;
   font-size: 14px;
   white-space: nowrap;
@@ -374,25 +374,4 @@ a {
   border: 1px solid #dbe0fc;
   padding: 5px;
   border-radius: 5px;
-}
-.TagForm {
-  position: fixed;
-  background-color: rgba(255, 255, 255, 0.9);
-  top: 15%;
-  left: 30%;
-  width: 40%;
-  height: 45%;
-  padding: 3rem;
-  border: 1px solid #dbe0fc;
-}
-.TagForm h4 {
-  margin: auto;
-  width: 8rem;
-}
-.TagForm div {
-  margin: 20px auto;
-}
-.TagForm button {
-  margin: auto;
-  width: 6rem;
 }
