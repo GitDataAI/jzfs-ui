@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button,Card,Modal} from "react-bootstrap";
 
 import {RepoIcon} from "@primer/octicons-react";
@@ -14,7 +14,8 @@ import { CreateRepositoryButtonProps, CreateRepositoryModalProps} from "../inter
 import {users } from "../../../lib/api/interface/index";
 import { useRouter } from "../../../lib/hooks/router";
 import { Repository } from "../../../lib/api/interface/Api";
-
+type Order = 'asc' | 'desc';
+type SortBy = 'name' | 'created_at';
 dayjs.extend(relativeTime);
 
 export const CreateRepositoryButton: React.FC<CreateRepositoryButtonProps> = ({variant = "success", enabled = false, onClick,word= 'New Repository',style={}}) => {
@@ -38,29 +39,65 @@ export const CreateRepositoryModal: React.FC<CreateRepositoryModalProps> = ({sho
                 />
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="success" type="submit" form="repository-create-form" className="me-2" disabled={!formValid || inProgress} onClick={()=>{setShow(false),setRefresh(refresh)}}>
-                { inProgress ? 'Creating...' : 'Create Repository' }
-              </Button>
-              <Button variant="secondary" onClick={(e) => {
+            <Button variant="secondary" onClick={(e) => {
                 e.preventDefault();
                 onCancel();
               }}>Cancel</Button>
+              <Button variant="primary" type="submit" form="repository-create-form" className="me-2" disabled={!formValid || inProgress} onClick={()=>{setShow(false),setRefresh(refresh)}}>
+                { inProgress ? 'Creating...' : 'Create Repository' }
+              </Button>
             </Modal.Footer>
         </Modal>
     );
 };
 
-export const RepositoryList = ({refresh,setRepoAmount,search,filter=''}:{refresh:boolean,setRepoAmount:React.Dispatch<React.SetStateAction<number>>,search:string,filter:string}) => {
+export const RepositoryList = ({refresh,setRepoAmount,search,filter='',sortBy,order}:{refresh:boolean,setRepoAmount:React.Dispatch<React.SetStateAction<number>>,search:string,filter:string}) => {
     const user = cache.get('user')
     const router = useRouter()
+    const [repoArr,setRepoArr] = useState<Repository[]>([])
+    function sortData(data:Repository[], order:Order, sortBy:SortBy) {        
+        if (!Array.isArray(data) || data.length === 0) {
+            console.error("Invalid data array provided.");
+            return [];
+        }
+        let sortField;
+        if (sortBy == "name") {
+        } else if (sortBy == "created_at") {
+            sortField = "created_at"; 
+        } else {
+            console.error("Invalid order parameter. Use 'name' or 'created_at'.");
+            return [];
+        }
     
+        const sortOrder = order === "asc" ? 1 : order === "desc" ? -1 : 0;
+        if (sortOrder === 0) {
+            console.error("Invalid sortBy parameter. Use 'asc' or 'desc'.");
+            return [];
+        }
+    
+        return data.sort((a, b) => {
+            const valueA = a[sortField];
+            const valueB = b[sortField];
+            if (valueA < valueB) {
+                return -sortOrder;
+            } else if (valueA > valueB) {
+                return sortOrder;
+            }
+            return 0;
+        });
+    }
+    useEffect(()=>{
+        sortData(repoArr,order,sortBy)     
+        setRepoArr(repoArr)   
+    }, [refresh,search,filter,sortBy,order])
+
     const Storage = ({storage})=>{
         return(
         <span className="storage">{storage?'public':'private'}</span>
         )
     }
     if(user){
-        const {results, loading, error} = useAPIWithPagination( async() => {
+        const {loading, error} = useAPIWithPagination( async() => {
                 return  await users.listRepository(user).then((results)=>{
                     if(search && !filter ){
                         results.data.results = results.data.results.filter((item)=>{
@@ -72,16 +109,17 @@ export const RepositoryList = ({refresh,setRepoAmount,search,filter=''}:{refresh
                         })
                     }
                     setRepoAmount(results.data.results.length)
+                    setRepoArr(results.data.results)
                     return results
                 })
         }, [refresh,search,filter]);
         if (loading) return <Loading/>;
         if (error) { 
             return <AlertError error={error}/>;}
-            if(results){                
+            if(repoArr){                
                 return (
                     <div>
-                        {results.map((repo:Repository)=>{   
+                        {repoArr.map((repo:Repository)=>{   
                                 return(  
                                     <Card key={repo.id}>
                                         <Card.Body>

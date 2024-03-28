@@ -21,10 +21,10 @@ const RepoNav = () => {
     return (
         <Breadcrumb className="to-repo">
             <Link href={{pathname: '/repositories'}} component={Breadcrumb.Item}>
-                Repositories
+                <strong>Repositories</strong>
             </Link>
             <Link href={{pathname: '/repositories/:user/:repoId/objects', params: {repoId,user}}} component={Breadcrumb.Item}>
-                {repoId}
+                <code>{repoId}</code>
             </Link>
         </Breadcrumb>
 

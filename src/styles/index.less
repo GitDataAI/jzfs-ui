@@ -338,6 +338,13 @@ a {
     margin-top: 1rem;
   .repo-card-header{
     border-radius: 5px 5px 0 0;
+    display: flex;
+    justify-content: space-between;
+    line-height: 2.5rem;
+    svg{
+      font-size: 18px;
+      margin: 0 0.2rem 0.2rem 0;
+    }
     strong{
       font-size: 0.9rem;
     }
@@ -348,7 +355,7 @@ a {
   }
 }
 .Navtittle{
-  margin: 2rem 2rem 1.3rem 2rem;
+  margin: 2.5rem 2rem 0.7rem 2rem;
   font-size: 20px;
 }
 .AKSK-List{
@@ -373,11 +380,12 @@ a {
   }
 }
 .to-repo{
-  margin: 0.9rem;
+  margin-top: 1.35rem;
   font-size: 18px;
 }
 .repoTittle{
   font-size: 20px;
+  padding-top: 0.5rem;
 }
 .repo-create{
   .form-floating{
@@ -389,17 +397,34 @@ a {
     border-radius: 5px;
   }
 }
-// .TagForm{
-//   background-color: rgba(255, 255, 255, 0.9);
-//   padding: 3rem;
-//   border: 1px solid rgb(219, 224, 252) ;
- 
-//   div{
-//     margin: 20px auto;
+.sortMenu{
+  font-size: 14px;
+  .dropdown-item{
+    padding-right:1rem;
+    padding-left: 2rem;
+  }
+  .UpsplitDropdown{
+    border-bottom: 1px solid rgb(219, 224, 252);
+  }
+}
+.sortType{
+  border: none;
+  background-color: rgba(188, 188, 188, 0.1) ;
+  color:rgb(67, 67, 67) ;
+}
+.sortType:active{
+  border: none;
+  background-color: rgba(188, 188, 188, 0.1) !important;
+  color:rgb(67, 67, 67) !important;
+}
 
-//   }
-//   button{
-//     margin: auto;
-//     width: 6rem;
-//   }
-// }
+.sortType:hover{
+  border: none;
+  background-color: rgba(188, 188, 188, 0.1) !important ;
+  color:rgb(67, 67, 67) !important;
+}
+.show .sortType{
+  border: none;
+  background-color: rgba(188, 188, 188, 0.1) !important;
+  color:rgb(67, 67, 67) !important;
+}

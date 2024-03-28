@@ -22,7 +22,7 @@ export interface GettingStartedCreateRepoButtonProps {
 export interface CreateRepositoryModalProps {
     show: boolean;
     error: null | undefined;
-    onSubmit:(repo:{ name: string, description: string ,visible:boolean}) => Promise<boolean>;
+    onSubmit:(repo:{ name: string, description: string ,visible:boolean,blockstore_config:string}) => Promise<boolean>;
     onCancel:()=>void;
     inProgress: boolean;
     samlpleRepoChecked?: boolean;
@@ -57,6 +57,6 @@ export interface SQLEditorProps {
 
 export interface RepositoryCreateFormProps{
     id:string, 
-    onSubmit:(repo: { name: string, description: string ,visible:boolean}) => Promise<boolean> ,
+    onSubmit:(repo: { name: string, description: string ,visible:boolean,blockstore_config:string}) => Promise<boolean> ,
     setFormValid:React.Dispatch<React.SetStateAction<boolean>>
 }

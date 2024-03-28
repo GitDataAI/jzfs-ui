@@ -7,11 +7,13 @@ import { RepositoryCreateFormProps } from '../../pages/repositories/interface/re
 export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ( {id, onSubmit,setFormValid} ) => {
     const [repoName, setRepoName] = useState('');
     const [description, setDescription] = useState('');
+    const [config, setConfig] = useState('');
   
     const repoNameField = useRef<HTMLInputElement>(null);
     const DescriptionField = useRef<HTMLInputElement>(null);
+    const ConfigField = useRef<HTMLInputElement>(null);
+
     const [visible, setVisible] = useState(true);
-    console.log(visible);
 
     const handleChange = (e:any) => {
       setVisible(e.target.value === 'public');
@@ -25,12 +27,12 @@ export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ( {id, o
     }, []);
   
     useEffect(() => {
-      if (repoName || repoName && description) {
+      if (repoName || repoName && description && config) {
         setFormValid(true);
       } else  {
         setFormValid(false);
       }
-    }, [repoName, description]);
+    }, [repoName, description,config]);
     const handleRepoNameChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
         setRepoName(e.target.value);
       };
@@ -39,21 +41,29 @@ export const RepositoryCreateForm:React.FC<RepositoryCreateFormProps> = ( {id, o
         setDescription(e.target.value);
       };
 
+      const handleConfigChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setConfig(e.target.value);
+      };
+
     return (
         <Form id={id}  className='repo-create' onSubmit={(e) => {
             e.preventDefault();
             onSubmit({
               name: repoNameField.current ? repoNameField.current.value : '',
               description: DescriptionField.current ? DescriptionField.current.value : '',
-              visible: visible
+              visible: visible,
+              blockstore_config: ConfigField.current ? ConfigField.current.value: ''
             });
         }}>
             <h4 className="mb-3">Create A New Repository</h4>
             <FloatingLabel label="Repository Name" controlId="repositryIdControl">
             <Form.Control type="text" ref={repoNameField}  placeholder="my-data-lake" onChange={handleRepoNameChange}/>               
             </FloatingLabel>
-            <FloatingLabel label="Description" controlId="repositryIdControl">
+            <FloatingLabel label="Description" controlId="repositryDesControl">
             <Form.Control type="text" ref={DescriptionField}  placeholder="my-data-lake" onChange={handleDescriptionChange}/>               
+            </FloatingLabel>
+            <FloatingLabel label="Repository Config" controlId="repositryCfgControl">
+            <Form.Control type="text" ref={ConfigField}  placeholder="my-data-lake" onChange={handleConfigChange}/>               
             </FloatingLabel>
             <Form.Group controlId="repositryIdControl" className='repo-Visable'>
             <code>Do You want your repository to be discovered by others?</code>

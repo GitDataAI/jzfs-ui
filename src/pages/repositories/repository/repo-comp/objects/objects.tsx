@@ -5,7 +5,6 @@ import {
     ActionGroup,
     ActionsBar,
     Loading,
-    RefreshButton,
 } from "../../../../../lib/components/controls";
 import {useRefs} from "../../../../../lib/hooks/repo";
 import {useRouter} from "../../../../../lib/hooks/router";
@@ -297,15 +296,17 @@ const ObjectsBrowser = () => {
      
       </Row>
     </Form>
+    
             </Modal.Body>
             <Modal.Footer>
-            <Button variant="primary" type="submit" onClick={handleSubmit}>
-              Create Tag
-            </Button>
-              <Button variant="secondary" onClick={(e) => {
+            <Button variant="secondary" onClick={(e) => {
                 e.preventDefault();
                 ShowTagForm();
               }}>Cancel</Button>
+            <Button variant="primary" type="submit" onClick={handleSubmit}>
+              Create Tag
+            </Button>
+
             </Modal.Footer>
         </Modal>
      
