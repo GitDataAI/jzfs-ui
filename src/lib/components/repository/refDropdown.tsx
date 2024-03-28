@@ -95,9 +95,9 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
                     setCommitList(initialCommitList);
                 }}/>
         )}
-
-
-    const results = refList.payload? refList.payload.results: '';
+                
+    const results = refList.payload ? refList.payload.data ? refList.payload.data.results : refList.payload.results : '';
+    
                 
     return (
         <div className="ref-selector">
@@ -112,9 +112,6 @@ const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, wit
                                 />
                             ))}
                         </ul>
-                        <Paginator results={refList.payload? refList.payload.results : []} pagination={refList.payload? refList.payload.pagination:{}} from={pagination.after} onPaginate={(after) => {
-                            setPagination({after , prefix: "", amount})
-                        }}/>
                     </>
                 ) : (
                     <p className="text-center mt-3"><small>No references found</small></p>

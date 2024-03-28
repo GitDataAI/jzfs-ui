@@ -1,6 +1,9 @@
 
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ButtonToolbar, Card, Container, Form, FormControl } from "react-bootstrap";
+import { ButtonToolbar, Card, Container, Dropdown, Form, FormControl } from "react-bootstrap";
+import { GoRepoPush } from "react-icons/go";
+import { HiSortAscending  } from "react-icons/hi";
+import { PiSortAscendingBold } from "react-icons/pi";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -9,13 +12,15 @@ import Layout from "../../lib/components/layout";
 import { ActionsBar } from "../../lib/components/controls";
 import { cache } from '../../lib/api';
 import { useRouter } from "../../lib/hooks/router";
+import { PiTextAaBold } from "react-icons/pi";
 
 import { Route, Routes } from "react-router-dom";
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
 import { users } from "../../lib/api/interface/index";
 import { ActivepageContext } from "../../lib/hooks/conf";
 import { activepage } from "../../lib/hooks/interface";
-
+type Order = 'asc' | 'desc';
+type SortBy = 'name' | 'created_at';
 const RepositoryPage = React.lazy(() => import('./repository'));
 
 
@@ -31,6 +36,8 @@ const RepositoriesPage = () => {
     const [repoamount, setRepoAmount] = useState(0);
     const [search,setSearch] = useState('')
     const [filter, setFilter] = useState('')
+    const [sortBy, setSortBy] = useState<SortBy>('name');
+    const [order, setOrder] = useState<Order>('asc');
     function debounce(func: Function, delay: number) {
         let timer: NodeJS.Timeout;
         return  (...args: any[]) => {
@@ -52,7 +59,7 @@ const RepositoriesPage = () => {
     useEffect(() => {
         activepageL.setPage('repositories')
     })
-    const createRepo = async (repo: { name: string, description: string ,visible:boolean}, presentRepo = true) => {
+    const createRepo = async (repo: { name: string, description: string ,visible:boolean,blockstore_config:string}, presentRepo = true) => {
         const owner = cache.get('user')
         try {
             setCreatingRepo(true);
@@ -96,12 +103,27 @@ const RepositoriesPage = () => {
                 <Card className="repo-card">
                     <Card.Header className="repo-card-header">
                         <strong>{repoamount} repositories</strong>
+                        <Dropdown>
+        <Dropdown.Toggle variant="outline-primary" className="sortType"  id="dropdown-basic">
+          {order=='asc'?<HiSortAscending />:<PiSortAscendingBold />}
+          {sortBy=='name'?'Name':'Last Pushed'}
+        </Dropdown.Toggle>
+        <Dropdown.Menu className="sortMenu">
+          <Dropdown.Item onClick={() => setSortBy('name')}><PiTextAaBold />Name</Dropdown.Item>
+          <Dropdown.Item onClick={() => setSortBy('created_at')} className="UpsplitDropdown"><GoRepoPush />Last Pushed</Dropdown.Item>
+          <Dropdown.Item onClick={() => setOrder('asc')} className="DownsplitDropdown"><HiSortAscending />Ascending</Dropdown.Item>
+          <Dropdown.Item onClick={() => setOrder('desc')}><PiSortAscendingBold />Descending</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+
                     </Card.Header>
                 <RepositoryList
                     refresh={refresh}
                     setRepoAmount={setRepoAmount}
                     search={search}
                     filter={filter}
+                    sortBy={sortBy}
+                    order={order}
                 />
                 </Card>
 
