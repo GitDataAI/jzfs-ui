@@ -6,6 +6,7 @@ import {RefTypeBranch, RefTypeCommit, RefTypeTag} from "../../../constants";
 import { CommitListProps, RefDropdownProps, RefEntryProps, RefSelectorProps, ref, RepoPaginatorProps, ResponseProps } from "../interface/comp_interface";
 import { Commit } from "../../../lib/api/interface/Api"
 import { repos } from "../../api/interface";
+import { useRouter } from "../../hooks/router";
 
 
 const RefSelector:React.FC<RefSelectorProps> = ({ repo, selected, selectRef, withWorkspace, withTags, amount = 300 }) => {
@@ -167,6 +168,7 @@ const CommitList:React.FC<CommitListProps> = ({ commits, selectRef, reset, branc
 };
 
 const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, selected, logCommits}) => {
+  
     return (
         <li className="list-group-item" key={namedRef}>
         {(!!selected && namedRef === selected.name) ?
@@ -185,25 +187,6 @@ const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, s
     );
 };
 
-const Paginator:React.FC<RepoPaginatorProps> = ({ pagination, onPaginate, results, from }) => {
-    const next = (results.length) ? results[results.length-1].id : "";
-
-    if (!pagination.has_more && from === "") return (<span/>);
-
-    return (
-        <p className="ref-paginator">
-            {(from !== "") ?
-                (<Button  size={"sm"} variant="link" onClick={() => { onPaginate(""); }}>Reset</Button>) :
-                (<span/>)
-            }
-            {' '}
-            {(pagination.has_more) ?
-                (<Button size={"sm"} variant="link" onClick={() => { onPaginate(next?next:''); }}>Next...</Button>) :
-                (<span/>)
-            }
-        </p>
-    );
-};
 
 const RefDropdown:React.FC<RefDropdownProps> = ({ repo, selected, selectRef, onCancel, variant="light", prefix = '', emptyText = '', withCommits = true, withWorkspace = true, withTags = true,commitId}) => {
 

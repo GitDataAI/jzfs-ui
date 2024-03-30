@@ -179,7 +179,7 @@ const ObjectsBrowser = () => {
                 repoId: repo.name,
                 user
               },
-              query: { ref:ref.id},
+              query: { ref:ref.id,type: ref.type},
             })} onCancel={undefined}          
             />
         </ActionGroup>
