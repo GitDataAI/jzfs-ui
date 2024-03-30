@@ -201,6 +201,7 @@ const ObjectsBrowser = () => {
 
                 </Dropdown.Menu>
           </Dropdown>
+{  reference.type !=='tag'  &&   <>
         <Button
         variant={"light"}
         >
@@ -217,7 +218,8 @@ const ObjectsBrowser = () => {
         >
         <UploadIcon />Create Tag
         </Button>
-          
+        </> 
+          }
         </ActionGroup>
       </ActionsBar>
 

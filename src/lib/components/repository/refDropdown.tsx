@@ -167,7 +167,7 @@ const CommitList:React.FC<CommitListProps> = ({ commits, selectRef, reset, branc
     );
 };
 
-const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, selected, logCommits}) => {
+const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, selected}) => {
   
     return (
         <li className="list-group-item" key={namedRef}>
@@ -179,7 +179,9 @@ const RefEntry:React.FC<RefEntryProps> = ({repo, namedRef, refType, selectRef, s
 }
             <div className="actions">
                {(refType === RefTypeBranch && namedRef === repo.head) ? (<Badge variant="info">Default</Badge>) : <span/>}
-                    <Button onClick={logCommits} size="sm" variant="link">
+                    <Button onClick={() => {
+                    selectRef({id: namedRef, type: refType});
+                }} size="sm" variant="link">
                         <ChevronRightIcon/>
                     </Button>
             </div>

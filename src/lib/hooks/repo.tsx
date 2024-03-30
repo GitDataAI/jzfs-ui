@@ -7,9 +7,7 @@ import { repos } from "../api/interface";
 
 
 export const resolveRef = async (user,repoId:string, refId:string,type = 'branch') => {
-    // try branch
-    console.log(type);
-    
+    // try branch    
     try {
         if(type == 'tag'){
             const branch = await repos.getTag(user,repoId,{refName:refId});
