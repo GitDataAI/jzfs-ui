@@ -37,7 +37,7 @@ const Loadingpage = () => {
 
   const spanList = Array.from({ length: 8 }, (_, index) => index + 1);
 
-  // 生成第二个 span 列表
+  // generate span
   const rotateList = Array.from({ length: 5 }, (_, index) => index);
   return (
     <>
