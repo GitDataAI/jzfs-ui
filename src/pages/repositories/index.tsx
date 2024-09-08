@@ -13,6 +13,7 @@ import { ActionsBar } from "../../lib/components/controls";
 import { cache } from '../../lib/api';
 import { useRouter } from "../../lib/hooks/router";
 import { PiTextAaBold } from "react-icons/pi";
+import Alert from '@mui/material/Alert';
 
 import { Route, Routes } from "react-router-dom";
 import { CreateRepositoryButton, CreateRepositoryModal, RepositoryList } from "./repos-comp";
@@ -64,13 +65,14 @@ const RepositoriesPage = () => {
         try {
             setCreatingRepo(true);
             setCreateRepoError(null);
-            await users.createRepository(repo);
+            const usersData = await users.createRepository(repo);
             setRefresh(!refresh);
             if (presentRepo) {
                 router.push({ pathname: `/repositories/:user/:repoId/objects`, params: { repoId: repo.name, user: owner }, query: {} });
             }
             return true;
         } catch (error: any) {
+            await <Alert severity="error">{error}</Alert>
             setCreatingRepo(false);
             setCreateRepoError(error);
             return false;

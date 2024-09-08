@@ -5,6 +5,8 @@ import {auth as Auth, cache,} from "../../lib/api";
 import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
 import { auth, users } from "../../lib/api/interface/index";
+import loginback from "../../../pub/iteamm.png"
+import loginback2 from "../../../pub/backdata.png"
 // import {AiOutlineGithub,AiFillGitlab,AiFillGoogleCircle,AiFillTwitterCircle} from "react-icons/ai";
 
 
@@ -23,8 +25,16 @@ const LoginForm = () => {
     }
     return (
         <Row className="justify-content-center align-items-center gx-0">
+              <img src={loginback2} alt="" className="backname22"/>
+              <img src={loginback} alt="" className="backname11"/>
             <Col md={{offset: 5, span: 7}} className="login-box" >
-        <img src="/jiaozifs.png" alt="JiaoziFS" /><br /><strong className="Signtittle">Sign in To JiaoziFS</strong>
+            <div className="jiaonamebox">
+                <div className="itwrodname">
+                <img src="/jiaozifs.png" alt="JiaoziFS" className="JiaoziFS"/><br />
+                <strong className="Signtittle">Sign in To JiaoZiFS</strong>
+                </div>
+            <div className="wordname">In production systems with machine learning components, updates and experiments are frequent. New updates to models(data products) may be released every day or every few minutes, and different users may see the results of different models as part of A/B experiments or canary releases.</div>
+            </div>
             <Card className="login-widget jiaozi-login">
                 <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>
@@ -33,20 +43,27 @@ const LoginForm = () => {
                             const form = e.target as HTMLFormElement;
                             const username = form.elements.namedItem('username') as HTMLInputElement;
                             const password = form.elements.namedItem('password') as HTMLInputElement;
-                            try {
-                                const response = await auth.login({name:username.value,password:password.value})
-                                    Auth.clearCurrentUser()
-                                    cache.set('token', response.data.token)
-                                    await users.getUserInfo().then((response)=>{
-                                        cache.set('user', response.data.name)
-                                        setLoginError(null);
-                                        router.push(next ? next : '/repositories');
-                                    })
-                            } catch(err) {
-                                console.log(err);
-                                
-                                setLoginError(<span>{'Check your username or password,and password must contain at least 8 characters'}</span>)
-                    }                            
+                            if(!username.value)
+                            {setLoginError(<span>{'Please input your username'}</span>)}
+                               else if(!password.value)
+                                {setLoginError(<span>{'Please input your password'}</span>)}
+                            else if(password.value.length<8)
+                                {setLoginError(<span>{'The password must contain at least 8 characters'}</span>)}
+                            else{
+                                try {
+                                    const response = await auth.login({name:username.value,password:password.value})
+                                        Auth.clearCurrentUser()
+                                        cache.set('token', response.data.token)
+                                        await users.getUserInfo().then((response)=>{
+                                            cache.set('user', response.data.name)
+                                            setLoginError(null);
+                                            router.push(next ? next : '/repositories');
+                                        })
+                                } catch(err) {
+                                    console.log(err);
+                                    setLoginError(<span>{'Check your username or password'}</span>)
+                                 }                   
+                            } 
                         }}>
                             <Form.Group controlId="username" className="mb-3">
                                 <strong>Username</strong>

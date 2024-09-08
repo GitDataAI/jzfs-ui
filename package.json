@@ -5,7 +5,7 @@
     "node": ">= 16.16.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "docker": "docker build -t gitdatateam/jiaozifs-ui:latest . && docker push gitdatateam/jiaozifs-ui:latest",
     "docker-test": "docker build -t gitdatateam/jiaozifs-ui:test . && docker push gitdatateam/jiaozifs-ui:test",

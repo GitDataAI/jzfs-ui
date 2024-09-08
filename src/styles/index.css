@@ -16,6 +16,11 @@ a {
     display: grid;
   }
 }
+.backname2{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
 .logo {
   margin-left: 10px;
 }
@@ -23,15 +28,15 @@ a {
   display: grid;
   margin-top: 50px;
 }
-.login-box img {
-  margin-left: 100px;
-  height: 100px;
-  width: 100px;
+
+.login-box .JiaoziFS {
+  height: 6vw;
+  width: 6vw;
 }
-.login-box .Signtittle {
-  margin-left: 50px;
-  font-size: 24px;
+.creatButton{
+  margin-top: 2vh;
 }
+
 .login-display {
   width: 400px;
   height: 450px;
@@ -59,15 +64,22 @@ a {
 .login-widget.jiaozi-login.card {
   display: grid;
   justify-content: center;
-  background-color: white;
-  width: 332px;
-  height: 450px;
-  border: 1px solid #95a3a7;
-  border-radius: 0 5px 5px 0;
-  margin-top: 10px;
+  width: 25vw;
+  height: 60vh;
+   z-index: 999;
+   position: relative;
+   left: -33.5vw;
+   background-color: rgb(255, 255, 255,0);
+   border: 1px solid white;
+  margin-top: -50px;
 }
 .login-widget.jiaozi-login.card .card-header {
-  height: 80px;
+  height: 5vh;
+  position: relative;
+  top: 5vh;
+  border: none;
+  background-color: transparent;
+  margin-top: 1vh;
 }
 .login-widget.jiaozi-login.card .card-body {
   margin-bottom: 100px;
@@ -77,24 +89,37 @@ a {
   margin: 20px 30px;
   color: #95a3a7;
 }
+.backname{
+  position: absolute;
+  width: 30vw;
+  height: 30vw;
+  right: 5px;
+  bottom: 0;
+}
+.card input:hover{
+  border: 2px solid rgb(5,111,187);
+}
 .login-widget.jiaozi-login.card a:hover {
-  color: #fc42c9;
-  border-bottom: 3px solid #fc42c9;
+  color: rgb(5,111,187);
+  border-bottom: 3px solid rgb(5,111,187);
 }
 .login-widget.jiaozi-login.card .active,
 .login-widget.jiaozi-login.card a::after {
-  color: #fc42c9;
-  border-bottom: 3px solid #fc42c9;
+  color: rgb(5,111,187);
+  border-bottom: 3px solid rgb(5,111,187);
 }
 .login-widget.jiaozi-login.card .btn {
-  width: 300px;
-  height: 35px;
+  width: 17vw;
+  position: relative;
+  top: 5vh;
+  height: 40px;
+  margin: 0 auto;
   font-weight: 600;
   line-height: 30px;
-  border: 1px solid #95a3a7;
+  border: 1px solid rgb(5,111,187);
   border-radius: 5px;
   color: white;
-  background-color: #5d6280;
+  background-color: rgb(121, 151, 240);
 }
 .login-widget.jiaozi-login.card .btn svg {
   font-size: 20px;
@@ -124,7 +149,7 @@ a {
   font-size: 13px;
   padding: 10px;
   margin: 5px auto;
-  width: 280px;
+  width: 25vw;
   height: 40px;
   color: #5d6280;
   border: 1px solid #95a3a7;
@@ -155,6 +180,7 @@ a {
   margin-right: 10px;
   background-color: #fff;
   overflow-y: scroll;
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
 }
 @media (max-width: 600px) {
   .sidebar {
@@ -180,7 +206,11 @@ a {
   margin-left: 22px;
   margin-bottom: 22px;
 }
+
 .sidebar form .col {
+  border-bottom: 1px solid rgb(224, 224, 224);
+  height: 13.1vh;
+  width: 110%;
   flex-wrap: wrap;
   align-content: space-between;
 }
@@ -192,19 +222,27 @@ a {
   margin-right: 0px;
 }
 .sidebar .card {
+  margin: 0 auto;
   border: none;
 }
 .sidebar .card .Nav-Card {
+  margin: 0 1.7rem;
   display: grid;
   justify-content: flex-start;
 }
 .sidebar .card .Nav-Card svg {
-  margin: 3px 3px 5px 5px;
+  margin: 3px 5px 5px 3px;
 }
 .sidebar .card .Nav-Card .active {
   background: none;
   color: black;
   border-left: 3px solid #658fd3;
+}
+.notClick:hover{
+  cursor:not-allowed;
+}
+.notClick{
+  cursor:not-allowed;
 }
 .sidebar .card .Nav-Card button:hover {
   background: none;
@@ -216,19 +254,22 @@ a {
   color: black;
   border: none;
   text-align: left;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.5rem;
+  display: flex;
   font-weight: 600;
   border-radius: 0;
 }
 .sidebar::-webkit-scrollbar {
   display: none;
 }
+.Fast-navb{ 
+  border-left: 1px solid black;
+}
 .child {
   margin: 0.5rem;
   margin-bottom: 5rem;
   padding-top: 0.8rem;
   width: 100%;
-  overflow-y: scroll;
 }
 @media (max-width: 600px) {
   .child {
@@ -266,8 +307,11 @@ a {
   margin: 20px auto;
 }
 .Progress {
+  position: relative;
   width: 40%;
-  margin: 10rem auto;
+  display: flex;
+  justify-content: center;
+  /* margin: 1rem auto; */
 }
 .Progress .progress-bar {
   background-color: #95a3a7;
@@ -315,6 +359,14 @@ a {
 .Child-nav {
   margin-left: 18px;
 }
+.itwrodname{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  width: 25vw;
+}
 .filerender {
   display: flex;
 }
@@ -327,6 +379,12 @@ a {
   border: 1px solid #dcdbdb;
   border-radius: 2px;
   background-color: #e5e5e5;
+}
+.jiaonamebox{
+  position: relative;
+  top: 5rem;
+  margin-left: 18rem;
+  z-index: 9999;
 }
 .repo-card {
   margin-top: 1rem;
@@ -349,7 +407,7 @@ a {
   border: 0.5px solid #eeeeee;
 }
 .Navtittle {
-  margin: 2.5rem 2rem 0.7rem 2rem;
+  margin: 2.5rem auto;
   font-size: 20px;
 }
 .AKSK-List .row button {
@@ -394,10 +452,24 @@ a {
 .sortMenu .UpsplitDropdown {
   border-bottom: 1px solid #dbe0fc;
 }
+.alert-info{
+ position: relative;
+}
 .sortType {
   border: none;
   background-color: rgba(188, 188, 188, 0.1);
   color: #434343;
+}
+.login-widget.jiaozi-login.card .btn:hover{
+  background-color: rgb(5,111,187);
+}
+input{
+  transition: background-color 0.3s;
+}
+input:hover{
+  transition: background-color 0.3s;
+  background-color: #f1f1f1;
+  box-sizing: border-box;
 }
 .sortType:active {
   border: none;

@@ -29,17 +29,17 @@ export default ({ command }) => {
         port: 3000,
         proxy: {
           '/api': {
-            target: 'http://localhost:34913',
+            target: 'http://qr52ku.natappfree.cc',
             changeOrigin: true,
             secure: false
           },
           '/oidc/login': {
-            target: 'http://localhost:34913',
+            target: 'http://qr52ku.natappfree.cc',
             changeOrigin: false,
             secure: false
           },
           '/logout': {
-            target: 'http://localhost:34913',
+            target: 'http://qr52ku.natappfree.cc',
             changeOrigin: false,
             secure: false
           }
