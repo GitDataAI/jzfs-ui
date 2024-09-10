@@ -6,8 +6,10 @@ import { users } from "../../lib/api/interface/index";
 import { AlertError } from "../../lib/components/controls";
 import loginback from "../../../pub/iteamm.png"
 import loginback2 from "../../../pub/backdata.png"
+import LoadingButton from '@mui/lab/LoadingButton';
 const RegisterForm = () => {
     const router = useRouter();
+    const [loading, setLoading] = React.useState(false);
     const [RegisterError, setRegisterError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
     const reghandleclick = (e) =>{
@@ -24,7 +26,7 @@ const RegisterForm = () => {
                  <img src={loginback} alt="" className="backname11"/>
              <Col md={{offset: 5, span: 7}} className="login-box" >
             
-             <div className="jiaonamebox">
+            <div className="jiaonamebox">
             <img src="/jiaozifs.png" alt="JiaoziFS" className="JiaoziFS"/><br />
             <strong className="Signtittle">Register To JiaoZiFS</strong>
             <div className="wordname">In production systems with machine learning components, updates and experiments are frequent. New updates to models(data products) may be released every day or every few minutes, and different users may see the results of different models as part of A/B experiments or canary releases.</div>
@@ -34,10 +36,13 @@ const RegisterForm = () => {
                 <Card.Body>
                     <Form onSubmit={async (e) => {
                         e.preventDefault()
+                        setLoading(true);
                         const form = e.target as HTMLFormElement;
                         const username = form.elements.namedItem('username') as HTMLInputElement;
                         const password = form.elements.namedItem('password') as HTMLInputElement;
                         const email = form.elements.namedItem('email') as HTMLInputElement;
+                        setTimeout(async() => {
+                            setLoading(false);
                         if(password.value.length<8)
                             {setRegisterError(<span>{'The password must contain at least 8 characters'}</span>)
                         }else if(!email.value)
@@ -55,7 +60,7 @@ const RegisterForm = () => {
                                 {setRegisterError(<span>{'The request is incorrect'}</span>)}
                             }
                         }
-                        
+                    }, 1500);
                     }}>
                         <strong>Username</strong>
                         <Form.Group controlId="username" className="mb-3">
@@ -72,10 +77,8 @@ const RegisterForm = () => {
 
                         {(!!RegisterError) && <AlertError error={RegisterError}/>}
 
-                        <Button variant="primary" type="submit">Register</Button>
+                        <LoadingButton style={{width:'25vw',marginTop:'2.5vh'}} loadingIndicator="Loading…" loading={loading} variant="contained" type="submit">Register</LoadingButton>
                     </Form>
-
-                   
                 </Card.Body>
             </Card>
         </Col>
