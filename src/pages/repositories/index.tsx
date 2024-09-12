@@ -133,7 +133,7 @@ const RepositoriesPage = () => {
                         <Dropdown>
         <Dropdown.Toggle variant="outline-primary" className="sortType"  id="dropdown-basic">
           {order=='asc'?<HiSortAscending />:<PiSortAscendingBold />}
-          {sortBy=='name'?'Name':'Last Pushed'}
+          {sortBy=='name'?'Name':'Last Pushed'}-{order=='asc'?'Ascending':'Descending'}
         </Dropdown.Toggle>
         <Dropdown.Menu className="sortMenu">
           <Dropdown.Item onClick={() => setSortBy('name')}><PiTextAaBold />Name</Dropdown.Item>

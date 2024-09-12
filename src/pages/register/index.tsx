@@ -4,8 +4,6 @@ import { useRouter } from "../../lib/hooks/router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { users } from "../../lib/api/interface/index";
 import { AlertError } from "../../lib/components/controls";
-import loginback from "../../../pub/iteamm.png"
-import loginback2 from "../../../pub/backdata.png"
 import LoadingButton from '@mui/lab/LoadingButton';
 const RegisterForm = () => {
     const router = useRouter();
@@ -22,15 +20,8 @@ const RegisterForm = () => {
     }
     return(
             <Row className="justify-content-center align-items-center gx-0">
-                 <img src={loginback2} alt="" className="backname22"/>
-                 <img src={loginback} alt="" className="backname11"/>
-             <Col md={{offset: 5, span: 7}} className="login-box" >
-            
-            <div className="jiaonamebox">
-            <img src="/jiaozifs.png" alt="JiaoziFS" className="JiaoziFS"/><br />
-            <strong className="Signtittle">Register To JiaoZiFS</strong>
-            <div className="wordname">In production systems with machine learning components, updates and experiments are frequent. New updates to models(data products) may be released every day or every few minutes, and different users may see the results of different models as part of A/B experiments or canary releases.</div>
-            </div>
+             <Col className="login-box" >
+             <div className="titleword">Register</div>
             <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
                 <Card.Body>
@@ -62,22 +53,22 @@ const RegisterForm = () => {
                         }
                     }, 1500);
                     }}>
-                        <strong>Username</strong>
+                        <strong>Username<span className="mustword">*</span></strong>
                         <Form.Group controlId="username" className="mb-3">
                             <Form.Control type="text" placeholder={"Access username"} autoFocus/>
                         </Form.Group>
-                        <strong>Password</strong>
+                        <strong>Password<span className="mustword">*</span></strong>
                         <Form.Group controlId="password" className="mb-3">
                             <Form.Control type="password" placeholder={"Access password"}/>
                         </Form.Group>
-                        <strong>E-mail</strong>
+                        <strong>E-mail<span className="mustword">*</span></strong>
                         <Form.Group controlId="email" className="mb-3">
                             <Form.Control type="email" placeholder={"Access email"}/>
                         </Form.Group>
 
                         {(!!RegisterError) && <AlertError error={RegisterError}/>}
 
-                        <LoadingButton style={{width:'25vw',marginTop:'2.5vh'}} loadingIndicator="Loading…" loading={loading} variant="contained" type="submit">Register</LoadingButton>
+                        <LoadingButton style={{width:'100%',marginTop:'2.5vh'}} loadingIndicator="Loading…" loading={loading} variant="contained" type="submit">Register</LoadingButton>
                     </Form>
                 </Card.Body>
             </Card>

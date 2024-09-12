@@ -69,7 +69,7 @@ server:
                         <h5>jzctl</h5>
                         <div className="ms-2 mt-2">
                             <a target="_blank" rel="noreferrer" 
-                               >jzctl</a> is a CLI tool for working with JiaoZiFS.
+                               >jzctl</a> is a CLI tool for working with JZFS.
                             <p className="mt-2">
                             Download jzctl as part of the <a target="_blank" rel="noreferrer" href="">JiaoZiFS release package</a> and save the above credentials file as <code>~/.jzctl.yaml</code>.
                             </p>
