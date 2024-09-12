@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { ProgressBar } from "react-bootstrap";
 import "../../../styles/loading.css";
 import { version } from "../../api/interface";
 const Loadingpage = () => {
@@ -37,26 +36,12 @@ const Loadingpage = () => {
 
   const spanList = Array.from({ length: 8 }, (_, index) => index + 1);
 
-  // 生成第二个 span 列表
+  // Generate a second list of spans
   const rotateList = Array.from({ length: 5 }, (_, index) => index);
   return (
     <>
-      {/* <div className="welcome">
-        <img src="/jiaozifs.png" />
-        <h1>Welcome to JiaoziFS Cloud</h1>
-        <code>
-          Get started with a fully functional playground environment and start
-          data versioning at scale today!
-        </code>
-        <br />
-        <code>
-          No deployment, installing, maintaining and scaling overhead.
-        </code>
-      </div> */}
       <div className="loading">
         <div className="Progress">
-          {/* <div className="version">{loading>=80?<span>version: {ver.version}</span>:<span>It's getting version from server now</span>}</div>
-            <ProgressBar animated now={loading} /> */}
           <div className="box">
             <svg>
               <filter id="fluid">

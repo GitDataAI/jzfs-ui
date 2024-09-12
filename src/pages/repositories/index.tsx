@@ -70,18 +70,12 @@ const RepositoriesPage = () => {
             setCreatingRepo(true);
             setCreateRepoError(null);
             const usersData = await users.createRepository(repo);
-             if(usersData){
-                console.log('数据',usersData)
-             }else{
-                console.log('无数据')
-             }
             setRefresh(!refresh);
             if (presentRepo) {
                 router.push({ pathname: `/repositories/:user/:repoId/objects`, params: { repoId: repo.name, user: owner }, query: {} });
             }
             return true;
         } catch (error: any) {
-            console.log('发生错误了',error)
             setCreatingRepo(false);
             setShowAlert(true)
             setCreateRepoError(error);
@@ -115,6 +109,7 @@ const RepositoriesPage = () => {
     
     return (
         <Layout>
+            {/* Pop up window does not prompt bug fix */}
              {showAlert && <Alert severity="error" className={`Alerterror ${alertClass}`}>Request error: {alertMessage.status}</Alert>}
             <Container fluid="xl" className="mt-3">
                 {<ActionsBar>
@@ -134,6 +129,7 @@ const RepositoriesPage = () => {
         <Dropdown.Toggle variant="outline-primary" className="sortType"  id="dropdown-basic">
           {order=='asc'?<HiSortAscending />:<PiSortAscendingBold />}
           {sortBy=='name'?'Name':'Last Pushed'}-{order=='asc'?'Ascending':'Descending'}
+          {/*fixui2.0 Modifying bugs, filtering data prompts are not complete enough */}
         </Dropdown.Toggle>
         <Dropdown.Menu className="sortMenu">
           <Dropdown.Item onClick={() => setSortBy('name')}><PiTextAaBold />Name</Dropdown.Item>

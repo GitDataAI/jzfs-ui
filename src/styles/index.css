@@ -398,7 +398,7 @@ code{
   position: absolute;
   width: 80vw;
   top: 5vh;
-  animation: fadeIn 0.5s forwards; /* 淡入动画 */ 
+  animation: fadeIn 0.5s forwards;
 }
 @keyframes fadeIn {
   from {
@@ -430,9 +430,9 @@ code{
   padding-bottom: 3vh;
   border-bottom: 1px solid rgb(235, 235, 235);
 }
-/* 在 alert 消失时应用 fadeOut 动画 */
+/* Apply the fadeOut animation when the alert disappears */
 .Alerterror.fade-out {
-  animation: fadeOut 0.5s forwards; /* 淡出动画 */
+  animation: fadeOut 0.5s forwards; /* Fade out animation */
 }
 .jiaonamebox{
   position: relative;
@@ -512,9 +512,6 @@ code{
 .dropdown-item:hover{
   color: rgb(5,111,187);
 }
-.sortType {
-
-}
 .login-widget.jiaozi-login.card .btn:hover{
   background-color: rgb(5,111,187);
 }
@@ -527,14 +524,4 @@ input:hover{
   border-color:#86b7fe;
   box-sizing: border-box;
 }
-.sortType:active {
-  
-}
-.sortType:hover {
-
-}
-/* .show .sortType {
-  border: none;
-  background-color: rgba(188, 188, 188, 0.1) !important;
-  color: #434343 !important;
-} */
+/*fixui2.0 The color matching is not consistent enough */

@@ -1,11 +1,10 @@
 import React, {useState} from "react";
 import Layout from "../../lib/components/layout";
-import {Button,Col,Form,Card,Row} from "react-bootstrap";
+import {Col,Form,Card,Row} from "react-bootstrap";
 import {auth as Auth, cache,} from "../../lib/api";
 import {AlertError} from "../../lib/components/controls"
 import {useRouter} from "../../lib/hooks/router";
 import { auth, users } from "../../lib/api/interface/index";
-// import {AiOutlineGithub,AiFillGitlab,AiFillGoogleCircle,AiFillTwitterCircle} from "react-icons/ai";
 import LoadingButton from '@mui/lab/LoadingButton';
 
 
@@ -31,15 +30,14 @@ const LoginForm = () => {
                 <Card.Header> <a href="" onClick={loghandleclick} className="active">Log in</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>
                         <Form onSubmit={async (e) => {
+                             //fixui2.0 Anti shake operation
                              setLoading(true);
-                             // 模拟异步操作
                             e.preventDefault()
                             const form = e.target as HTMLFormElement;
                             const username = form.elements.namedItem('username') as HTMLInputElement;
                             const password = form.elements.namedItem('password') as HTMLInputElement;
                             setTimeout(async() => {
                                 setLoading(false);
-                             
                             if(!username.value)
                             {setLoginError(<span>{'Please input your username'}</span>)}
                                else if(!password.value)
@@ -55,6 +53,7 @@ const LoginForm = () => {
                                             cache.set('user', response.data.name)
                                             setLoginError(null);
                                             router.push(next ? next : '/repositories');
+                                            
                                         })
                                 } catch(err) {
                                     console.log(err);
@@ -73,7 +72,7 @@ const LoginForm = () => {
                                 <Form.Control type="password" placeholder={"Access password"} autoComplete="current-password"/>
                             </Form.Group>
                             {(loginError) && <AlertError error={loginError}/>}
-
+                            {/* To prevent the button text from being automatically capitalized, add an inline style textTransform: 'none' to the debounce button. */}
                             <LoadingButton style={{width:'100%',marginTop:'2.5vh', textTransform: 'none'}} loadingIndicator="Loading…" loading={loading} variant="contained" type="submit">Log in</LoadingButton>
                             {/* <div className="waytologin">
                                 <p>————Try another way to login————</p>

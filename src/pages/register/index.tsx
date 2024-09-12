@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import Layout from "../../lib/components/layout"
 import { useRouter } from "../../lib/hooks/router";
-import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { Card, Col, Form, Row } from "react-bootstrap";
 import { users } from "../../lib/api/interface/index";
 import { AlertError } from "../../lib/components/controls";
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -26,8 +26,10 @@ const RegisterForm = () => {
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
                 <Card.Body>
                     <Form onSubmit={async (e) => {
+                         // Anti shake operation
                         e.preventDefault()
                         setLoading(true);
+                       
                         const form = e.target as HTMLFormElement;
                         const username = form.elements.namedItem('username') as HTMLInputElement;
                         const password = form.elements.namedItem('password') as HTMLInputElement;
@@ -67,7 +69,7 @@ const RegisterForm = () => {
                         </Form.Group>
 
                         {(!!RegisterError) && <AlertError error={RegisterError}/>}
-
+                        {/* To prevent the button text from being automatically capitalized, add an inline style textTransform: 'none' to the debounce button. */}
                         <LoadingButton style={{width:'100%',marginTop:'2.5vh'}} loadingIndicator="Loading…" loading={loading} variant="contained" type="submit">Register</LoadingButton>
                     </Form>
                 </Card.Body>

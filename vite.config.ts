@@ -21,7 +21,7 @@ export default ({ command }) => {
     publicDir: './pub',
   };
 
-  // 在开发环境
+  // In the development environment
   if (command === 'serve' || command === 'test') {
     return {
       ...baseConfig,
@@ -29,17 +29,17 @@ export default ({ command }) => {
         port: 3000,
         proxy: {
           '/api': {
-            target: 'http://qr52ku.natappfree.cc',
+            target: 'http://localhost:34913',
             changeOrigin: true,
             secure: false
           },
           '/oidc/login': {
-            target: 'http://qr52ku.natappfree.cc',
+            target: 'http://localhost:34913',
             changeOrigin: false,
             secure: false
           },
           '/logout': {
-            target: 'http://qr52ku.natappfree.cc',
+            target: 'http://localhost:34913',
             changeOrigin: false,
             secure: false
           }
