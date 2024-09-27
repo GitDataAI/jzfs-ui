@@ -1,14 +1,13 @@
 apiVersion: v2
-name: jiaozifs-ui
+name: jiaozifshub
 description: Install jiaozifs ui to provider backend function of ui.
 version: 1.0.0
-kubeVersion: < 1.28.0-0
-home: https://jiaozifs.com/
+home: https://jzhub.gitdata.com/
 keywords:
   - jiaozifs
-  - jiaozifs-ui
+  - jiaozihub
 sources:
   - https://github.com/jiaozifs/jiaozifs
-  - https://github.com/jiaozifs/jiaozifs-ui
+  - https://github.com/jiaozifs/jiaozifshub
 maintainers:
   - name: jiaozifs team

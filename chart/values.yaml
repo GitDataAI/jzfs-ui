@@ -3,5 +3,5 @@
 # See README.md for details.
 replicas: 1
 ingress_name: nginx
-api_url: http://api.jiaozifs.com/api/v1
+api_url: http://api.jzhub.gitdata.ai/api/v1
 tag: latest
