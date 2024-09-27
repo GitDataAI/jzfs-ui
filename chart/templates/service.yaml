@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: jiaozihub-service
+  name: jiaozifs-ui-service
   labels:
-    apptype: jiaozihub
+    apptype: jiaozifs-ui
 spec:
   type: ClusterIP
   selector:
-    app: jiaozihub
+    app: jiaozifs-ui
   ports:
     - protocol: TCP
       port: 80

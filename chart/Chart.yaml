@@ -1,5 +1,5 @@
 apiVersion: v2
-name: jiaozifshub
+name: jiaozifs-ui
 description: Install jiaozifs ui to provider backend function of ui.
 version: 1.0.0
 home: https://jzhub.gitdata.com/
