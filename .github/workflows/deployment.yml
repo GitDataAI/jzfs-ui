@@ -49,6 +49,6 @@ jobs:
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v3
         with:
-          exec: helm upgrade  jiaozifs-ui --install ./chart/ --namespace jiaozifs --set-string api_url=${{ secrets.JIAOZI_API_URL }}  --set-string tag=${{ steps.version.outputs.version }}
+          exec: helm upgrade  jiaozihub --install ./chart/ --namespace jiaozifs --set-string api_url=${{ secrets.JIAOZI_API_URL }}  --set-string tag=${{ steps.version.outputs.version }}
           kubeconfig: ${{ secrets.KUBECONTENT }}
           overrule_existing_kubeconfig: "true"

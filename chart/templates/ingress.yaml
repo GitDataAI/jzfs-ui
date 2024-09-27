@@ -1,28 +1,28 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name:  jiaozifs-ui
+  name:  jiaozihub
   annotations:
-    meta.helm.sh/release-name: jiaozifs-ui
+    meta.helm.sh/release-name: jiaozihub
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
   labels:
-    apptype: jiaozifs-ui
+    apptype: jiaozihub
     app.kubernetes.io/managed-by: Helm
     heritage: Helm
-    release:  jiaozifs-ui
+    release:  jiaozihub
 spec:
   ingressClassName: {{.Values.ingress_name}}
   rules:
-    - host: cloud.jiaozifs.com
+    - host: jzhub.gitdata.ai
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: jiaozifs-ui-service
+                name: jiaozihub-service
                 port:
                   number: 80
