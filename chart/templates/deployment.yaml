@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jiaozihub-deployment
+  name: jiaozifs-ui-deployment
   labels:
-    apptype: jiaozihub
+    apptype: jiaozifs-ui
 spec:
   replicas: {{ .Values.replicas}}
   selector:
     matchLabels:
-      app: jiaozihub
+      app: jiaozifs-ui
   template:
     metadata:
       labels:
-        app: jiaozihub
-        apptype: jiaozihub
+        app: jiaozifs-ui
+        apptype: jiaozifs-ui
     spec:
       containers:
-        - name: jiaozihub
-          image: gitdatateam/jiaozihub:{{ .Values.tag }}
+        - name: jiaozifs-ui
+          image: gitdatateam/jiaozifs-ui:{{ .Values.tag }}
           imagePullPolicy: Always
           env:
             - name: JIAOZIFS_API_URL
