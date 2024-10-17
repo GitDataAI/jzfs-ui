@@ -20,7 +20,7 @@ const RegisterForm = () => {
     return(
             <Row className="justify-content-center align-items-center gx-0">
              <Col md={{offset: 5, span: 7}} className="login-box" >
-             <img src="/jiaozifs.png" alt="JiaoziFS" /><br /><strong className="Signtittle">Register To JiaoziFS</strong>
+             <img src="/jiaozifs.png" alt="JZFS" /><br /><strong className="Signtittle">Register To JiaoziFS</strong>
             <Card className="login-widget jiaozi-login register">
             <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
                 <Card.Body>

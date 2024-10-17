@@ -41,7 +41,7 @@ const Loadingpage = ()  =>{
         <>
         <div className="welcome">
             <img src="/jiaozifs.png"/>
-            <h1>Welcome to JiaoziFS Cloud</h1>
+            <h1>Welcome to JZFS Cloud</h1>
            <code>Get started with a fully functional playground environment and start data versioning at scale today!</code><br/> 
            <code>No deployment, installing, maintaining and scaling overhead.</code>
         </div>

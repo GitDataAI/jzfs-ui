@@ -57,7 +57,7 @@ const TopNav = ({logged = true}) => {
             <Container fluid={true}>
                 <Link component={Navbar.Brand} href="/">
                     <img src="/jiaozifs3.png" alt="JiaoziFS" className="logo"/>
-                    <strong>JiaoziFS Cloud</strong>
+                    <strong>JZFS Cloud</strong>
                 </Link>
                 <NavUserInfo/>
             </Container>
