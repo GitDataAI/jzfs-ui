@@ -24,7 +24,7 @@ const LoginForm = () => {
     return (
         <Row className="justify-content-center align-items-center gx-0">
             <Col md={{offset: 5, span: 7}} className="login-box" >
-        <img src="/jiaozifs.png" alt="JZFS" /><br /><strong className="Signtittle">Sign in To JiaoziFS</strong>
+        <img src="/jiaozifs.png" alt="JZFS" /><br /><strong className="Signtittle">Sign in To JZFS</strong>
             <Card className="login-widget jiaozi-login">
                 <Card.Header> <a href="" onClick={loghandleclick} className="active">Sign In</a> <a href="#" onClick={reghandleclick}>Create Account</a></Card.Header>
                         <Card.Body>
