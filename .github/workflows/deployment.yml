@@ -43,12 +43,12 @@ jobs:
         run: |
           ls dist
           docker login -u  ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker build -t gitdatateam/jiaozifs-ui:${{ steps.version.outputs.version }} . 
-          docker push gitdatateam/jiaozifs-ui:${{ steps.version.outputs.version }}
+          docker build -t gitdatateam/jzconsole:${{ steps.version.outputs.version }} . 
+          docker push gitdatateam/jzconsole:${{ steps.version.outputs.version }}
           
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v3
         with:
-          exec: /usr/sbin/helm upgrade jiaozifs-ui --install ./chart/ --namespace jiaozifs --set-string api_url=${{ secrets.JIAOZI_API_URL }}  --set-string tag=${{ steps.version.outputs.version }}
+          exec: /usr/sbin/helm upgrade jzconsole --install ./chart/ --namespace jiaozifs --set-string api_url=${{ secrets.JIAOZI_API_URL }}  --set-string tag=${{ steps.version.outputs.version }}
           kubeconfig: ${{ secrets.KUBECONTENT }}
           overrule_existing_kubeconfig: "true"
