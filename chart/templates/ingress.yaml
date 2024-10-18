@@ -1,28 +1,28 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name:  jiaozifs-ui
+  name:  jzconsole
   annotations:
-    meta.helm.sh/release-name: jiaozifs-ui
+    meta.helm.sh/release-name: jzconsole
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
   labels:
-    apptype: jiaozifs-ui
+    apptype: jzconsole
     app.kubernetes.io/managed-by: Helm
     heritage: Helm
-    release:  jiaozifs-ui
+    release:  jzconsole
 spec:
   ingressClassName: {{.Values.ingress_name}}
   rules:
-    - host: jzhub.gitdata.ai
+    - host: console.gitdata.ai
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: jiaozifs-ui-service
+                name: jzconsole-service
                 port:
                   number: 80

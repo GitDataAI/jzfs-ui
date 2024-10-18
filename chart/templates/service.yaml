@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: jiaozifs-ui-service
+  name: jzconsole-service
   labels:
-    apptype: jiaozifs-ui
+    apptype: jzconsole
 spec:
   type: ClusterIP
   selector:
-    app: jiaozifs-ui
+    app: jzconsole
   ports:
     - protocol: TCP
       port: 80

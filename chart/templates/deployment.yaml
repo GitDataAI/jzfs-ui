@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jiaozifs-ui-deployment
+  name: jzconsole-deployment
   labels:
-    apptype: jiaozifs-ui
+    apptype: jzconsole
 spec:
   replicas: {{ .Values.replicas}}
   selector:
     matchLabels:
-      app: jiaozifs-ui
+      app: jzconsole
   template:
     metadata:
       labels:
-        app: jiaozifs-ui
-        apptype: jiaozifs-ui
+        app: jzconsole
+        apptype: jzconsole
     spec:
       containers:
         - name: jiaozifs-ui
-          image: gitdatateam/jiaozifs-ui:{{ .Values.tag }}
+          image: gitdatateam/jzconsole:{{ .Values.tag }}
           imagePullPolicy: Always
           env:
             - name: JIAOZIFS_API_URL
