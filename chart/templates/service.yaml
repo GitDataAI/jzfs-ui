@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jzconsole-service
+  namespace: jiaozifs
   labels:
     apptype: jzconsole
 spec:

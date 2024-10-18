@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name:  jzconsole
+  namespace: jiaozifs
   annotations:
     meta.helm.sh/release-name: jzconsole
     nginx.ingress.kubernetes.io/rewrite-target: /
