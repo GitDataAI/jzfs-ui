@@ -1,76 +1,155 @@
 import React, { useState } from "react"
 import Layout from "../../lib/components/layout"
 import { useRouter } from "../../lib/hooks/router";
-import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { users } from "../../lib/api/interface/index";
-import { AlertError } from "../../lib/components/controls";
+import {users} from "../../lib/api/interface";
+import "daisyui/dist/full.css"
 
-const RegisterForm = () => {
+
+
+const RegisterForms = () => {
+    const [Up,setUp] = useState({
+        u: "",
+        p: "",
+        e: ""
+    })
+    const [tips,setips] = useState({
+        u: "",
+        p: "",
+        e: ""
+    })
     const router = useRouter();
-    const [RegisterError, setRegisterError] = useState<React.ReactElement | null>(null);
     const { next } = router.query;
-    const reghandleclick = (e) =>{
-        e.preventDefault();
-        router.push('/register')
-    }
-    const loghandleclick = (e) =>{
+    const loghandleclick = (e: { preventDefault: () => void; }) =>{
         e.preventDefault();
         router.push('/login')
     }
+
+    async function Register(){
+        try {
+            await users.register({name: Up.u,password:Up.p,email:Up.e})
+            router.push(next ? next : '/login');
+        } catch(err) {
+            console.log(err)
+        }
+    }
     return(
-            <Row className="justify-content-center align-items-center gx-0">
-             <Col md={{offset: 5, span: 7}} className="login-box" >
-             <img src="/jiaozifs.png" alt="JZFS" /><br /><strong className="Signtittle">Register To JZFS</strong>
-            <Card className="login-widget jiaozi-login register">
-            <Card.Header> <a href="" onClick={loghandleclick}>Sign In</a> <a href="#" onClick={reghandleclick} className="active">Create Account</a></Card.Header>
-                <Card.Body>
-                    <Form onSubmit={async (e) => {
-                        e.preventDefault()
-                        const form = e.target as HTMLFormElement;
-                        const username = form.elements.namedItem('username') as HTMLInputElement;
-                        const password = form.elements.namedItem('password') as HTMLInputElement;
-                        const email = form.elements.namedItem('email') as HTMLInputElement;
-                        try {
-                            await users.register({name: username.value,password:password.value,email:email.value})
-                            setRegisterError(null);
-                            router.push(next ? next : '/login');
-                        } catch(err) {
-                            if(password.value.length<8)
-                                    {setRegisterError(<span>{'The password must contain at least 8 characters'}</span>)
-                                }else if(!email.value)
-                                    {setRegisterError(<span>{'Please input your e-mail'}</span>)}
-                        }
-                    }}>
-                        <strong>Username</strong>
-                        <Form.Group controlId="username" className="mb-3">
-                            <Form.Control type="text" placeholder={"Access username"} autoFocus/>
-                        </Form.Group>
-                        <strong>Password</strong>
-                        <Form.Group controlId="password" className="mb-3">
-                            <Form.Control type="password" placeholder={"Access password"}/>
-                        </Form.Group>
-                        <strong>E-mail</strong>
-                        <Form.Group controlId="email" className="mb-3">
-                            <Form.Control type="email" placeholder={"Access email"}/>
-                        </Form.Group>
+        <div className={"login"}>
+            <div className="login-page-header">
+                <img src="/jiaozifs.png" alt="JZFS"/><strong>JzConsole</strong>
+            </div>
+            <div className={"login-window"}>
+                <h3>WelCome To JzConsole</h3>
+                <h5>Simplicity, Elasticity, Security and Low Cost.</h5>
+                <form className={"login-form-input"}>
+                    <label>
+                        <input onChange={(x)=>{
+                            setUp({
+                                ...Up,
+                                u: x.target.value
+                            })
+                        }} onBlur={()=>{
+                            const lpp = document.getElementById("lpu")!;
+                            lpp.classList.remove("input-success");
+                            lpp.classList.remove("input-error");
 
-                        {(!!RegisterError) && <AlertError error={RegisterError}/>}
+                            if (Up.u === ""){
+                                setips({
+                                    ...tips,
+                                    u: "Please enter your username"
+                                })
+                                lpp.classList.add("input-error");
+                            }else {
+                                setips({
+                                    ...tips,
+                                    u: ""
+                                })
+                                lpp.classList.add("input-success");
+                            }
 
-                        <Button variant="primary" type="submit">Register</Button>
-                    </Form>
+                        }} id={"lpu"} placeholder={"Username"} className={"input input-bordered w-full max-w-xs"} autoComplete={"current-password"}/>
+                        <br/>
+                        <span>{tips.u}</span>
+                    </label>
+                    <label>
+                        <input onChange={(x) => {
+                            setUp({
+                                ...Up,
+                                p: x.target.value
+                            })
 
-                   
-                </Card.Body>
-            </Card>
-        </Col>
-    </Row>
+                        }} onBlur={()=>{
+                            const lpp = document.getElementById("lpp")!;
+                            lpp.classList.remove("input-success");
+                            lpp.classList.remove("input-error");
+
+                            if (Up.p.length < 8){
+                                setips({
+                                    ...tips,
+                                    p: "The password must contain at least 8 characters"
+                                })
+                                lpp.classList.add("input-error");
+                            }else {
+                                setips({
+                                    ...tips,
+                                    p: ""
+                                })
+                                lpp.classList.add("input-success");
+                            }
+
+                        }} id={"lpp"} placeholder={"password"} className={"input input-bordered w-full max-w-xs"}
+                               type={"password"} autoComplete={"current-password"}/><br/>
+                        <span>{tips.p}</span>
+                    </label>
+
+                    <label>
+                        <input onChange={(x) => {
+                            setUp({
+                                ...Up,
+                                e: x.target.value
+                            })
+
+                        }} onBlur={()=>{
+                            const lpp = document.getElementById("lpe")!;
+                            lpp.classList.remove("input-success");
+                            lpp.classList.remove("input-error");
+
+                            if (Up.e === ""){
+                                setips({
+                                    ...tips,
+                                    e: "Please enter your email"
+                                })
+                                lpp.classList.add("input-error");
+                            }else {
+                                setips({
+                                    ...tips,
+                                    e: ""
+                                })
+                                lpp.classList.add("input-success");
+                            }
+
+                        }} id={"lpe"} placeholder={"email"} className={"input input-bordered w-full max-w-xs"}
+                               type={"email"} autoComplete={"email"}/><br/>
+                        <span>{tips.e}</span>
+                    </label>
+
+
+                    <button type={"button"} onClick={Register} className={"btn max-w-xs w-full absolute btn-active btn-accent"}>Apply</button>
+                    <br/>
+                    <br/>
+                    <span>or</span>
+                    <br/>
+                    <button type={"button"} onClick={loghandleclick} className={"btn max-w-xs w-full absolute"}>Login</button>
+
+                </form>
+
+            </div>
+        </div>
     )
 }
-
 const RegisterPage = ()=>{
     return(
     <Layout logged={false}>
-        <RegisterForm />
+        <RegisterForms />
     </Layout>
     )
 }

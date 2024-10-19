@@ -17,7 +17,7 @@ spec:
         apptype: jzconsole
     spec:
       containers:
-        - name: jiaozifs-ui
+        - name: jzconsole
           image: gitdatateam/jzconsole:{{ .Values.tag }}
           imagePullPolicy: Always
           env:
