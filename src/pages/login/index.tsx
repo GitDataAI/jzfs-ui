@@ -17,7 +17,7 @@ const LoginForm = () => {
         p: "",
     })
     const router = useRouter();
-    const { next } = router.query;
+    // const { next } = router.query;
     const reghandleclick = (e: { preventDefault: () => void; }) =>{
         e.preventDefault();
         router.push('/register')
@@ -30,7 +30,8 @@ const LoginForm = () => {
             cache.set('token', response.data.token)
             await users.getUserInfo().then((response)=>{
                 cache.set('user', response.data.name)
-                router.push(next ? next : '/repositories');
+                // router.push(next ? next : '/repositories');
+                window.location.href = "/repositories"
             })
         } catch(err) {
             console.log(err);
