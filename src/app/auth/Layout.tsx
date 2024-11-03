@@ -1,6 +1,11 @@
-import {Outlet} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 const AuthLayout = () => {
+    const nav = useNavigate();
+    useEffect(() => {
+        nav("/auth/login")
+    },[])
     return(
         <div className="auth-layout">
             <div className="auth-node">

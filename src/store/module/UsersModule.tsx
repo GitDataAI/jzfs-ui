@@ -66,6 +66,22 @@ export class UsersModule{
             return false;
         }
     }
+    public async GetUserInfo() {
+        try {
+            if (!this.Token) {
+                return false
+            }
+            const result = await auth.getUserInfo(this.GetTokenHeader())
+            if (result.status === 200){
+                this.UserInfo = result.data
+                return true
+            }else {
+                return false
+            }
+        } catch (e) {
+            return false
+        }
+    }
     public GetTokenHeader(){
         return {
             headers:{

@@ -13,18 +13,23 @@ const Login = () => {
         register,
         handleSubmit,
     } = useForm<Input>()
-    const onSubmit: SubmitHandler<Input> = async (data) => {
-        const store = await new UseStore().get();
-        const result = await store.user_model.Login(data.name, data.password);
-        console.log(result)
-        if (result){
-
-        }else {
-
-        }
-        new UseStore().set(store)
-    }
     const nav = useNavigate();
+    const onSubmit: SubmitHandler<Input> = async (data) => {
+        try {
+            const store = await new UseStore().get();
+            const result = await store.user_model.Login(data.name, data.password);
+            console.log(result)
+            if (result){
+                nav("/repo")
+                await store.user_model.GetUserInfo();
+            }else {
+                alert("Login Failed")
+            }
+            new UseStore().set(store)
+        }catch (e) {
+            alert(`Error: \`${e}\``)
+        }
+    }
     const Apply = () => nav("/auth/apply")
     return(
       <>
