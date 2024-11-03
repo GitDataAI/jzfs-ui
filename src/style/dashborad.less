@@ -1,0 +1,113 @@
+.dash-layout{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+.dash-sidebar{
+  position: fixed;
+  width: 256px;
+  height: 100vh;
+  border-right: 1px #e8e8e8 solid;
+  background: #ffffff;
+  .dash-sidebar-header{
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 18%;
+    opacity: 1;
+    background: rgb(243, 243, 243);
+  }
+  .dash-sidebar-option{
+    left: 0;
+    width: 100%;
+    height: 85%;
+    opacity: 1;
+    background: rgb(251, 250, 253);
+    .p-menu{
+      width: 100%;
+      border: none;
+      background: none;
+    }
+    .labels-active{
+      margin-left: 16px;
+      background: #e1e1e1;
+      border-left: 2px solid blue;
+    }
+    span{
+      color: #000000;
+      font-weight: 350;
+    }
+    .p-menuitem{
+      height: 35px;
+    }
+    .labels{
+      padding: 5px;
+      margin-left: 20px;
+    }
+    .p-submenu-header{
+      background: none;
+      font-size: small;
+    }
+    .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link{
+      padding: 0
+    }
+    .p-menu .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover{
+      background: #e1e1e1;
+    }
+    .p-menu .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content{
+      background: none;
+    }
+  }
+}
+.dash-body{
+  position: fixed;
+  left: 256px;
+  width: calc(100vw - 256px);
+  height: 100vh;
+  .dash-body-header{
+    top: 0;
+    width: 100%;
+    height: 48px;
+    opacity: 1;
+    background: rgb(255, 255, 255);
+    border-bottom: 0.5px solid rgb(241, 240, 243);
+  }
+  .dash-body-top{
+    .tt{
+      font-size: 40px;
+      margin-left: 20px;
+    }
+    width: 100%;
+    top: 48px;
+    height: 128px;
+    border-bottom: 2px solid rgb(229, 231, 235);
+    #repo-ops{
+      position: absolute;
+      right: 15px;
+      top: 65px
+    }
+    .p-tabmenu{
+      position: absolute;
+      top: 142px;
+      li{
+        margin-left: 5px
+      }
+      .p-highlight{
+        .p-menuitem-text{
+          font-weight: 600;
+          color: #31292f;
+        }
+      }
+    }
+    .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link{
+      padding: 0.5rem;
+    }
+    .p-menuitem-text{
+      font-weight: 400;
+      color: #31292f;
+    }
+  }
+
+}
