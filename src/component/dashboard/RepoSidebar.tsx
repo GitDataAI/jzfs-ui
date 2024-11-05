@@ -1,56 +1,34 @@
 import {Menu} from "primereact/menu";
-import { GoRepo} from "react-icons/go";
-import {PiFlowArrow} from "react-icons/pi";
-import {MenuItem, MenuItemOptions} from "primereact/menuitem";
+import {AiOutlineAlignLeft} from "react-icons/ai";
+import {defaultItem} from "../../store/useSidebar.tsx";
+import {useState} from "react";
+import {MenuItem} from "primereact/menuitem";
 
 const DashRepoSidebar = () => {
-    const ActiveLabel = (id:string) => {
-        document.querySelectorAll(".labels")
-            .forEach((value)=>{
-                value.classList.remove("labels-active")
-                if (value.id === id){
-                    value.classList.add("labels-active")
-                }
-            })
-    }
-    const itemRenderer = (item: MenuItem, _options: MenuItemOptions) => {
-        if (item.disabled){
-            return (
-                <div className='p-menuitem-content labels disable' id={item.id}>
-                    <a className="flex align-items-center p-menuitem-link">
-                        {item.icon}
-                        <span className="mx-2" style={{marginLeft: "10px"}}>{item.label}</span>
-                    </a>
-                </div>
-            )
-        } else {
-            return (
-                <div className='p-menuitem-content labels' id={item.id} onClick={() => ActiveLabel(item.id as string)}>
-                    <a className="flex align-items-center p-menuitem-link">
-                        {item.icon}
-                        <span className="mx-2" style={{marginLeft: "10px"}}>{item.label}</span>
-                    </a>
-                </div>
-            )
+    const HiddleSidebar = () => {
+        const idx = document.getElementById("dash-sidebar");
+        const btn = document.getElementById("dash-sidebar-header-outlint");
+        if (!(idx === null|| btn === null)){
+            if (idx.style.transform == "translateX(-100%)"){
+                idx.style.transform = "translateX(0%)"
+                btn.style.transform = "translateX(0%)"
+            }else {
+                idx.style.transform = "translateX(-100%)"
+                btn.style.transform = "translateX(100%)"
+            }
         }
     }
-
-    let Menuitems: MenuItem[] = [
-        {
-            label: "Your work",
-            items: [
-                {label: 'Repository', id: "sidebar-repo", icon: <GoRepo/>, template: itemRenderer},
-                { label: 'Pipelines',id: "sidebar-pipeline", icon: <PiFlowArrow />,template: itemRenderer,disabled: true},
-            ]
-        }
-    ];
-    return(
-        <div className="dash-sidebar">
+    const [Item] = useState<MenuItem[]>(defaultItem);
+    return (
+        <div className="dash-sidebar" id="dash-sidebar">
             <div className="dash-sidebar-header">
-
+                <button id="dash-sidebar-header-outlint" onClick={HiddleSidebar} className="dash-sidebar-header-outlint"
+                        aria-label="Filter"><AiOutlineAlignLeft/></button>
             </div>
             <div className="dash-sidebar-option">
-                <Menu model={Menuitems} />
+                <Menu onClick={(e)=>{
+                    console.log(e);
+                }} model={Item}/>
             </div>
         </div>
     )

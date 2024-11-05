@@ -1,6 +1,6 @@
 import {Branch, Commit, ObjectStats, RefType, Repository, Tag} from "../../api/models";
 import {BranchesApi, ObjectsApi, RepoApi } from "../../api";
-import UseStore from "../useStore.tsx";
+import {UsersModule} from "./UsersModule.tsx";
 
 const repo = new RepoApi();
 const branch = new BranchesApi();
@@ -32,7 +32,7 @@ export class Repos{
     public async GetCommit(){
         try {
             const result = await repo
-                .getCommitsInRef(this.owner_name, this.repository.name,undefined,undefined,undefined,await this.Token())
+                .getCommitsInRef(this.owner_name, this.repository.name,undefined,undefined,undefined,this.Token())
             if (result.status === 200){
                 this.commit = result.data;
                 return true
@@ -58,14 +58,15 @@ export class Repos{
         }
     }
     public async GetFileContent(ref:RefType){
-        const result = await object.getFiles(this.owner_name,this.repository.name,ref, undefined,await this.Token());
+        const result = await object.getFiles(this.owner_name,this.repository.name,ref, undefined,this.Token());
         if (result.status === 200){
             //TODO
         }
     }
-    public async Token(){
-        const result = await new UseStore().get();
-        return result.user_model.GetTokenHeader();
+    public Token(){
+       let result = new UsersModule();
+       result.Load();
+       return result.GetTokenHeader()
     }
 }
 
@@ -77,7 +78,7 @@ export class RepoModule{
     }
     public async GetOwnerRepo(OwnerId:string){
         try {
-            const result = await repo.listRepository(OwnerId,undefined,undefined,undefined,await this.Token());
+            const result = await repo.listRepository(OwnerId,undefined,undefined,undefined,this.Token());
             if (result.status === 200){
                 for (let i = 0; i ++ ;i < result.data.results.length){
                     this.Repos.push(new Repos(result.data.results[i]))
@@ -124,8 +125,18 @@ export class RepoModule{
             return false
         }
     }
-    public async Token(){
-        const result = await new UseStore().get();
-        return result.user_model.GetTokenHeader();
+    public Save(){
+        localStorage.setItem("Repos",JSON.stringify(this.Repos))
+    }
+    public Load(){
+        const result = localStorage.getItem("Repos");
+        if (result !== null){
+            this.Repos = JSON.parse(result);
+        }
+    }
+    public Token(){
+        const result = new UsersModule();
+        result.Load();
+        return result.GetTokenHeader();
     }
 }

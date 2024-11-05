@@ -2,7 +2,7 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {Button} from "primereact/button";
 import {InputText} from "primereact/inputtext";
 import {useNavigate} from "react-router-dom";
-import UseStore from "../../store/useStore.tsx";
+import {UsersModule} from "../../store/module/UsersModule.tsx";
 
 type Input = {
     name: string,
@@ -16,16 +16,16 @@ const Login = () => {
     const nav = useNavigate();
     const onSubmit: SubmitHandler<Input> = async (data) => {
         try {
-            const store = await new UseStore().get();
-            const result = await store.user_model.Login(data.name, data.password);
+            const module = new UsersModule();
+            const result = await module.Login(data.name, data.password);
             console.log(result)
             if (result){
                 nav("/repo")
-                await store.user_model.GetUserInfo();
+                await module.GetUserInfo();
             }else {
                 alert("Login Failed")
             }
-            new UseStore().set(store)
+            module.Save();
         }catch (e) {
             alert(`Error: \`${e}\``)
         }

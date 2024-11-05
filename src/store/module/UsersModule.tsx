@@ -30,6 +30,29 @@ export class UsersModule{
             return false;
         }
     }
+    public Save(){
+       localStorage.setItem("token",this.Token!);
+       localStorage.setItem("token_expire",this.Token_Expire!.toString());
+       localStorage.setItem("user_info",JSON.stringify(this.UserInfo));
+    }
+    public Load(){
+        try {
+            const token = localStorage.getItem("token");
+            const token_expire = localStorage.getItem("token_expire");
+            const user_info = localStorage.getItem("user_info");
+            if (token && token_expire && user_info){
+                this.Token = token;
+                this.Token_Expire = parseInt(token_expire);
+                this.UserInfo = JSON.parse(user_info);
+                return true
+            }else {
+                return false
+            }
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
     public async Apply(name: string, passwd: string,email: string){
        try {
            const result = await auth.register({
@@ -85,7 +108,7 @@ export class UsersModule{
     public GetTokenHeader(){
         return {
             headers:{
-                "Authorization": `Bearer \`${this.Token}\``
+                "Authorization": `Bearer ` + this.Token
             }
         }
     }

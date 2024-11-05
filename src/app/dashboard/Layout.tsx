@@ -1,12 +1,16 @@
 import DashRepoSidebar from "../../component/dashboard/RepoSidebar.tsx";
 import {Outlet, useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+import useSidebar from "../../store/useSidebar.tsx";
 
 const DashboardLayout = () => {
     const nav = useNavigate();
-    useEffect(()=>{
-        nav("/repo")
-    },[])
+    useSidebar.subscribe((state)=>{
+        console.log(state.current);
+        const url = state.current.url;
+        if (url){
+            nav("/"+url)
+        }
+    })
     return (
         <div className="dash-layout">
             <DashRepoSidebar/>
