@@ -1,12 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import 'bootstrap/dist/css/bootstrap.css';
-import './styles/globals.css';
-import './styles/index.css'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import "primereact/resources/themes/lara-light-cyan/theme.css";
+import {RouterProvider} from "react-router-dom";
+import {Routers} from "./router.tsx";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+
+const root = document.getElementById('root');
+if (root){
+  createRoot(root)
+      .render(
+          <StrictMode>
+              <RouterProvider router={Routers()}/>
+          </StrictMode>
+      )
+}
