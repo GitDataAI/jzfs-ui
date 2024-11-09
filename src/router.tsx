@@ -1,39 +1,47 @@
-import {createBrowserRouter, RouteObject} from "react-router-dom";
+import { createBrowserRouter, RouteObject } from "react-router-dom";
 import useAuth from "./store/useUsers.tsx";
+import AuthLayout from "./app/AuthLayout.tsx";
+import LoginForm from "./components/auth/LoginForm.tsx";
+import RegisterForm from "./components/auth/RegisterForm.tsx";
+import ForgotForm from "./components/auth/ForgotForm.tsx";
 
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
 export const Routers = () => {
-    // @eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let basicRouter:RouteObject[] = [
+  // @eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let basicRouter: RouteObject[] = [
+    {
+      path: "/",
+      element: <h1>Hello GitDataAi Cloud</h1>,
+    },
+    {
+      path: "/auth",
+      element: <AuthLayout />,
+      children: [
         {
-            path: "/",
-            element: <h1>Hello GitDataAi Cloud</h1>
+          path: "login",
+          element: <LoginForm />,
         },
         {
-            path: "/auth",
-            element: <h1>Layout</h1>,
-            children: [
-                {
-                    path: "login",
-                    element: <h1>Login</h1>
-                },
-                {
-                    path: "register",
-                    element: <h1>Register</h1>
-                }
-            ]
-        }
-    ]
-    // @eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let AuthBeforeRouter:RouteObject[] = [
+          path: "register",
+          element: <RegisterForm />,
+        },
         {
-            path: "/test",
-            element: <h1>test</h1>
-        }
-    ]
-    const resp = useAuth.getState();
-    if (resp.user !== undefined){
-        basicRouter.push(...AuthBeforeRouter)
-    }
-    return createBrowserRouter(basicRouter)
-}
+          path: "forgot",
+          element: <ForgotForm />,
+        },
+      ],
+    },
+  ];
+  // @eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let AuthBeforeRouter: RouteObject[] = [
+    {
+      path: "/test",
+      element: <h1>test</h1>,
+    },
+  ];
+  const resp = useAuth.getState();
+  if (resp.user !== undefined) {
+    basicRouter.push(...AuthBeforeRouter);
+  }
+  return createBrowserRouter(basicRouter);
+};
