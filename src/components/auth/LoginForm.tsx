@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import AuthApi from "../../libs/apis/auth_api";
 import { Login } from "../../libs/module/Auth";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const LoginForm: React.FC = () => {
+  const { t } = useTranslation("Auth");
+
   const [formData, setFormData] = useState<Login>({
     username: "",
     password: "",
@@ -18,11 +21,11 @@ const LoginForm: React.FC = () => {
   const validateField = (name: string, value: string) => {
     switch (name) {
       case "username":
-        return value.trim() !== "" ? "" : "用户名不能为空";
+        return value.trim() !== "" ? "" : t("NullUsername");
       case "password":
         return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value)
           ? ""
-          : "密码必须包含字母和数字，且不少于6位";
+          : t("InvalidPass");
       default:
         return "";
     }
@@ -72,7 +75,7 @@ const LoginForm: React.FC = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          用户名
+          {t("Username")}
         </label>
         <input
           type="text"
@@ -82,7 +85,7 @@ const LoginForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.username ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请输入用户名"
+          placeholder={t("Enter") + t("Username")}
         />
         {errors.username && (
           <p className="text-red-500 text-xs mt-1">{errors.username}</p>
@@ -90,7 +93,9 @@ const LoginForm: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">密码</label>
+        <label className="block text-sm font-medium text-gray-700">
+          {t("Password")}
+        </label>
         <input
           type="password"
           name="password"
@@ -99,7 +104,7 @@ const LoginForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.password ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请输入密码"
+          placeholder={t("Enter") + t("Password")}
         />
         {errors.password && (
           <p className="text-red-500 text-xs mt-1">{errors.password}</p>
@@ -110,18 +115,18 @@ const LoginForm: React.FC = () => {
         type="submit"
         className="w-full py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition"
       >
-        登录
+        {t("Login")}
       </button>
       <div className="text-center mt-4">
         <div className="flex justify-between">
           <Link to="/auth/forgot" className="text-primary hover:underline mx-2">
-            忘记密码
+            {t("ForgotPass")}
           </Link>
           <Link
             to="/auth/register"
             className="text-primary hover:underline mx-2"
           >
-            没有账号？去注册
+            {t("NonAccount")}
           </Link>
         </div>
       </div>

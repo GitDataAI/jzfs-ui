@@ -20,17 +20,17 @@ const LanguageSwitcher: React.FC = () => {
   return (
     <div className="relative">
       <button
-        className="flex items-center space-x-2 px-2 py-1 border border-gray-400 rounded-full shadow-sm hover:border-primary focus:outline-none transition duration-300"
+        className="flex items-center space-x-2 px-2 py-1 border border-white rounded-full shadow-sm hover:border-primary focus:outline-none transition duration-300"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <GrLanguage className="text-lg dark:text-white/70" />
-        <span className="text-sm text-dark dark:text-white/70 hidden sm:block">
+        <GrLanguage className="text-lg dark:text-white" />
+        <span className="text-sm text-dark dark:text-white hidden sm:block">
           {languages.find((lang) => lang.code === i18n.language)?.label}
         </span>
         {isOpen ? (
-          <FaCaretUp className="text-xs dark:text-white/70" />
+          <FaCaretUp className="text-xs dark:text-white" />
         ) : (
-          <FaCaretDown className="text-xs dark:text-white/70" />
+          <FaCaretDown className="text-xs dark:text-white" />
         )}
       </button>
       {isOpen && (
@@ -38,7 +38,7 @@ const LanguageSwitcher: React.FC = () => {
           {languages.map((lang, index) => (
             <button
               key={lang.code}
-              className={`w-full text-left px-4 py-2 dark:hover:bg-gray-700 transition duration-200 dark:text-white hover:text-primary dark:hover:text-primary whitespace-nowrap ${
+              className={`w-full text-left px-4 py-2 dark:hover:bg-gray-800 transition duration-200 dark:text-white hover:text-primary dark:hover:text-primary whitespace-nowrap ${
                 index === languages.length - 1 ? "rounded-b-lg" : "rounded-t-lg"
               }`}
               onClick={() => changeLanguage(lang.code)}

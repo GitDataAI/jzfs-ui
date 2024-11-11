@@ -1,4 +1,28 @@
 {
+  "Auth": {
+    "Login": "登录",
+    "Register": "注册",
+    "NonAccount": "没有账号？去注册",
+    "HaveAccount": "已有账号？去登录",
+    "RemAccount": "想起来了？去登录",
+    "ForgotPass": "忘记密码",
+    "Username": "用户名",
+    "Password": "密码",
+    "Captcha": "验证码",
+    "Email": "邮箱",
+    "ConfirmPass": "确认密码",
+    "Submit": "提交",
+    "H2": "关于 GitDataAi Cloud",
+    "Description": "GitDataAi Cloud 是一个用于数据管理、可视化和分析的平台，帮助您高效地管理和探索数据资源。",
+    "InvalidUsername": "用户名必须包含字母和数字，且不少于6位",
+    "InvalidEmail": "请输入有效的邮箱地址",
+    "InvalidPass": "密码必须包含字母和数字，且不少于6位",
+    "InvalidConfirmPass": "两次输入的密码不一致",
+    "InvalidCaptcha": "验证码必须是6位数字",
+    "NullUsername": "用户名不能为空",
+    "Enter": "请输入",
+    "Confirm": "请再次确认密码"
+  },
   "Header": {
     "Home": "主页",
     "PD": "产品",

@@ -1,4 +1,28 @@
 {
+  "Auth": {
+    "Login": "Sign in",
+    "Register": "Sign up",
+    "NonAccount": "Go to Register",
+    "HaveAccount": "Go to log in",
+    "RemAccount": "Go to log in",
+    "ForgotPass": "Forgot Password",
+    "Username": "Username",
+    "Password": "Password",
+    "Captcha": "Captcha",
+    "Email": "Email",
+    "ConfirmPass": "ConfirmPassword",
+    "Submit": "Submit",
+    "H2": "About GitDataAi Cloud",
+    "Description": "GitDataAi Cloud is a platform for data management, visualization, and analysis that helps you manage and explore data resources efficiently.",
+    "InvalidUsername": "The username must contain letters and numbers and be at least 6 digits",
+    "InvalidEmail": "Please enter a valid email address",
+    "InvalidPass": "The password must contain letters and numbers, and be at least 6 digits",
+    "InvalidConfirmPass": "The password entered twice is inconsistent",
+    "InvalidCaptcha": "The verification code must be 6 digits",
+    "NullUsername": "The username cannot be empty",
+    "Enter": "Please Enter ",
+    "Confirm": "Please confirm your password again"
+  },
   "Header": {
     "Home": "Home",
     "PD": "Product",

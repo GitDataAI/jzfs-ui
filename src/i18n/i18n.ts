@@ -23,6 +23,7 @@ i18n
       zh: zhTranslations,
     },
     ns: [
+      "Auth",
       "Header",
       "HomeFT",
       "HomeTitle",
@@ -31,7 +32,7 @@ i18n
       "Contact",
       "Footer",
     ], // 添加所有命名空间
-    defaultNS: "Header", // 设置默认命名空间
+    // defaultNS: "Auth", // 设置默认命名空间
   });
 
 export default i18n;

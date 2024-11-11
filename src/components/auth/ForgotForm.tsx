@@ -1,29 +1,34 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 // import AuthApi from "../../libs/apis/auth_api";
+import { useTranslation } from "react-i18next";
 
 const ForgotForm: React.FC = () => {
+  const { t } = useTranslation("Auth");
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    verificationCode: "",
   });
 
   const [errors, setErrors] = useState({
     username: "",
     email: "",
+    verificationCode: "",
   });
 
   // Consolidate all validation logic
   const validateField = (name: string, value: string) => {
     switch (name) {
       case "username":
-        return /^[a-zA-Z0-9_]+$/.test(value)
-          ? ""
-          : "用户名只能包含字母、数字和下划线";
+        return /^[a-zA-Z0-9_]+$/.test(value) ? "" : t("InvalidUsername");
       case "email":
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
           ? ""
-          : "请输入有效的邮箱地址";
+          : t("InvalidEmail");
+      case "verificationCode":
+        return /^\d{6}$/.test(value) ? "" : t("InvalidCaptcha");
       default:
         return "";
     }
@@ -48,6 +53,10 @@ const ForgotForm: React.FC = () => {
     const newErrors = {
       username: validateField("username", formData.username),
       email: validateField("email", formData.email),
+      verificationCode: validateField(
+        "verificationCode",
+        formData.verificationCode
+      ),
     };
 
     if (Object.values(newErrors).some((error) => error)) {
@@ -67,7 +76,7 @@ const ForgotForm: React.FC = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          用户名
+          {t("Username")}
         </label>
         <input
           type="text"
@@ -77,7 +86,7 @@ const ForgotForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.username ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请输入用户名"
+          placeholder={t("Enter") + t("Username")}
         />
         {errors.username && (
           <p className="text-red-500 text-xs mt-1">{errors.username}</p>
@@ -85,7 +94,9 @@ const ForgotForm: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">邮箱</label>
+        <label className="block text-sm font-medium text-gray-700">
+          {t("Email")}
+        </label>
         <input
           type="email"
           name="email"
@@ -94,10 +105,29 @@ const ForgotForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.email ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请输入邮箱"
+          placeholder={t("Enter") + t("Email")}
         />
         {errors.email && (
           <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          {t("Captcha")}
+        </label>
+        <input
+          type="text"
+          name="verificationCode"
+          value={formData.verificationCode}
+          onChange={handleChange}
+          className={`w-full mt-1 p-2 border ${
+            errors.verificationCode ? "border-red-500" : "border-gray-300"
+          } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
+          placeholder={t("Enter") + t("Captcha")}
+        />
+        {errors.verificationCode && (
+          <p className="text-red-500 text-xs mt-1">{errors.verificationCode}</p>
         )}
       </div>
 
@@ -105,11 +135,11 @@ const ForgotForm: React.FC = () => {
         type="submit"
         className="w-full py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition"
       >
-        提交
+        {t("Submit")}
       </button>
       <div className="text-center mt-4">
         <Link to="/auth/login" className="text-primary hover:underline mx-2">
-          想起来了？去登录
+          {t("RemAccount")}
         </Link>
       </div>
     </form>

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import AuthApi from "../../libs/apis/auth_api";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const RegisterForm: React.FC = () => {
+  const { t } = useTranslation("Auth");
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -23,17 +26,17 @@ const RegisterForm: React.FC = () => {
       case "username":
         return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value)
           ? ""
-          : "用户名必须包含字母和数字，且不少于6位";
+          : t("InvalidUsername");
       case "email":
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
           ? ""
-          : "请输入有效的邮箱地址";
+          : t("InvalidEmail");
       case "password":
         return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(value)
           ? ""
-          : "密码必须包含字母和数字，且不少于6位";
+          : t("InvalidPass");
       case "confirmPassword":
-        return value === formData.password ? "" : "两次密码不一致";
+        return value === formData.password ? "" : t("InvalidConfirmPass");
       default:
         return "";
     }
@@ -50,7 +53,7 @@ const RegisterForm: React.FC = () => {
         const confirmPasswordError =
           updatedData.password === updatedData.confirmPassword
             ? ""
-            : "两次密码不一致";
+            : t("InvalidConfirmPass");
         setErrors((prevErrors) => ({
           ...prevErrors,
           confirmPassword: confirmPasswordError,
@@ -100,7 +103,7 @@ const RegisterForm: React.FC = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          用户名
+          {t("Username")}
         </label>
         <input
           type="text"
@@ -110,7 +113,7 @@ const RegisterForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.username ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请输入用户名"
+          placeholder={t("Enter") + t("Username")}
         />
         {errors.username && (
           <p className="text-red-500 text-xs mt-1">{errors.username}</p>
@@ -118,7 +121,9 @@ const RegisterForm: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">邮箱</label>
+        <label className="block text-sm font-medium text-gray-700">
+          {t("Email")}
+        </label>
         <input
           type="email"
           name="email"
@@ -127,7 +132,7 @@ const RegisterForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.email ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请输入邮箱"
+          placeholder={t("Enter") + t("Email")}
         />
         {errors.email && (
           <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -135,7 +140,9 @@ const RegisterForm: React.FC = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">密码</label>
+        <label className="block text-sm font-medium text-gray-700">
+          {t("Password")}
+        </label>
         <input
           type="password"
           name="password"
@@ -144,7 +151,7 @@ const RegisterForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.password ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请输入密码"
+          placeholder={t("Enter") + t("Password")}
         />
         {errors.password && (
           <p className="text-red-500 text-xs mt-1">{errors.password}</p>
@@ -153,7 +160,7 @@ const RegisterForm: React.FC = () => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          确认密码
+          {t("ConfirmPass")}
         </label>
         <input
           type="password"
@@ -163,7 +170,7 @@ const RegisterForm: React.FC = () => {
           className={`w-full mt-1 p-2 border ${
             errors.confirmPassword ? "border-red-500" : "border-gray-300"
           } rounded-md focus:outline-none focus:border-primary bg-white focus:bg-blue-50 text-primary`}
-          placeholder="请再次输入密码"
+          placeholder={t("Confirm")}
         />
         {errors.confirmPassword && (
           <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
@@ -174,11 +181,11 @@ const RegisterForm: React.FC = () => {
         type="submit"
         className="w-full py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition"
       >
-        注册
+        {t("Register")}
       </button>
       <div className="text-center mt-4">
         <Link to="/auth/login" className="text-primary hover:underline mx-2">
-          已有账号？去登录
+          {t("HaveAccount")}
         </Link>
       </div>
     </form>
