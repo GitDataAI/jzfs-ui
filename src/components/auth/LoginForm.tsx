@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import AuthApi from "../../libs/apis/auth_api";
 import { Login } from "../../libs/module/Auth";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import useAuth from "@/store/useUsers";
 
 const LoginForm: React.FC = () => {
   const { t } = useTranslation("Auth");
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState<Login>({
     username: "",
@@ -43,30 +44,25 @@ const LoginForm: React.FC = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate all fields before submission
     const newErrors = {
       username: validateField("username", formData.username),
       password: validateField("password", formData.password),
     };
 
-    // If there are validation errors, set them and return
     if (Object.values(newErrors).some((error) => error)) {
       setErrors(newErrors);
       return;
     }
 
-    try {
-      const response = await new AuthApi().login(formData);
-      console.log("Login successful:", response);
-    } catch (err) {
-      console.error("Login error:", err);
+    const loginSuccess = await login(formData);
+    if (loginSuccess) {
+    } else {
       setErrors({
         username: "",
-        password: "登录失败，请检查您的用户名和密码",
+        password: t("LoginFail"),
       });
     }
   };

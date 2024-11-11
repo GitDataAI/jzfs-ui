@@ -4,14 +4,21 @@ import AuthLayout from "./app/AuthLayout.tsx";
 import LoginForm from "./components/auth/LoginForm.tsx";
 import RegisterForm from "./components/auth/RegisterForm.tsx";
 import ForgotForm from "./components/auth/ForgotForm.tsx";
+import Layout from "./app/Layout.tsx";
+import Home from "./app/home.tsx";
 
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
 export const Routers = () => {
   // @eslint-disable-next-line @typescript-eslint/no-unused-vars
   let basicRouter: RouteObject[] = [
     {
-      path: "/",
-      element: <h1>Hello GitDataAi Cloud</h1>,
+      element: <Layout/>,
+      children:[
+        {
+          path:"/",
+          element:<Home/>
+        }
+      ]
     },
     {
       path: "/auth",

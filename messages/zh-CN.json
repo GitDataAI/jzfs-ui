@@ -21,7 +21,9 @@
     "InvalidCaptcha": "验证码必须是6位数字",
     "NullUsername": "用户名不能为空",
     "Enter": "请输入",
-    "Confirm": "请再次确认密码"
+    "Confirm": "请再次确认密码",
+    "LoginSuccess": "登录成功",
+    "LoginFail": "登录失败，用户名或密码有误"
   },
   "Header": {
     "Home": "主页",

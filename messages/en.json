@@ -21,7 +21,9 @@
     "InvalidCaptcha": "The verification code must be 6 digits",
     "NullUsername": "The username cannot be empty",
     "Enter": "Please Enter ",
-    "Confirm": "Please confirm your password again"
+    "Confirm": "Please confirm your password again",
+    "LoginSuccess": "Login successful",
+    "LoginFail": "Login failed, wrong username or password"
   },
   "Header": {
     "Home": "Home",
