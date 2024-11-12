@@ -2,9 +2,11 @@ import Urls from "./Urls.tsx";
 import axios from "axios";
 
 export interface Result<T> {
-  code: number;
-  msg: string;
-  data?: T;
+  data: {
+    code: number;
+    msg: string;
+    data?: T;
+  };
 }
 
 class Nets extends Urls {

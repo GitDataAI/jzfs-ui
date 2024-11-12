@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Login } from "../../libs/module/Auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useAuth from "@/store/useUsers";
 
 const LoginForm: React.FC = () => {
   const { t } = useTranslation("Auth");
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<Login>({
     username: "",
@@ -59,9 +60,10 @@ const LoginForm: React.FC = () => {
 
     const loginSuccess = await login(formData);
     if (loginSuccess) {
+      navigate("/");
     } else {
       setErrors({
-        username: "",
+        username: t("LoginFail"),
         password: t("LoginFail"),
       });
     }

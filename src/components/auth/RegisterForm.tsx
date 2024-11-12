@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import AuthApi from "../../libs/apis/auth_api";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
+import { useNavigate } from "react-router-dom";
 const RegisterForm: React.FC = () => {
   const { t } = useTranslation("Auth");
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -92,8 +93,10 @@ const RegisterForm: React.FC = () => {
     try {
       const { confirmPassword, ...registerData } = formData;
       const authApi = new AuthApi();
-      const response = await authApi.register(registerData);
-      console.log("Register successful:", response);
+      const res = await authApi.register(registerData);
+      if (res.data.code === 200) {
+        navigate("/auth/login");
+      }
     } catch (err) {
       console.error("Register error:", err);
     }

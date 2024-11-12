@@ -1,4 +1,10 @@
-import { Auth, Login, Register, UserModule } from "../module/Auth.tsx";
+import {
+  Auth,
+  Login,
+  Register,
+  updataModule,
+  UserModule,
+} from "../module/Auth.tsx";
 import Nets, { Result } from "../Nets.tsx";
 
 class AuthApi extends Nets implements Auth {
@@ -32,6 +38,23 @@ class AuthApi extends Nets implements Auth {
   local(): Promise<Result<UserModule>> {
     try {
       return this.POST(this.Urls.v1.auth.local, {});
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+  updatePassword(data: string): Promise<Result<undefined>> {
+    try {
+      const base = window.btoa(JSON.stringify(data));
+      return this.POST(this.Urls.v1.auth.updatePassword, {
+        inner: base,
+      });
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+  updata(data: updataModule): Promise<Result<undefined>> {
+    try {
+      return this.POST(this.Urls.v1.auth.updata, data);
     } catch (e) {
       return Promise.reject(e);
     }

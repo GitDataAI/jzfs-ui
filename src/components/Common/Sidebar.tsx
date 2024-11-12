@@ -1,3 +1,4 @@
+// Sidebar.tsx
 import React from "react";
 import { FiChevronLeft, FiHome, FiUser, FiSettings } from "react-icons/fi";
 
@@ -17,7 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
     <div
       className={`bg-white text-black dark:bg-gray-800 dark:text-white transition-width duration-300 border-r border-gray-200 dark:border-gray-700 ${
         isCollapsed ? "w-14" : "w-64"
-      }`}
+      } h-full overflow-y-auto`}
     >
       <div className="flex items-center justify-between p-4">
         <span
