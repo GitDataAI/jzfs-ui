@@ -6,6 +6,8 @@ import RegisterForm from "./components/auth/RegisterForm.tsx";
 import ForgotForm from "./components/auth/ForgotForm.tsx";
 import Layout from "./app/Layout.tsx";
 import Home from "./app/Home.tsx";
+import Login from "./components/auth/Login.tsx";
+import Register from "./components/auth/Register.tsx";
 
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
 export const Routers = () => {
@@ -26,11 +28,11 @@ export const Routers = () => {
       children: [
         {
           path: "login",
-          element: <LoginForm />,
+          element: <Login />,
         },
         {
           path: "register",
-          element: <RegisterForm />,
+          element: <Register />,
         },
         {
           path: "forgot",
