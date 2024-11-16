@@ -1,7 +1,6 @@
 
-# JiaoZiFS(JZFS)-UI
-A UI of JiaoZiFS(A version control file system for data centric applications & teams).
-
+# JZLab
+JZLab is the self-hosted version of GitData.AI that allows you to deploy and manage your own DataHub and Workflow on-prem.
 <p align="left">
   <a href="https://www.npmjs.com/package/npm">
        <img src="https://camo.githubusercontent.com/ae8e4bb0c53259a19bfe3a79d29797a2d7b38cf50251ac18a60c9e91846c5aa0/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6e706d2e737667" alt="npm package" />
@@ -10,42 +9,33 @@ A UI of JiaoZiFS(A version control file system for data centric applications & t
   <br/>
 </p>
 
-<a href="https://github.com/GitDataAI/jiaozifs"><img src="https://github.com/GitDataAI/jiaozifs/blob/main/docs/logo/jiaozifs.png?raw=true" width="100" /></a>
+<a href="https://github.com/GitDataAI/jzlab"><img src="https://github.com/GitDataAI/jzlab/blob/main/pub/jzlab-ts.png?raw=true"/></a>
 
 ----
-### What is JiaoZiFS?
-JiaoZiFS is an industry-leading **Data-Centric Version Control** File System, helps ensure Responsible AI Engineering by improving **Data Versioning**, **Provenance**, and **Reproducibility**.
+## JZLab include but not limited to：
 
-Note:
-* The name JiaoZi pays tribute to the world's earliest paper money: [Song Dynasty JiaoZi](https://en.wikipedia.org/wiki/Jiaozi_(currency)).
-* JiaoZiFS is yet another implementation of [IPFS (InterPlanetary File System)](https://ipfs.tech/) as JiaoZiFS will be compatible with the [implementation requirements](https://specs.ipfs.tech/architecture/principles/#ipfs-implementation-requirements) of IPFS.
-* As a filesystem of data versioning at scale, although JiaoZiFS is built for machine learning, It has a wide range of use scenarios (refer A Universe of Uses) and can be seamlessly integrated into all your data stack.
+1. Visualize and interact with JZFS repositories 
+2. Visualize and interact JZFlow pipelines and Directed Acyclic Graphs (DAGs).
+2. One-click to start the fully functional JupyterLab environment.
+3. Examine the performance of versioned/registered models.
+4. Monitor the status of model services including health and resource usage stats, and view deployment history and related logs.
+5. Easily upload and manage datasets and shared resources.
+6. Browse and share files with other group members in a collaborative, group-centric, environment.
+7. Submit and schedule jobs to run automatically in the background. Easily monitor job progress from the job stats panel.
+8. The easiest way to do the infrastructure orchestration for setting up 10+ different tools to build your infrastructure.
 
-Data-centric AI is about the practice of iterating and collaborating on data, used to build AI systems, programmatically. Machine learning pioneer Andrew Ng [argues that focusing on the quality of data fueling AI systems will help unlock its full power](https://youtu.be/TU6u_T-s68Y).
 
+## How different roles use JZLab
+- Data Scientist
+    - Data scientists can stay informed and focused on training and running their models.
+    - In the past, there was a lot of manual work of setting the environment, which is a fragmented and time consuming analysis process. And it is hard to collaborate with a team on the same project.
+    - Now, you can carry out data analytics and optimizations with ML easily, and contribute your time on what really matters.
+- IT Leader
+    - Gives IT leaders flexibility and administration authority to configure resources.
+    - In the past, it’s hard to keep track of each teams' needs and environment settings. Also, the hardware, resources, and GPU usage are unsure.
+    - Now, You can equip and enable data teams with the tools and resources they need as easy as pie. And easily deploy the model within an hour.
 ----
-### Why JiaoZiFS?
-In production systems with machine learning components, updates and experiments are frequent. New updates to models(data products) may be released every day or every few minutes, and different users may see the results of different models as part of A/B experiments or canary releases.
-
-* **Version Everything**: Data scientists are often criticized for being less disciplined with versioning their experiments(versioning of data, pipeline, code, and models), especially when using computational notebooks.
-* **Track Data Provenance**: This applies to all processing steps in an AI/ML pipeline, including data collection/acquisition, data merging, data cleaning, feature extraction, learning, or deployment.
-* **Reproducibility**: A final question of AI/ML that is often relevant for debugging, audits, and also science more broadly is to what degree data, models, and decisions can be reproduced.
-
-----
-### A Universe of Uses
-JiaoZiFS's versatility shines across different industries – making it the multi-purpose tool for the **data centric applications and teams**.
-
-* **Enterprise DataHub & Data Collaboration**: Depending on your operating scale, you may even be managing multiple team members, who may be spread across different locations. JiaoZiFS enable Collaborative Datasets Version Management at Scale,Share & collaborate easily: Instantly share insights and co-edit with your team.
-* **DataOps & Data Products & Data Mesh**: Augmenting Enterprise Data Development and Operations,JiaoZiFS ensures Responsible DataOps/AIOps/MLOps by improving Data Versioning, Provenance, and Reproducibility. JiaoziFS makes a fusion of data science and product development and allows data to be containerized into shareable, tradeable, and trackable assets(data products or data NFTs). Versioning data products in a maturing Data Mesh environment via standard processes, data consumers can be informed about both breaking and non-breaking changes in a data product, as well as retirement of data products.
-* **Industrial Digital Twin**: Developing digital twins for manufacturing involves managing tons of large files and multiple iterations of a project. All of the data collected and created in the digital twin process (and there is a lot of it) needs to be managed carefully. JiaoziFS allows you to manage changes to files over time and store these modifications in a database.
-* **Data Lake Management**: Data lakes are dynamic.   New files and new versions of ex- isting files enter the lake at the ingestion stage.   Additionally, extractors can evolve over time and generate new versions of raw data.   As a result, data lake versioning is a cross-cutting concern across all stages of a data lake.   Of course vanilla dis- tributed file systems are not adequate for versioning-related operations.   For example, simply storing all versions may be too costly for large datasets, and without a good version manager, just using filenames to track versions can be error-prone.   In a data lake, for which there are usually many users, it is even more important to clearly maintain correct versions being used and evolving across different users.   Furthermore, as the number of versions increases, efficiently and cost-effectively providing storage and retrieval of versions is going to be an important feature of a successful data lake system.
-----
-### Specification
-
-[JiaoZiFS Specification](https://github.com/GitDataAI/Specification/blob/main/JiaoziFS)
-
-----
-### Basic Build And Usage
+## Basic Build And Usage
 
 #### Requirement
 
@@ -56,13 +46,13 @@ JiaoZiFS's versatility shines across different industries – making it the mult
 
 deploy the system to your server,you can get help from this repository:
 ```bash
-https://github.com/GitDataAI/jiaozifs
+https://github.com/GitDataAI/jzfs
 ```
 
-clone jiaozifs-ui repository to your server:
+clone JZLab repository to your server:
 
 ```bash
-git clone git@github.com:GitDataAI/jiaozifs-ui.git
+git clone git@github.com:GitDataAI/jzlab.git
 ```
 
 Before you run the project for the first time, run the following script to install packages from `package.json`:
@@ -83,7 +73,7 @@ docker run -it -p 12345:80 -e JIAOZIFS_API_URL=http://api.jiaozifs.com/api/v1 gi
 ----
 ### Cloud
 
-[Try without installing](https://cloud.jiaozifs.com)
+[Try without installing](https://gitdata.ai)
 
 ----
 ### Contributors
