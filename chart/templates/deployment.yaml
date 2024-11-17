@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: gitdata-rust
-          image: gitdatateam/GitDatCloudRust:{{ .Values.tag }}
+          image: gitdatateam/gitdatarust:{{ .Values.tag }}
           imagePullPolicy: Always
           env:
             - name: JIAOZIFS_API_URL
