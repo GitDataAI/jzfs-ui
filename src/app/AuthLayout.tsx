@@ -1,11 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Link } from "react-router-dom";
-import LanguageSwitcher from "@/components/Common/LanguageSwitcher";
-import { useTranslation } from "react-i18next";
+// import { Link } from "react-router-dom";
+// import LanguageSwitcher from "@/components/Common/LanguageSwitcher";
+// import { useTranslation } from "react-i18next";
 
 const AuthLayout: React.FC = () => {
-  const { t } = useTranslation("Auth");
+  // const { t } = useTranslation("Auth");
   return (
     // bg-gradient-to-br
     <div className="relative min-h-screen flex items-center justify-center  from-black via-primary-dark to-background p-4">

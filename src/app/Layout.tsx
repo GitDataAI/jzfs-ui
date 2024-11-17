@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "@/components/Common/Sidebar";
-import Header from "@/components/Common/Header";
-import Footer from "@/components/Common/Footer";
 import { Outlet } from "react-router-dom";
 import useAuth from "../store/useUsers.tsx";
+import Header from "@/components/layout/Header.tsx";
 
 const Layout: React.FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
   const { user, init } = useAuth();
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -26,16 +19,14 @@ const Layout: React.FC = () => {
   }, [init, user, navigate]);
 
   return (
-    <div className="flex w-screen h-screen bg-background dark:bg-background-darkmode">
-      <Sidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
-      <div className="flex flex-col flex-1 h-full">
+    <>
+      <div className="flex flex-col h-screen">
         <Header />
-        <main className="flex-1 p-5 bg-white dark:bg-gray-800">
+        <div className="w-full flex flex-grow items-center justify-center">
           <Outlet />
-        </main>
-        <Footer />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
