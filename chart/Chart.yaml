@@ -1,11 +1,11 @@
 apiVersion: v2
-name: jzconsole
+name: gitdata-rust
 description: Install jiaozifs ui to provider backend function of ui.
 version: 1.0.0
 home: https://devcloud.gitdata.ai/
 keywords:
-  - jzconsole
-  - jiaozifs
+  - gitdata-rust
+  - rust
 sources:
   - https://github.com/GitdataAi/console
   - https://github.com/GitdataAi/jiaozifshub
