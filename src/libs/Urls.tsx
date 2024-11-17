@@ -1,14 +1,19 @@
-class Urls{
-    public Urls = {
-        v1:{
-            auth:{
-                login: '/api/v1/auth/login',
-                logout: '/api/v1/auth/logout',
-                register: '/api/v1/auth/register',
-                local: '/api/v1/auth/local'
-            },
-        }
-    }
+class Urls {
+  public Urls = {
+    v1: {
+      auth: {
+        login: "/v1/auth/login",
+        logout: "/v1/auth/logout",
+        register: "/v1/auth/register",
+        local: "/v1/auth/local",
+        updatePassword: "/v1/auth/updatawp",
+        updata: "/v1/auth/updata",
+      },
+      keys: {
+        listToken: "/v1/keys/list/token",
+      },
+    },
+  };
 }
 
-export default Urls
+export default Urls;

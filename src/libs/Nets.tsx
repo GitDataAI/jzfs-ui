@@ -2,28 +2,34 @@ import Urls from "./Urls.tsx";
 import axios from "axios";
 
 export interface Result<T> {
+  data: {
     code: number;
-    msg:  string;
+    msg: string;
     data?: T;
+  };
 }
 
-
-class Nets extends Urls{
-    constructor(){
-        super();
+class Nets extends Urls {
+  constructor() {
+    super();
+  }
+  public baseUrl = "http://221.128.225.26:34914";
+  // @eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async POST(
+    urls: string,
+    data: any,
+    options: object = {}
+  ): Promise<any> {
+    try {
+      return await axios.post(this.baseUrl + urls, data, {
+        headers: {
+          ...options,
+        },
+      });
+    } catch (e) {
+      return e;
     }
-    // @eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public async POST(urls: string, data: any, options: object = {}): Promise<any>{
-        try {
-            return await axios.post(urls, data,{
-                headers: {
-                    ...options
-                }
-            })
-        }catch (e) {
-            return e;
-        }
-    }
+  }
 }
 
 export default Nets;
