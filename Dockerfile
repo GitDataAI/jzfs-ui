@@ -2,10 +2,8 @@ FROM node:22.6.0-alpine3.20
 WORKDIR /usr/src/app
 
 COPY . .
-RUN npm install --global pnpm
-RUN pnpm install
-
-RUN pnpm run build
+RUN npm install
+RUN npm run build
 
 FROM nginx:latest
 
