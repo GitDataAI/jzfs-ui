@@ -1,7 +1,14 @@
-FROM nginx:1.25.3
+FROM node:22.6.0-alpine3.20
+WORKDIR /usr/src/app
 
-COPY dist/. /usr/share/nginx/html
-COPY ./script/start.sh /docker-entrypoint.d/start.sh
-COPY ./script/nginx.conf /etc/nginx/nginx.conf
+COPY . .
+RUN npm install --global pnpm
+RUN pnpm install
 
-RUN chmod +x /docker-entrypoint.d/start.sh
+RUN pnpm run build
+
+FROM nginx:latest
+
+COPY --from=0 /usr/src/app/dist /usr/share/nginx/html
+COPY script/nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80

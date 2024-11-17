@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: jzconsole-service
+  name: gitdata-rust-service
   namespace: jiaozifs
   labels:
-    apptype: jzconsole
+    apptype: gitdata-rust
 spec:
   type: ClusterIP
   selector:
-    app: jzconsole
+    app: gitdata-rust
   ports:
     - protocol: TCP
       port: 80

@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jzconsole-deployment
+#  name: gitdata-rust-deployment
   namespace: jiaozifs
   labels:
-    apptype: jzconsole
+    apptype: gitdata-rust
 spec:
   replicas: {{ .Values.replicas}}
   selector:
     matchLabels:
-      app: jzconsole
+      app: gitdata-rust
   template:
     metadata:
       labels:
-        app: jzconsole
-        apptype: jzconsole
+        app: gitdata-rust
+        apptype: gitdata-rust
     spec:
       containers:
-        - name: jzconsole
-          image: gitdatateam/jzconsole:{{ .Values.tag }}
+        - name: gitdata-rust
+          image: gitdatateam/GitDatCloudRust:{{ .Values.tag }}
           imagePullPolicy: Always
           env:
             - name: JIAOZIFS_API_URL

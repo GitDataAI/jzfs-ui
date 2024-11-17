@@ -8,4 +8,4 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - cloud.jiaozifs.com
+    - devcloud.jiaozifs.com

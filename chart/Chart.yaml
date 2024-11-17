@@ -2,7 +2,7 @@ apiVersion: v2
 name: jzconsole
 description: Install jiaozifs ui to provider backend function of ui.
 version: 1.0.0
-home: https://console.gitdata.com/
+home: https://devcloud.gitdata.ai/
 keywords:
   - jzconsole
   - jiaozifs

@@ -48,8 +48,8 @@ jobs:
         run: |
           ls dist
           docker login -u  ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker build -t gitdatateam/jzconsole:${{ steps.version.outputs.version }} . 
-          docker push gitdatateam/jzconsole:${{ steps.version.outputs.version }}
+          docker build -t gitdatateam/GitDatCloudRust:${{ steps.version.outputs.version }} . 
+          docker push gitdatateam/GitDatCloudRust:${{ steps.version.outputs.version }}
           
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v3
