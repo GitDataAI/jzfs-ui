@@ -13,11 +13,11 @@ class Nets extends Urls {
   constructor() {
     super();
   }
-  public baseUrl = "http://221.128.225.26:34914";
+  public baseUrl = "/api";
   // @eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async POST(
     urls: string,
-    data: any,
+    data?: any,
     options: object = {}
   ): Promise<any> {
     try {
