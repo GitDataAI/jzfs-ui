@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-import LanguageSwitcher from "@/components/Common/LanguageSwitcher";
+import LanguageSwitcher from "@/components/Common/LanguageSwitcher.tsx";
 import { useTranslation } from "react-i18next";
 
 const AuthLayout: React.FC = () => {

@@ -59,6 +59,24 @@ class AuthApi extends Nets implements Auth {
       return Promise.reject(e);
     }
   }
+  send(email: string): Promise<Result<undefined>>{
+    try {
+      return this.POST(this.Urls.v1.auth.send,{
+        email: email
+      });
+    }catch (e){
+      return Promise.reject(e);
+    }
+  }
+  verification(data: string): Promise<Result<undefined>>{
+    try {
+      return this.POST(this.Urls.v1.auth.verification,{
+        code:data
+      });
+    }catch (e){
+      return Promise.reject(e);
+    }
+  }
 }
 
 export default AuthApi;

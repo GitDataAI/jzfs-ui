@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name:  gitdata-rust
-  namespace: jiaozifs
+  namespace: gitdata
   annotations:
     meta.helm.sh/release-name: gitdata-rust
     nginx.ingress.kubernetes.io/rewrite-target: /
