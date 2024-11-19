@@ -5,6 +5,8 @@ import Login from "@/app/auth/Login.tsx";
 
 const Register = () => {
     const [Step,setStep] = useState(0)
+    const [CountDown,setCountDown] = useState(60)
+    const [isCountDown,setisCountDown] = useState(false)
     const [Oauth,setOauth] = useState<ReactElement<any, any>[]>([]);
     const [user,Setuser] = useState({
         email:"",
@@ -23,14 +25,17 @@ const Register = () => {
         ])
     },[])
     const handleSend = () => {
-        Auth_api.send(user.email)
-            .then(res=>{
-                if (res.data.code === 200){
-                    alert("发送成功")
-                }else {
-                    alert("发送失败:"+res.data.msg)
-                }
-            })
+        if(!isCountDown ){
+            Auth_api.send(user.email)
+                .then(res=>{
+                    if (res.data.code === 200){
+                        alert("发送成功")
+                        setisCountDown(true)
+                    }else {
+                        alert("发送失败:"+res.data.msg)
+                    }
+                })
+        }
     }
 
     const validate = (code:string) => {
@@ -70,11 +75,20 @@ const Register = () => {
         }
     }
     useEffect(() => {
-        const timer = setInterval(() => {
-
-        }, 1000)
-        return () => clearInterval(timer);
-    }, []);
+        console.log(isCountDown)
+        console.log(CountDown)
+        if (isCountDown){
+            const timer = setTimeout(() => {
+                setCountDown(CountDown - 1)
+                if(CountDown == 0){
+                    setisCountDown(false)
+                    return () =>{
+                        clearTimeout(timer)
+                    }
+                }
+            }, 1000)
+        }
+    }, [isCountDown,CountDown]);
     const login = () => {
         nav("/auth/login")
     }
@@ -93,18 +107,24 @@ const Register = () => {
                 }} type="text" placeholder="输入您的电子邮件地址" className="border border-[#8790a2] h-12 w-4/5 px-2 mt-2 mb-2"/>
                 {
                     (Step===1 || Step === 2)?(
-                        <div className="flex items-center h-12 w-4/5 mt-2 mb-2 ">
+                        <div className="flex items-center h-12 w-4/5 mt-2 mb-2 showDiv ">
                             <input onChange={(e)=>InputCode(e.target.value)} type="text" placeholder="输入验证码" className="border border-[#8790a2] h-12 w-3/5 px-2 mt-2 mb-2"/>
-                            <button onClick={handleSend} type={"button"} className="bg-[#3767e6] h-12 w-2/5"><span className="text-white">{Time}</span></button>
+                            <button onClick={handleSend} type={"button"} className="bg-[#3767e6] h-12 w-2/5"><span className="text-white">{
+                                isCountDown ?(<>
+                                    {CountDown}
+                                </>):(<>
+                                    发送验证码
+                                </>)
+                            }</span></button>
                         </div>
                     ):null
                 }
                 {
                     Step===2?(
                         <>
-                            <input onChange={(x)=>{Setuser({...user,password:x.target.value})}} type="password" placeholder="请输入密码" className="border border-[#8790a2] h-12 w-4/5 px-2 mt-2 mb-2"/>
-                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder="请确认密码" className="border border-[#8790a2] h-12 w-4/5 px-2 mt-2 mb-2"/>
-                            <input onChange={(x)=>{Setuser({...user,username:x.target.value})}} type="text" placeholder="请输入用户名" className="border border-[#8790a2] h-12 w-4/5 px-2 mt-2 mb-2"/>
+                            <input onChange={(x)=>{Setuser({...user,password:x.target.value})}} type="password" placeholder="请输入密码" className="border border-[#8790a2] h-12 w-4/5 px-2 mt-2 mb-2 showDiv"/>
+                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder="请确认密码" className="border border-[#8790a2] h-12 w-4/5 px-2 mt-2 mb-2 showDiv"/>
+                            <input onChange={(x)=>{Setuser({...user,username:x.target.value})}} type="text" placeholder="请输入用户名" className="border border-[#8790a2] h-12 w-4/5 px-2 mt-2 mb-2 showDiv"/>
                         </>
                     ):null
                 }

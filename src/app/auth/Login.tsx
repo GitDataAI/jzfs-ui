@@ -26,7 +26,7 @@ const Login = () => {
            })
                .then(res=>{
                    if (res.data.code === 200){
-                       nav("/home")
+                       nav("/")
                    }else {
                        console.error(res)
                    }
