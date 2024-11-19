@@ -22,14 +22,13 @@ class Nets extends Urls {
     options: object = {}
   ): Promise<any> {
     try {
-      const agent = new https.Agent({
-        rejectUnauthorized: false
-      });
       return await axios.post(this.baseUrl + urls, data, {
         headers: {
           ...options,
         },
-        httpsAgent: agent
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false
+        })
       });
     } catch (e) {
       return e;
