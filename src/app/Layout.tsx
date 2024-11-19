@@ -19,7 +19,7 @@ const Layout: React.FC = () => {
   };
   useEffect(() => {
     checkAuthStatus();
-  }, [init, user, navigate]);
+  }, []);
 
   return (
     <>
