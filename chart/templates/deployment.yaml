@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-#  name: gitdata-rust-deployment
   namespace: gitdata
+  name: gitdata-rust
   labels:
     apptype: gitdata-rust
 spec:
@@ -20,8 +20,5 @@ spec:
         - name: gitdata-rust
           image: gitdatateam/gitdatarust:{{ .Values.tag }}
           imagePullPolicy: Always
-          env:
-            - name: JIAOZIFS_API_URL
-              value: {{ .Values.api_url }}
           ports:
             - containerPort: 80

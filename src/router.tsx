@@ -1,8 +1,6 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import useAuth from "./store/useUsers.tsx";
 import AuthLayout from "./app/auth/Layout.tsx";
-import LoginForm from "./components/auth/LoginForm.tsx";
-import RegisterForm from "./components/auth/RegisterForm.tsx";
 import ForgotForm from "./components/auth/ForgotForm.tsx";
 import Layout from "./app/Layout.tsx";
 import Repositories from "./app/Repositories.tsx";

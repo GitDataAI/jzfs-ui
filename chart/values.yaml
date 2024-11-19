@@ -1,7 +1,6 @@
 # Additional Trusted CAs.
 # Enable this flag and add your CA certs as a secret named tls-ca-additional in the namespace.
 # See README.md for details.
-replicas: 1
+replicas: 2
 ingress_name: nginx
-api_url: http://api.jzhub.gitdata.ai/api/v1
 tag: latest
