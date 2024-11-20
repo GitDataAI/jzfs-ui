@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.7",
     "i18next": "^23.16.5",
     "i18next-browser-languagedetector": "^8.0.0",
