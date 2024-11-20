@@ -13,7 +13,7 @@ class Nets extends Urls {
   constructor() {
     super();
   }
-  public baseUrl = "/api";
+  public baseUrl = "https://v1.jiaozifs.com";
   // @eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async POST(
     urls: string,
