@@ -9,6 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
   labels:
     apptype: gitdata-rust
     app.kubernetes.io/managed-by: Helm
@@ -20,18 +21,17 @@ spec:
     - host: devcloud.gitdata.ai
       http:
         paths:
+          - path: ~ ^/api/.*$
+            pathType: Prefix
+            backend:
+              service:
+                name: jzfs-rust-service
+                port:
+                  number: 80
           - path: /
             pathType: Prefix
             backend:
               service:
                 name: gitdata-rust-service
-                port:
-                  number: 80
-
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: jzfs-rust-service
                 port:
                   number: 80
