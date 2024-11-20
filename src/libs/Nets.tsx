@@ -14,7 +14,7 @@ class Nets extends Urls {
   constructor() {
     super();
   }
-  public baseUrl = "https://api.rspanel.cn";
+  public baseUrl = "/api";
   // @eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async POST(
     urls: string,

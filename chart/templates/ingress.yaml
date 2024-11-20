@@ -5,10 +5,15 @@ metadata:
   namespace: gitdata
   annotations:
     meta.helm.sh/release-name: gitdata-rust
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,Content-Type,Authorization,Origin,Accept,Access-Control-Request-Method,Access-Control-Request-Headers"
+    nginx.ingress.kubernetes.io/cors-max-age: "86400"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-expose-headers: "Content-Length,Content-Range"
+    nginx.ingress.kubernetes.io/rewrite-target: /api/$1
   labels:
     apptype: gitdata-rust
     app.kubernetes.io/managed-by: Helm
@@ -27,3 +32,10 @@ spec:
                 name: gitdata-rust-service
                 port:
                   number: 80
+          - path: /api/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: jzfs-rust-service
+                port:
+                  number: 34513
