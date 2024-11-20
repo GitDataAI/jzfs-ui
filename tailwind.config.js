@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
   screens: {
+    ssm: "375px",
+    // => @media (min-width: 375px) { ... }
+
     xs: "450px",
     // => @media (min-width: 450px) { ... }
 

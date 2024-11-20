@@ -5,8 +5,10 @@ import { Link } from "react-router-dom";
 import { LuMenu } from "react-icons/lu";
 import LeftMenu from "./LeftMenu"; // 引入 LeftMenu 组件
 import RightMenu from "./RightMenu"; // 引入 RightMenu 组件
+import {useTranslation} from "react-i18next";
 
 const Header: React.FC = () => {
+  const [t]=useTranslation("Setting")
   const [isMenuOpen, setLeftMenuOpen] = useState(false);
   const [isRightMenuOpen, setIsRightMenuOpen] = useState(false); // 用来控制右侧菜单的显示
 
@@ -27,19 +29,19 @@ const Header: React.FC = () => {
               to="/Repositories"
               className="bg-white border border-gray-300 rounded-l-sm px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
             >
-              Repositories
+              {t("Repositories")}
             </Link>
             <Link
               to="/Actions"
               className="bg-white border-t border-b border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
             >
-              Actions
+              {t("Actions")}
             </Link>
             <Link
               to="/Group"
               className="bg-white border border-gray-300 rounded-r-sm px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none"
             >
-              Group
+              {t("Group")}
             </Link>
           </div>
         </div>
@@ -47,7 +49,7 @@ const Header: React.FC = () => {
           <div className="flex items-center border border-gray-300 rounded-sm p-1 md:px-3 md:py-1 bg-white shadow-sm">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder={t("Search")}
               className="flex-grow text-sm text-gray-700 placeholder-gray-500 focus:outline-none  hidden sm:hidden md:block lg:block"
             />
             <button className="p-0.5 md:p-1 text-gray-500 hover:text-gray-700">
