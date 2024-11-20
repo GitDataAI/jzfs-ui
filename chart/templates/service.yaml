@@ -13,3 +13,18 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jzfs-rust-service-external
+  namespace: gitdata
+spec:
+  externalName: v1.jiaozifs.com
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  sessionAffinity: ClientIP
