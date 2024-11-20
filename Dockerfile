@@ -8,6 +8,7 @@ FROM nginx:1.26.2
 
 COPY --from=0 /usr/src/app/dist /usr/share/nginx/html
 COPY script/nginx.conf /etc/nginx/
+COPY script/mime.types /etc/nginx/
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
