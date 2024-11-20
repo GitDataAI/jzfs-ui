@@ -52,7 +52,7 @@ spec:
       http:
         paths:
           - path: /api
-            pathType: Prefix
+            pathType: Exact
             backend:
               service:
                 name: jzfs-rust-service
