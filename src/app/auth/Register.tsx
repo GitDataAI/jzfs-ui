@@ -75,8 +75,6 @@ const Register = () => {
         }
     }
     useEffect(() => {
-        console.log(isCountDown)
-        console.log(CountDown)
         if (isCountDown){
             const timer = setTimeout(() => {
                 setCountDown(CountDown - 1)

@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://221.128.225.26:34513",
+        target: "https://v1.jiaozifs.com",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
