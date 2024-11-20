@@ -40,4 +40,4 @@ spec:
               service:
                 name: jzfs-rust-service-external
                 port:
-                  number: 80
+                  number: 443

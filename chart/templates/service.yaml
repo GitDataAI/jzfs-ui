@@ -23,6 +23,10 @@ metadata:
 spec:
   externalName: v1.jiaozifs.com
   ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 443
     - name: http
       port: 80
       protocol: TCP
