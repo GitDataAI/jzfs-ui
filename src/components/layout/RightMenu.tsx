@@ -1,5 +1,6 @@
 import React from "react";
 import { Sidebar } from "primereact/sidebar"; // 引入 PrimeReact 的 Sidebar 组件
+import {useTranslation} from "react-i18next";
 
 interface RightMenuProps {
   isOpen: boolean;
@@ -7,6 +8,7 @@ interface RightMenuProps {
 }
 
 const RightMenu: React.FC<RightMenuProps> = ({ isOpen, closeSidebar }) => {
+  const [t] = useTranslation("Setting")
   return (
     <Sidebar
       visible={isOpen}
@@ -19,17 +21,17 @@ const RightMenu: React.FC<RightMenuProps> = ({ isOpen, closeSidebar }) => {
         <ul className="mt-4 space-y-4">
           <li>
             <a href="#" className="text-md hover:text-blue-600">
-              我的账户
+              {t("MyAccount")}
             </a>
           </li>
           <li>
             <a href="#" className="text-md hover:text-blue-600">
-              设置
+              {t("Settings")}
             </a>
           </li>
           <li>
             <a href="#" className="text-md hover:text-blue-600">
-              退出
+              {t("Quit")}
             </a>
           </li>
         </ul>

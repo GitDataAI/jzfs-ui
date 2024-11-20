@@ -7,19 +7,19 @@ import Header from "@/components/layout/Header.tsx";
 const Layout: React.FC = () => {
   const navigate = useNavigate();
   const { user, init } = useAuth();
-  const checkAuthStatus = async () => {
-    try {
-      await init();
-      if (!user) {
-        navigate("/auth/login");
-      }
-    }catch (e){
-      navigate("/auth/login")
-    }
-  };
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  // const checkAuthStatus = async () => {
+  //   try {
+  //     await init();
+  //     if (!user) {
+  //       navigate("/auth/login");
+  //     }
+  //   }catch (e){
+  //     navigate("/auth/login")
+  //   }
+  // };
+  // useEffect(() => {
+  //   checkAuthStatus();
+  // }, []);
 
   return (
     <>
