@@ -21,11 +21,16 @@ class Nets extends Urls {
     options: object = {}
   ): Promise<any> {
     try {
-      return await axios.post(this.baseUrl + urls, data, {
+      const result = await axios.post(this.baseUrl + urls, data, {
         headers: {
           ...options,
+          "Cookie": document.cookie,
         },
       });
+      if (result.headers["set-cookie"]){
+        document.cookie = result.headers["set-cookie"].join("; ");
+      }
+      return result;
     } catch (e) {
       return e;
     }
