@@ -27,3 +27,11 @@ spec:
                 name: gitdata-rust-service
                 port:
                   number: 80
+
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: jzfs-rust-service
+                port:
+                  number: 80
