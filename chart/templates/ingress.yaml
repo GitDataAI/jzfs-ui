@@ -14,8 +14,6 @@ metadata:
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-expose-headers: "Content-Length,Content-Range"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/upstream-vhost: jzfs-rust-service-external
   labels:
     apptype: gitdata-rust
     app.kubernetes.io/managed-by: Helm
@@ -32,12 +30,5 @@ spec:
             backend:
               service:
                 name: gitdata-rust-service
-                port:
-                  number: 80
-          - path: /api/
-            pathType: Prefix
-            backend:
-              service:
-                name: jzfs-rust-service-external
                 port:
                   number: 80
