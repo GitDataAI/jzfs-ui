@@ -1,6 +1,5 @@
 import Urls from "./Urls.tsx";
 import axios from "axios";
-import * as https from "node:https";
 
 export interface Result<T> {
   data: {
@@ -26,9 +25,6 @@ class Nets extends Urls {
         headers: {
           ...options,
         },
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: false
-        })
       });
     } catch (e) {
       return e;
