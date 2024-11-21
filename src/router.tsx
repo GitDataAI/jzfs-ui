@@ -8,6 +8,7 @@ import Login from "./app/auth/Login.tsx";
 import Register from "./app/auth/Register.tsx";
 import Group from "./app/Group.tsx";
 import Actions from "./app/Actions.tsx";
+import Forgot from "./app/auth/Forgot.tsx";
 
 
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
@@ -49,7 +50,7 @@ export const Routers = () => {
         },
         {
           path: "forgot",
-          element: <ForgotForm />,
+          element: <Forgot />,
         },
       ],
     },

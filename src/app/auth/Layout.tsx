@@ -8,7 +8,7 @@ const AuthLayout: React.FC = () => {
   // const { t } = useTranslation("Auth");
   return (
     // bg-gradient-to-br
-    <div className="relative min-h-screen flex items-center justify-center  from-black via-primary-dark to-background p-4 ">
+    <div className="relative min-h-screen flex items-center justify-center  from-black via-primary-dark to-background p-4 bg-[#FFFFF7]">
       {/* <header className="absolute top-0 left-0 w-full flex items-center justify-between p-4 bg-transparent px-10">
         <Link to="/" className="text-white text-2xl font-bold">
           GitDataAi Cloud

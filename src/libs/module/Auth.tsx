@@ -45,6 +45,6 @@ export interface Auth {
   register(data: Register): Promise<Result<undefined>>;
   logout(): Promise<Result<undefined>>;
   local(): Promise<Result<UserModule>>;
-  updatePassword(data: string): Promise<Result<undefined>>;
+  updatePassword(data: object): Promise<Result<undefined>>;
   updata(data: updataModule): Promise<Result<undefined>>;
 }
