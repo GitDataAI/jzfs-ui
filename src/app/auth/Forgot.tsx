@@ -109,8 +109,8 @@ const Forgot =()=>{
             <Toast ref={toast}/>
             <div className="h-full">
                 <div className="flex items-baseline justify-center cursor-pointer">
-                    <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-8" />
-                    <b className=" text-4xl">GitDataAI</b>
+                    <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-52" />
+                    {/*<b className=" text-4xl">GitDataAI</b>*/}
                 </div>
                 <h3 className="text-center mt-6 mb-4 font-bold cursor-pointer">{t("ResetPass")}</h3>
                 <div>
@@ -141,7 +141,7 @@ const Forgot =()=>{
                             ):null
                         }
 
-                        <button type={"button"} onClick={handleNext} className="bg-[#f34d01e6] border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"><span className="text-white">{t("Confirm")}</span></button>
+                        <button type={"button"} onClick={handleNext} className="bg-[#f34d01e6] border border-[#8790a2] h-10 w-4/5"><span className="text-white">{t("Confirm")}</span></button>
 
                         {/*<h3 className="text-center text-[#616c84] mt-6 mb-4 cursor-pointer">{t("OrContinue")}</h3>*/}
                         {/*{*/}
@@ -152,12 +152,12 @@ const Forgot =()=>{
                     </form>
                 </div>
                 <div className="text-center mt-4 mb-5 cursor-pointer">
-                    <span className="mr-1"><a onClick={login}>{t("RemAccount")}</a></span>
+                    <span className="mr-1 hover:text-[#f34d01e6]"><a onClick={login}>{t("RemAccount")}</a></span>
                 </div>
                 <hr className="border-none h-px ml-auto mr-auto bg-[#c2c7d0] w-4/5"/>
-                <div className="flex items-baseline justify-center mt-5 cursor-pointer">
-                    <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-4" />
-                    <strong className=" text-xl">GitDataAI | Cloud</strong>
+                <div className="flex items-baseline justify-center mt-1 cursor-pointer">
+                    <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-32" />
+                    {/*<strong className=" text-xl">GitDataAI</strong>*/}
                 </div>
                 <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
                 <h3 className="text-center text-xs cursor-pointer">{t("Protection")}</h3>

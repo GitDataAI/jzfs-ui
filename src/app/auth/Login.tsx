@@ -59,8 +59,8 @@ const Login = () => {
     <>
     <div className="h-full ">
         <div className="flex items-baseline justify-center cursor-pointer">
-            <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-8" />
-            <b className=" text-4xl">GitDataAI</b>
+            <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-52" />
+            {/*<b className=" text-4xl">GitDataAI</b>*/}
         </div>
         <h3 className="text-center mt-6 mb-4 font-bold cursor-pointer">{t("LoginContinue")}</h3>
         <div>
@@ -83,16 +83,16 @@ const Login = () => {
             </form>
         </div>
         <div className="text-center mt-4 mb-5 cursor-pointer">
-            <span className="mr-1"><a onClick={forgot}>{t("ForgotPass")}</a> </span>
+            <span className="mr-1 hover:text-[#f34d01e6]"><a onClick={forgot}>{t("ForgotPass")}</a> </span>
             <span className="mr-1">• </span>
-            <span onClick={apply}>{t("CreateAccount")}</span>
+            <span onClick={apply} className="hover:text-[#f34d01e6]">{t("CreateAccount")}</span>
         </div>
         <hr className="border-none h-px ml-auto mr-auto bg-[#c2c7d0] w-4/5"/>
-        <div className="flex items-baseline justify-center mt-5 cursor-pointer">
-            <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-4" />
-            <strong className=" text-xl">GitDataAI | Cloud</strong>
+        <div className="flex items-baseline justify-center mt-1 cursor-pointer">
+            <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-32" />
+            {/*<strong className=" text-xl">GitDataAI</strong>*/}
         </div>
-        <h3 className="text-center text-xs cursor-pointer">{t("Connectivity")}</h3>
+        <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
         <h3 className="text-center text-xs cursor-pointer">{t("Protection")}</h3>
         </div>
     </>
