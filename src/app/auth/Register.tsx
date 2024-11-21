@@ -1,8 +1,9 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Auth_api} from "@/store/useUsers.tsx";
 import Login from "@/app/auth/Login.tsx";
 import {useTranslation} from "react-i18next";
+import {Toast} from "primereact/toast";
 
 const Register = () => {
     const [t] = useTranslation("Auth")
@@ -19,6 +20,7 @@ const Register = () => {
     })
     const [Time,setTime] = useState(t("Get")+t("Captcha"))
     const nav = useNavigate();
+    const toast = useRef<Toast>(null)
     useEffect(()=>{
         setOauth([
             // <button className="border border-[#c2c7d0] h-12 w-4/5 mt-2 mb-2"><FcGoogle className="inline mr-2" size={"2rem"}/>Google</button>,
@@ -31,10 +33,12 @@ const Register = () => {
             Auth_api.send(user.email)
                 .then(res=>{
                     if (res.data.code === 200){
-                        alert(t("Send")+t("Success"))
+                        toast.current?.show({severity:'success',summary:t("Success"),detail:t("Send")+t('Success')})
+                        // alert(t("Send")+t("Success"))
                         setisCountDown(true)
                     }else {
-                        alert(t("Send")+t("Fail")+res.data.msg)
+                        toast.current?.show({severity:'success',summary:t("Fail"),detail:t("Send")+t("Fail")})
+                        // alert(t("Send")+t("Fail")+res.data.msg)
                     }
                 })
         }
@@ -46,7 +50,8 @@ const Register = () => {
                 if (res.data.code === 200){
                     setStep(2)
                 }else {
-                    alert(t("CaptchaError"))
+                    toast.current?.show({severity:'error',summary:t("Fail"),detail:t("CaptchaError")})
+                    // alert(t("CaptchaError"))
                 }
             })
     }
@@ -66,7 +71,8 @@ const Register = () => {
                 if (res.data.code === 200){
                     nav("/auth/login")
                 }else {
-                    alert(t("RegistrationFailed")+res.data.msg)
+                    toast.current?.show({severity:'error',summary:t("RegistrationFailed"),detail:res.data.msg})
+                    // alert(t("RegistrationFailed")+res.data.msg)
                 }
             })
     }
@@ -84,24 +90,28 @@ const Register = () => {
                 setCountDown(CountDown - 1)
                 if(CountDown == 0){
                     setisCountDown(false)
-                    return () =>{
-                        clearTimeout(timer)
-                    }
                 }
             }, 1000)
+            return () =>{
+                clearTimeout(timer)
+            }
+
         }
+        setCountDown(60)
     }, [isCountDown,CountDown]);
     const login = () => {
         nav("/auth/login")
     }
   return (
+
     <>
+    <Toast ref={toast}/>
     <div className="h-full">
-        <div className="flex items-baseline justify-center">
-            <img src="/gitdata.ai.png" alt="JZFS" className=" w-8" />
+        <div className="flex items-baseline justify-center cursor-pointer">
+            <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-8" />
             <b className=" text-4xl">GitDataAI</b>
         </div>
-        <h3 className="text-center mt-6 mb-4 font-bold">{t("RegisterContinue")}</h3>
+        <h3 className="text-center mt-6 mb-4 font-bold cursor-pointer">{t("RegisterContinue")}</h3>
         <div>
             <form className="flex flex-col items-center ">
                 <input onChange={(x)=>{
@@ -111,7 +121,7 @@ const Register = () => {
                     (Step===1 || Step === 2)?(
                         <div className="flex items-center h-12 w-4/5 mt-2 mb-2 showDiv ">
                             <input onChange={(e)=>InputCode(e.target.value)} type="text" placeholder={t("Enter")+t("Captcha")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"/>
-                            <button onClick={handleSend} type={"button"} className="bg-[#3767e6] border border-[#8790a2] h-10 w-3/5 mt-2 mb-2 px-2"><span className="text-white">{
+                            <button onClick={handleSend} type={"button"} className="bg-[#f34d01e6] border border-[#8790a2] h-10 w-3/5 mt-2 mb-2 px-2"><span className="text-white">{
                                 isCountDown ?(<>
                                     {CountDown}
                                 </>):(<>
@@ -125,15 +135,15 @@ const Register = () => {
                     Step===2?(
                         <>
                             <input onChange={(x)=>{Setuser({...user,password:x.target.value})}} type="password" placeholder={t("Enter")+t("Password")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
-                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder={t("Confirm")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 showDiv"/>
+                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder={t("ConfirmP")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 showDiv"/>
                             <input onChange={(x)=>{Setuser({...user,username:x.target.value})}} type="text" placeholder={t("Enter")+t("Username")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
                         </>
                     ):null
                 }
 
-                <button type={"button"} onClick={handleNext} className="bg-[#3767e6] border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"><span className="text-white">{t("Register")}</span></button>
+                <button type={"button"} onClick={handleNext} className="bg-[#f34d01e6] border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"><span className="text-white">{t("Register")}</span></button>
 
-                <h3 className="text-center text-[#616c84] mt-6 mb-4">{t("OrContinue")}</h3>
+                <h3 className="text-center text-[#616c84] mt-6 mb-4 cursor-pointer">{t("OrContinue")}</h3>
                 {
                     Oauth.map((item)=>{
                         return item
@@ -141,16 +151,16 @@ const Register = () => {
                 }
             </form>
         </div>
-            <div className="text-center mt-4 mb-5">
+            <div className="text-center mt-4 mb-5 cursor-pointer">
                 <span className="mr-1">{t("HaveAccount")}<a onClick={login}>{t("Login")}</a></span>
             </div>
             <hr className="border-none h-px ml-auto mr-auto bg-[#c2c7d0] w-4/5"/>
-            <div className="flex items-baseline justify-center mt-5">
-                <img src="/gitdata.ai.png" alt="JZFS" className=" w-4" />
+            <div className="flex items-baseline justify-center mt-5 cursor-pointer">
+                <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-4" />
                 <strong className=" text-xl">GitDataAI | Cloud</strong>
             </div>
-            <h3 className="text-center text-xs mb-2">{t("Connectivity")}</h3>
-            <h3 className="text-center text-xs">{t("Protection")}</h3>
+            <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
+            <h3 className="text-center text-xs cursor-pointer">{t("Protection")}</h3>
         </div>
     </>
   );

@@ -42,7 +42,7 @@ class AuthApi extends Nets implements Auth {
       return Promise.reject(e);
     }
   }
-  updatePassword(data: string): Promise<Result<undefined>> {
+  updatePassword(data: object): Promise<Result<undefined>> {
     try {
       const base = window.btoa(JSON.stringify(data));
       return this.POST(this.Urls.v1.auth.updatePassword, {
