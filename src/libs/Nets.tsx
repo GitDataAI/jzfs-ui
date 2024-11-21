@@ -1,5 +1,6 @@
 import Urls from "./Urls.tsx";
 import axios from "axios";
+import Cookies from 'js-cookie'
 
 export interface Result<T> {
   data: {
@@ -21,11 +22,17 @@ class Nets extends Urls {
     options: object = {}
   ): Promise<any> {
     try {
-      return await axios.post(this.baseUrl + urls, data, {
+      const result = await axios.post(this.baseUrl + urls, data, {
         headers: {
           ...options,
+          "Cookie": Cookies.get("SessionID"),
         },
       });
+      const cks = result.headers["set-cookie"];
+      if (cks) {
+        Cookies.set("SessionID", cks[0])
+      }
+      return result;
     } catch (e) {
       return e;
     }

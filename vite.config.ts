@@ -19,6 +19,7 @@ export default defineConfig({
     },
   },
   plugins: [react(),BasicSsl()],
+  base: "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"), // Map the @ to the src directory
