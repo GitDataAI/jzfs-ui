@@ -13,17 +13,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-
----
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: gitdata-rust
-  namespace: gitdata
-subsets:
-  - addresses:
-      - ip: 10.210.1.150
-      - ip: 10.210.1.151
-      - ip: 10.210.1.152
-    ports:
-      - port: 80
