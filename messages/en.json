@@ -1,19 +1,26 @@
 {
   "Auth": {
+    "Get": "get",
     "Login": "Sign in",
+    "CantLogin": "Can't log in?",
     "Register": "Sign up",
+    "RegistrationFailed": "Registration failed",
     "NonAccount": "Go to Register",
     "HaveAccount": "Go to log in",
     "RemAccount": "Go to log in",
+    "CreateAccount": "Create Account  ",
     "ForgotPass": "Forgot Password",
     "Username": "Username",
     "Password": "Password",
     "Captcha": "Captcha",
+    "CaptchaError": "Captcha Error",
     "Email": "Email",
     "ConfirmPass": "ConfirmPassword",
     "Submit": "Submit",
     "H2": "About GitDataAi Cloud",
     "Description": "GitDataAi Cloud is a platform for data management, visualization, and analysis that helps you manage and explore data resources efficiently.",
+    "Connectivity": "One account gives you access to GitData, JZFS, JZFlow and other products.",
+    "Protection": "This site is protected by Cloudflare and subject to the Google Privacy Policy and Terms of Service.",
     "InvalidUsername": "The username must contain letters and numbers and be at least 6 digits",
     "InvalidEmail": "Please enter a valid email address",
     "InvalidPass": "The password must contain letters and numbers, and be at least 6 digits",
@@ -23,7 +30,14 @@
     "Enter": "Please Enter ",
     "Confirm": "Please confirm your password again",
     "LoginSuccess": "Login successful",
-    "LoginFail": "Login failed, wrong username or password"
+    "LoginFail": "Login failed, wrong username or password",
+    "LoginContinue": "Sign in to continue",
+    "RegisterContinue": "Register to continue",
+    "Continue": "continue",
+    "OrContinue": "Or continue with the following method",
+    "Send": "Send",
+    "SendSuccess": " successfully",
+    "SendFail": " failed:"
   },
   "Header": {
     "Home": "Home",
@@ -103,5 +117,17 @@
     "PRIVACY": "Privacy Policy",
     "SPLP": "Support & Help",
     "TERMUSE": "Terms of Use"
+  },
+  "Setting": {
+    "HomePage" : "Home",
+    "Notification": "Notification",
+    "Settings": "Settings",
+    "Help": "Help",
+    "MyAccount": "My Account",
+    "Quit": "Sign out",
+    "Repositories": "Repositories",
+    "Actions": "Actions",
+    "Group": "Group",
+    "Search": "Search"
   }
 }

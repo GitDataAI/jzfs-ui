@@ -1,5 +1,6 @@
 import React from "react";
 import { Sidebar } from "primereact/sidebar";
+import {useTranslation} from "react-i18next";
 
 interface LeftMenuProps {
   isOpen: boolean;
@@ -7,6 +8,7 @@ interface LeftMenuProps {
 }
 
 const LeftMenu: React.FC<LeftMenuProps> = ({ isOpen, closeSidebar }) => {
+  const [t] = useTranslation("Setting")
   return (
     <Sidebar
       visible={isOpen}
@@ -19,22 +21,22 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ isOpen, closeSidebar }) => {
         <ul className="mt-4 space-y-4">
           <li>
             <a href="#" className="text-md hover:text-blue-600">
-              首页
+              {t("HomePage")}
             </a>
           </li>
           <li>
             <a href="#" className="text-md hover:text-blue-600">
-              通知
+              {t("Notification")}
             </a>
           </li>
           <li>
             <a href="#" className="text-md hover:text-blue-600">
-              设置
+              {t("Settings")}
             </a>
           </li>
           <li>
             <a href="#" className="text-md hover:text-blue-600">
-              帮助
+              {t("Help")}
             </a>
           </li>
         </ul>

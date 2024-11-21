@@ -1,19 +1,26 @@
 {
   "Auth": {
+    "Get": "获取",
     "Login": "登录",
+    "CantLogin": "无法登录?",
     "Register": "注册",
+    "RegistrationFailed": "注册失败",
     "NonAccount": "没有账号？去注册",
-    "HaveAccount": "已有账号？去登录",
+    "HaveAccount": "已有GitDataAI.ai账号? ",
     "RemAccount": "想起来了？去登录",
+    "CreateAccount": "创建账户",
     "ForgotPass": "忘记密码",
     "Username": "用户名",
     "Password": "密码",
     "Captcha": "验证码",
+    "CaptchaError": "验证码错误",
     "Email": "邮箱",
     "ConfirmPass": "确认密码",
     "Submit": "提交",
     "H2": "关于 GitDataAi Cloud",
     "Description": "GitDataAi Cloud 是一个用于数据管理、可视化和分析的平台，帮助您高效地管理和探索数据资源。",
+    "Connectivity": "一个帐户可访问 GitData, JZFS, JZFlow 以及其他产品。",
+    "Protection": "此站点受 Cloudflare 的保护，且遵循 Google 隐私政策和服务条款。",
     "InvalidUsername": "用户名必须包含字母和数字，且不少于6位",
     "InvalidEmail": "请输入有效的邮箱地址",
     "InvalidPass": "密码必须包含字母和数字，且不少于6位",
@@ -23,7 +30,14 @@
     "Enter": "请输入",
     "Confirm": "请再次确认密码",
     "LoginSuccess": "登录成功",
-    "LoginFail": "登录失败，用户名或密码有误"
+    "LoginFail": "登录失败，用户名或密码有误",
+    "LoginContinue": "登录以继续",
+    "RegisterContinue": "注册以继续",
+    "Continue": "继续",
+    "OrContinue": "或通过以下方式继续",
+    "Send": "发送",
+    "Success": "成功",
+    "Fail": "失败："
   },
   "Header": {
     "Home": "主页",
@@ -103,5 +117,17 @@
     "PRIVACY": "隐私政策",
     "SPLP": "支持与帮助",
     "TERMUSE": "使用条款"
+  },
+  "Setting": {
+    "HomePage" : "首页",
+    "Notification": "通知",
+    "Settings": "设置",
+    "Help": "帮助",
+    "MyAccount" : "我的账户",
+    "Quit": "退出",
+    "Repositories": "存储库",
+    "Actions": "行动",
+    "Group": "团体",
+    "Search": "搜索"
   }
 }

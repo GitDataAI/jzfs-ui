@@ -9,6 +9,7 @@ import Register from "./app/auth/Register.tsx";
 import Group from "./app/Group.tsx";
 import Actions from "./app/Actions.tsx";
 
+
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
 export const Routers = () => {
   // @eslint-disable-next-line @typescript-eslint/no-unused-vars
