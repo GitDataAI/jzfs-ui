@@ -9,6 +9,7 @@ import Register from "./app/auth/Register.tsx";
 import Group from "./app/Group.tsx";
 import Actions from "./app/Actions.tsx";
 import Forgot from "./app/auth/Forgot.tsx";
+import Profile from "@/app/Profile.tsx";
 
 
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
@@ -33,6 +34,10 @@ export const Routers = () => {
         {
           path: "/Group",
           element: <Group />,
+        },
+        {
+          path:"/Profile",
+          element: <Profile />
         },
       ],
     },

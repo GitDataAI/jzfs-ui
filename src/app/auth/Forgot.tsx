@@ -160,7 +160,7 @@ const Forgot =()=>{
                     {/*<strong className=" text-xl">GitDataAI</strong>*/}
                 </div>
                 <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
-                <h3 className="text-center text-xs cursor-pointer">{t("Protection")}</h3>
+                <h3 className="text-center text-xs cursor-pointer">{t("Protection")}<a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a>{t("And")}<a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
             </div>
         </>
     );

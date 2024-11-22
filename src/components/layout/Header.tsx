@@ -14,8 +14,8 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="w-full p-3 flex justify-between items-center h-12 md:h-12 lg:h-14">
-        <div className="flex items-center gap-4">
+      <header className="w-full p-3 flex justify-between items-center h-14">
+        <div className=" flex items-center gap-4">
           <button
             onClick={() => {
               setLeftMenuOpen(true);

@@ -65,15 +65,9 @@ const Login = () => {
         <h3 className="text-center mt-6 mb-4 font-bold cursor-pointer">{t("LoginContinue")}</h3>
         <div>
             <form className="flex flex-col items-center ">
-                <input onChange={(x)=>{InputEmail(x.target.value)}} type="text" placeholder={t("Enter")+t("Username")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"/>
-                {
-                    Step==1?(
-                        <>
-                            <input value={user.password} onChange={(x)=>{Setuser({...user,password:x.target.value})}} type="password" placeholder={t("Enter")+t("Password")} autoComplete={"current-password"} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2  showDiv"/>
-                        </>
-                    ):null
-                }
-                <button type={"button"} onClick={Next} className="bg-[#f34d01e6] h-10 w-4/5"><span className="text-white">{Step==0?(t("Continue")):(t("Login"))}</span></button>
+                <input onChange={(x)=>{InputEmail(x.target.value)}} type="text" placeholder={t("Enter")+t("Username")+'/'+t("Email")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"/>
+                <input value={user.password} onChange={(x)=>{Setuser({...user,password:x.target.value})}} type="password" placeholder={t("Enter")+t("Password")} autoComplete={"current-password"} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"/>
+                <button type={"button"} onClick={Next} className="bg-[#f34d01e6] h-10 w-4/5"><span className="text-white">{(t("Login"))}</span></button>
                 <h3 className="text-center text-[#616c84] mt-6 mb-4 cursor-pointer">{t("OrContinue")}</h3>
                 {
                     Oauth.map((value)=>{
@@ -93,7 +87,7 @@ const Login = () => {
             {/*<strong className=" text-xl">GitDataAI</strong>*/}
         </div>
         <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
-        <h3 className="text-center text-xs cursor-pointer">{t("Protection")}</h3>
+        <h3 className="text-center text-xs cursor-pointer">{t("Protection")}<a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a>{t("And")}<a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
         </div>
     </>
   );

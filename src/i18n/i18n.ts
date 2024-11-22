@@ -31,6 +31,7 @@ i18n
       "HomeBlog",
       "Contact",
       "Footer",
+      "Setting",
     ], // 添加所有命名空间
     // defaultNS: "Auth", // 设置默认命名空间
   });
