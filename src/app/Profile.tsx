@@ -46,24 +46,21 @@ const Profile:react.FC = () => {
             <div className="w-full h-full justify-center items-center flex">
                 <div className="px-3 px-md-4 px-lg-5 mt-2 h-full w-full md:flex"  style={{width:width}}>
                     <div className="h-fit w-full md:w-1/4 md:h-full">
-                        <div className="w-1/4 h-1/4 aspect-square bg-gray-500 rounded-full flex items-center justify-center cursor-pointer mt-10 md:w-full ">
-                            {/*<img*/}
-                            {/*    src="https://via.placeholder.com/40"*/}
-                            {/*    alt="User Avatar"*/}
-                            {/*    className="w-full h-full rounded-full object-cover"*/}
-                            {/*/>*/}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-full rounded-full object-cover">
-                                <rect width="100%" height="100%" fill="#39a" />
-                                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="40" fontFamily="Arial">
-                                    U
-                                </text>
-                            </svg>
-                        </div>
-                        <div className="py-4 text-[#59636e] text-xl" style={{ display: isOpen ? 'none' : 'block' }}>
-                            UserName
+                        <div className="flex-row flex items-center md:flex-col">
+                            <div className="w-1/4 h-1/4 aspect-square bg-gray-500 rounded-full flex items-center justify-center cursor-pointer mt-10 md:w-full ">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-full h-full rounded-full object-cover">
+                                    <rect width="100%" height="100%" fill="#39a" />
+                                    <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="40" fontFamily="Arial">
+                                        U
+                                    </text>
+                                </svg>
+                            </div>
+                            <div className="mt-8 text-[#59636e] text-xl md:py-4 md:mt-0" style={{ display: isOpen ? 'none' : 'block' }}>
+                                UserName
+                            </div>
                         </div>
                         <button
-                            className="w-full h-8 bg-[#f6f8fa] border-[#d1d9e0] font-medium py-1.5 px-4 rounded-md hover:bg-gray-100} "
+                            className="w-full h-8 bg-[#f6f8fa] border-[#d1d9e0] font-medium py-1.5 px-4 mt-4 rounded-md hover:bg-gray-100} md:mt-0"
                             onClick={() => setisOpen(true)}
                             style={{ display: isOpen ? 'none' : 'block' }}
                         >

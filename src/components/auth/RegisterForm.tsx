@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AuthApi from "../../libs/apis/auth_api";
+import AuthApi from "@/libs/v2/apis/auth_api";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
