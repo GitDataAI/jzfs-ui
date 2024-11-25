@@ -2,6 +2,7 @@ import React, {ReactElement, useEffect, useState, useTransition} from "react";
 import {Auth_api} from "@/store/useUsers.tsx";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import SearchAccount from "@/app/auth/SearchAccount.tsx";
 
 
 const Login = () => {
@@ -51,8 +52,8 @@ const Login = () => {
         nav("/auth/apply")
     }
 
-    const forgot = () =>{
-        nav("/auth/forgot")
+    const SearchAccount = () =>{
+        nav("/auth/SearchAccount")
     }
 
   return (
@@ -77,7 +78,7 @@ const Login = () => {
             </form>
         </div>
         <div className="text-center mt-4 mb-5 cursor-pointer">
-            <span className="mr-1 hover:text-[#f34d01e6]"><a onClick={forgot}>{t("ForgotPass")}</a> </span>
+            <span className="mr-1 hover:text-[#f34d01e6]"><a onClick={SearchAccount}>{t("ForgotPass")}</a> </span>
             <span className="mr-1">• </span>
             <span onClick={apply} className="hover:text-[#f34d01e6]">{t("CreateAccount")}</span>
         </div>

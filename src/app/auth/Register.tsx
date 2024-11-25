@@ -37,7 +37,7 @@ const Register = () => {
                         // alert(t("Send")+t("Success"))
                         setisCountDown(true)
                     }else {
-                        toast.current?.show({severity:'success',summary:t("Fail"),detail:t("Send")+t("Fail")})
+                        toast.current?.show({severity:'error',summary:t("Fail"),detail:t("Send")+t("Fail")})
                         // alert(t("Send")+t("Fail")+res.data.msg)
                     }
                 })
@@ -133,7 +133,7 @@ const Register = () => {
                     Step===2?(
                         <>
                             <input onChange={(x)=>{Setuser({...user,password:x.target.value})}} type="password" placeholder={t("Enter")+t("Password")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
-                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder={t("ConfirmP")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 showDiv"/>
+                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder={t("ConfirmP")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
                             <input onChange={(x)=>{Setuser({...user,username:x.target.value})}} type="text" placeholder={t("Enter")+t("Username")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
                         </>
                     ):null

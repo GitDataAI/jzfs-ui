@@ -10,6 +10,9 @@ import Group from "./app/Group.tsx";
 import Actions from "./app/Actions.tsx";
 import Forgot from "./app/auth/Forgot.tsx";
 import Profile from "@/app/Profile.tsx";
+import UpPwd from "@/app/auth/UpPwd.tsx";
+import SearchAccount from "@/app/auth/SearchAccount.tsx";
+import FindAccount from "@/app/auth/FindAccount.tsx";
 
 
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
@@ -54,9 +57,21 @@ export const Routers = () => {
           element: <Register />,
         },
         {
+          path: "SearchAccount",
+          element: <SearchAccount/>
+        },
+        {
           path: "forgot",
           element: <Forgot />,
         },
+        {
+          path:"UpPwd/:token",
+          element: <UpPwd/>
+        },
+        {
+          path: "FindAccount",
+          element: <FindAccount/>,
+        }
       ],
     },
   ];

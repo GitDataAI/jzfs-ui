@@ -43,7 +43,8 @@
     "OrContinue": "Or continue with the following method",
     "Send": "Send",
     "SendSuccess": " successfully",
-    "SendFail": " failed:"
+    "SendFail": " failed:",
+    "Search": "Search"
   },
   "Header": {
     "Home": "Home",

@@ -43,7 +43,8 @@
     "OrContinue": "或通过以下方式继续",
     "Send": "发送",
     "Success": "成功",
-    "Fail": "失败："
+    "Fail": "失败：",
+    "Search": "搜索"
   },
   "Header": {
     "Home": "主页",
