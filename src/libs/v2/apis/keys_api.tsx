@@ -1,4 +1,4 @@
-import { Keys } from "../module/Keys.tsx";
+import { Keys } from "@/libs/v2/module/Keys.tsx";
 import Nets, { Result } from "../Nets.tsx";
 
 class KeysApi extends Nets implements Keys {

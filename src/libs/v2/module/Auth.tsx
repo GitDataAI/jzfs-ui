@@ -1,4 +1,4 @@
-import { Result } from "../Nets";
+import { Result } from "../Nets.tsx";
 
 export interface Login {
   username: string;

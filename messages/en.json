@@ -22,8 +22,11 @@
     "Submit": "Submit",
     "H2": "About GitDataAi Cloud",
     "Description": "GitDataAi Cloud is a platform for data management, visualization, and analysis that helps you manage and explore data resources efficiently.",
-    "Connectivity": "One account gives you access to GitData, JZFS, JZFlow and other products.",
-    "Protection": "This site is protected by Cloudflare and subject to the Google Privacy Policy and Terms of Service.",
+    "Connectivity": "GitData.AI is a one-stop collaborative platform for the development, management, and trading of data products (such as AI models)to help you efficiently develop and explore data products.",
+    "Protection": "This site is protected by Cloudflare and subject to the Google",
+    "PrivacyPolicy": "Privacy Policy",
+    "And": "and",
+    "Service": "Terms of Service.",
     "InvalidUsername": "The username must contain letters and numbers and be at least 6 digits",
     "InvalidEmail": "Please enter a valid email address",
     "InvalidPass": "The password must contain letters and numbers, and be at least 6 digits",
@@ -40,7 +43,8 @@
     "OrContinue": "Or continue with the following method",
     "Send": "Send",
     "SendSuccess": " successfully",
-    "SendFail": " failed:"
+    "SendFail": " failed:",
+    "Search": "Search"
   },
   "Header": {
     "Home": "Home",

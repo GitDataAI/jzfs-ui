@@ -4,7 +4,7 @@ import {
   Register,
   updataModule,
   UserModule,
-} from "../module/Auth.tsx";
+} from "@/libs/v2/module/Auth.tsx";
 import Nets, { Result } from "../Nets.tsx";
 
 class AuthApi extends Nets implements Auth {

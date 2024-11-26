@@ -12,7 +12,8 @@ export default defineConfig({
     },
     proxy: {
       "/api": {
-        target: "https://v1.jiaozifs.com/api/",
+        // target: "https://v1.jiaozifs.com/api/",
+        target: "https://192.168.0.100:8080/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

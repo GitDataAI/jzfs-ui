@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Login } from "../../libs/module/Auth";
+import { Login } from "@/libs/v2/module/Auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useAuth from "@/store/useUsers";

@@ -37,7 +37,7 @@ const Register = () => {
                         // alert(t("Send")+t("Success"))
                         setisCountDown(true)
                     }else {
-                        toast.current?.show({severity:'success',summary:t("Fail"),detail:t("Send")+t("Fail")})
+                        toast.current?.show({severity:'error',summary:t("Fail"),detail:t("Send")+t("Fail")})
                         // alert(t("Send")+t("Fail")+res.data.msg)
                     }
                 })
@@ -106,8 +106,8 @@ const Register = () => {
     <Toast ref={toast}/>
     <div className="h-full">
         <div className="flex items-baseline justify-center cursor-pointer">
-            <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-8" />
-            <b className=" text-4xl">GitDataAI</b>
+            <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-52" />
+            {/*<b className=" text-4xl">GitDataAI</b>*/}
         </div>
         <h3 className="text-center mt-6 mb-4 font-bold cursor-pointer">{t("RegisterContinue")}</h3>
         <div>
@@ -133,13 +133,13 @@ const Register = () => {
                     Step===2?(
                         <>
                             <input onChange={(x)=>{Setuser({...user,password:x.target.value})}} type="password" placeholder={t("Enter")+t("Password")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
-                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder={t("ConfirmP")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 showDiv"/>
+                            <input onChange={(x)=>{Setuser({...user,passwordE:x.target.value})}} type="password" placeholder={t("ConfirmP")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
                             <input onChange={(x)=>{Setuser({...user,username:x.target.value})}} type="text" placeholder={t("Enter")+t("Username")} className="border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2 showDiv"/>
                         </>
                     ):null
                 }
 
-                <button type={"button"} onClick={handleNext} className="bg-[#f34d01e6] border border-[#8790a2] h-10 w-4/5 mt-2 mb-2 px-2"><span className="text-white">{t("Register")}</span></button>
+                <button type={"button"} onClick={handleNext} className="bg-[#f34d01e6] border border-[#8790a2] h-10 w-4/5"><span className="text-white">{t("Register")}</span></button>
 
                 <h3 className="text-center text-[#616c84] mt-6 mb-4 cursor-pointer">{t("OrContinue")}</h3>
                 {
@@ -150,15 +150,15 @@ const Register = () => {
             </form>
         </div>
             <div className="text-center mt-4 mb-5 cursor-pointer">
-                <span className="mr-1">{t("HaveAccount")}<a onClick={login}>{t("Login")}</a></span>
+                <span className="mr-1"><a onClick={login} className="hover:text-[#f34d01e6]">{t("HaveAccount")}{t("Login")}</a></span>
             </div>
             <hr className="border-none h-px ml-auto mr-auto bg-[#c2c7d0] w-4/5"/>
-            <div className="flex items-baseline justify-center mt-5 cursor-pointer">
-                <img src="/gitdata.ai-redpanda.png" alt="JZFS" className=" w-4" />
-                <strong className=" text-xl">GitDataAI | Cloud</strong>
+            <div className="flex items-baseline justify-center mt-1 cursor-pointer">
+                <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-32" />
+                {/*<strong className=" text-xl">GitDataAI</strong>*/}
             </div>
             <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
-            <h3 className="text-center text-xs cursor-pointer">{t("Protection")}</h3>
+            <h3 className="text-center text-xs cursor-pointer">{t("Protection")}<a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a>{t("And")}<a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
         </div>
     </>
   );

@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { Login, UserModule } from "../libs/module/Auth.tsx";
+import { Login, UserModule } from "@/libs/v2/module/Auth.tsx";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
-import AuthApi from "../libs/apis/auth_api.tsx";
+import AuthApi from "@/libs/v2/apis/auth_api.tsx";
 
 export interface useAuthImpl {
   user: UserModule | undefined;
