@@ -3,7 +3,7 @@ import {Auth_api} from "@/store/useUsers.tsx";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import SearchAccount from "@/app/auth/SearchAccount.tsx";
-import { UserApi } from "jzfs-ts-api/src/index.ts"
+import { UserApi } from "@/apis"
 import {Toast} from "primereact/toast";
 import PrivacyPolicy from "../policy/PrivacyPolicy.tsx"
 import TermsOfService from "@/app/policy/TermsOfService.tsx";

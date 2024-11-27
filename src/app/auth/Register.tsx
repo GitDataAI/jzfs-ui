@@ -1,10 +1,8 @@
 import React, {ReactElement, useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Auth_api} from "@/store/useUsers.tsx";
-import Login from "@/app/auth/Login.tsx";
 import {useTranslation} from "react-i18next";
 import {Toast} from "primereact/toast";
-import {EmailApi, UserApi} from "jzfs-ts-api/src";
+import {EmailApi, UserApi} from "@/apis";
 
 const Register = () => {
     const [t] = useTranslation("Auth")

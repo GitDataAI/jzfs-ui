@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { Login, UserModule } from "@/libs/v2/module/Auth.tsx";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import AuthApi from "@/libs/v2/apis/auth_api.tsx";
-import {UserApi} from "../../jzfs-api/src";
+import {UserApi} from "@/apis";
 
 export interface useAuthImpl {
   user: any | undefined;
