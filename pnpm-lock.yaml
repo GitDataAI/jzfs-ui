@@ -26,6 +26,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      jzfs-ts-api:
+        specifier: ./jzfs-api
+        version: link:jzfs-api
       less:
         specifier: ^4.2.0
         version: 4.2.0
