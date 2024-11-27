@@ -10,13 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@types/js-cookie": "^3.0.6",
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
     "axios": "^1.7.7",
     "i18next": "^23.16.5",
     "i18next-browser-languagedetector": "^8.0.0",
     "js-cookie": "^3.0.5",
     "less": "^4.2.0",
+    "jzfs-ts-api": "./jzfs-api",
     "localforage": "^1.10.0",
     "primeicons": "^7.0.0",
     "react": "^18.3.1",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
+    "jzfs-ts-api": "github:lazhenyi/jzfs-api",
     "postcss": "^8.4.47",
     "primereact": "^10.8.4",
     "react-router-dom": "^6.28.0",
