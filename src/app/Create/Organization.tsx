@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {media} from "@/hooks/useMedia.tsx";
 import {InputTextarea} from "primereact/inputtextarea";
-import { GroupApi } from "jzfs-ts-api/src/apis/group_api"
+import { GroupApi } from "@/apis/apis/group_api"
 
 const Organization:React.FC= () => {
 
