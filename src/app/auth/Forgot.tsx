@@ -33,20 +33,20 @@ const Forgot =()=>{
     const [error, setError] = useState<string | null>(null);
     const { email } = useParams<{ email: string }>();
 
-    const handleNext = () => {
-        Auth_api.updatePassword({
-            email:email,
-            password: user.password
-        })
-            .then(res=>{
-                if (res.data.code === 200){
-                    nav("/auth/login")
-                }else {
-                    toast.current?.show({severity:'error',summary:t("Failed"),detail:res.data.msg})
-                    // alert(t("RegistrationFailed")+res.data.msg)
-                }
-            })
-    }
+    // const handleNext = () => {
+    //     Auth_api.updatePassword({
+    //         email:email,
+    //         password: user.password
+    //     })
+    //         .then(res=>{
+    //             if (res.data.code === 200){
+    //                 nav("/auth/login")
+    //             }else {
+    //                 toast.current?.show({severity:'error',summary:t("Failed"),detail:res.data.msg})
+    //                 // alert(t("RegistrationFailed")+res.data.msg)
+    //             }
+    //         })
+    // }
 
     const handleCheckEmail = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // 阻止表单默认提交行为
@@ -119,7 +119,7 @@ const Forgot =()=>{
                     <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-32" />
                 </div>
                 <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
-                <h3 className="text-center text-xs cursor-pointer">{t("Protection")} <a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a>{t("And")}<a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
+                <h3 className="text-center text-xs cursor-pointer">{t("Protection")} <a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a> {t("And")} <a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
             </div>
         </>
     );

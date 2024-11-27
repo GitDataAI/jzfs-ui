@@ -2,26 +2,27 @@ import { create } from "zustand";
 import { Login, UserModule } from "@/libs/v2/module/Auth.tsx";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import AuthApi from "@/libs/v2/apis/auth_api.tsx";
+import {UserApi} from "@/apis";
 
 export interface useAuthImpl {
-  user: UserModule | undefined;
+  user: any | undefined;
   init: () => Promise<void>;
   login: (data: Login) => Promise<boolean>;
   logout: () => Promise<void>;
 }
-export const Auth_api = new AuthApi();
+export const Auth_api = new UserApi();
 const useAuth = create<useAuthImpl>()(
   devtools(
     persist(
       (setState) => ({
         user: undefined,
         async init() {
-          const { data } = await Auth_api.local();
+          const { data } = await Auth_api.Local();
           setState({ user: data.data });
         },
         async login(param: Login): Promise<boolean> {
           try {
-            const { data } = await Auth_api.login(param);
+            const { data } = await Auth_api.LoginName(param);
             if (data.code === 200) {
               setState({ user: data.data });
               return true;
@@ -34,7 +35,7 @@ const useAuth = create<useAuthImpl>()(
         },
         async logout() {
           try {
-            await Auth_api.logout();
+            await Auth_api.Logout();
             setState({ user: undefined });
             return;
           } catch (e) {

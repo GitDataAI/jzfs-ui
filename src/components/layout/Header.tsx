@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import { FaPlus, FaChevronDown } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -6,11 +6,49 @@ import { LuMenu } from "react-icons/lu";
 import LeftMenu from "./LeftMenu"; // 引入 LeftMenu 组件
 import RightMenu from "./RightMenu"; // 引入 RightMenu 组件
 import {useTranslation} from "react-i18next";
+import { Menu } from 'primereact/menu';
+import { MenuItem } from 'primereact/menuitem';
+import {Button} from "primereact/button";
 
 const Header: React.FC = () => {
   const [t]=useTranslation("Setting")
   const [isMenuOpen, setLeftMenuOpen] = useState(false);
   const [isRightMenuOpen, setIsRightMenuOpen] = useState(false); // 用来控制右侧菜单的显示
+  const menuLeft = useRef<Menu>(null);
+  const items: MenuItem[] = [
+    {
+      label:'Options0',
+      items: [
+        {
+          label: 'New repository',
+          icon: 'pi pi-refresh'
+        },
+        {
+          label: 'Import repository',
+          icon: 'pi pi-upload'
+        },
+        { separator: true },
+        {
+          label:'New codespace',
+          icon:'pi pi-refresh'
+        },
+        {
+          label:'New gist',
+          icon:'pi pi-refresh'
+        },
+        {
+          label:'New organization',
+          icon:'pi pi-refresh'
+        },
+        {
+          label:'New organization',
+          icon:'pi pi-refresh'
+        },
+
+        { separator: true },
+      ]
+    }
+  ];
 
   return (
     <>
@@ -60,9 +98,12 @@ const Header: React.FC = () => {
             <button className="bg-white border border-gray-300 rounded-l-sm p-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none">
               <FaPlus className="text-gray-700" />
             </button>
-            <button className="bg-white border border-l-0 border-gray-300 rounded-r-sm p-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none">
-              <FaChevronDown className="text-gray-700" />
+            <Menu model={items} popup ref={menuLeft} id="popup_menu_left" />
+            <button className="bg-white border border-l-0 border-gray-300 rounded-r-sm p-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none" onClick={(event) => menuLeft.current?.toggle(event)} aria-controls="popup_menu_left" aria-haspopup>
+              <FaChevronDown className="text-gray-700"/>
             </button>
+
+            {/*<Button label="" icon="pi " className="mr-2" onClick={(event) => menuLeft.current?.toggle(event)} aria-controls="popup_menu_left" aria-haspopup />*/}
           </div>
           <div
             className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center cursor-pointer"

@@ -13,6 +13,11 @@ import Profile from "@/app/Profile.tsx";
 import UpPwd from "@/app/auth/UpPwd.tsx";
 import SearchAccount from "@/app/auth/SearchAccount.tsx";
 import FindAccount from "@/app/auth/FindAccount.tsx";
+import TermsOfService from "@/app/policy/TermsOfService.tsx";
+import PrivacyPolicy from "@/app/policy/PrivacyPolicy.tsx";
+import PolicyLayout from "@/app/policy/PolicyLayout.tsx";
+import Organization from "@/app/Create/Organization.tsx";
+import CreateLayout from "@/app/Create/CreateLayout.tsx";
 
 
 // After logging in, you must use window.location.href = /{target} to redirect, otherwise subsequent routes cannot be loaded
@@ -74,6 +79,34 @@ export const Routers = () => {
         }
       ],
     },
+    {
+      path: "/policy",
+      element:<PolicyLayout />,
+      children:[
+        {
+          path:"PrivacyPolicy",
+          element: <PrivacyPolicy isOpen={false} onClose={function(): void {
+              throw new Error("Function not implemented.");
+          } } />
+        },
+        {
+          path:"TermsOfService",
+          element: <TermsOfService isOpen={false} onClose={function(): void {
+              throw new Error("Function not implemented.");
+          } } />
+        }
+      ],
+    },
+    {
+      path: "/Create",
+      element:<CreateLayout />,
+      children:[
+        {
+          path:"Organization",
+          element: <Organization/>
+        }
+      ]
+    }
   ];
   // @eslint-disable-next-line @typescript-eslint/no-unused-vars
   let AuthBeforeRouter: RouteObject[] = [

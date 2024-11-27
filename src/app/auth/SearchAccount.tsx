@@ -1,10 +1,7 @@
-import React, {ReactElement, useEffect, useRef, useState} from "react";
+import React, {ReactElement, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {Auth_api} from "@/store/useUsers.tsx";
-import Login from "@/app/auth/Login.tsx";
 import {useTranslation} from "react-i18next";
 import {Toast} from "primereact/toast";
-import login from "@/app/auth/Login.tsx";
 
 const SearchAccount = () => {
     const [t] = useTranslation("Auth")
@@ -66,7 +63,7 @@ const SearchAccount = () => {
                     <img src="/gitdata.ai-black-redpanda.png" alt="JZFS" className=" w-32"/>
                 </div>
                 <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
-                <h3 className="text-center text-xs cursor-pointer">{t("Protection")} <a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a>{t("And")}<a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
+                <h3 className="text-center text-xs cursor-pointer">{t("Protection")} <a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a> {t("And")} <a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
             </div>
         </>
     );
