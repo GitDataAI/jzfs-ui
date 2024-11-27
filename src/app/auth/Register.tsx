@@ -4,7 +4,7 @@ import {Auth_api} from "@/store/useUsers.tsx";
 import Login from "@/app/auth/Login.tsx";
 import {useTranslation} from "react-i18next";
 import {Toast} from "primereact/toast";
-// import {UserApi} from "jzfs-ts-api/dist";
+import {EmailApi, UserApi} from "jzfs-ts-api/src";
 
 const Register = () => {
     const [t] = useTranslation("Auth")
@@ -22,7 +22,8 @@ const Register = () => {
     const [Time,setTime] = useState(t("Get")+t("Captcha"))
     const nav = useNavigate();
     const toast = useRef<Toast>(null)
-    // const n = new UserApi();
+    const n = new UserApi();
+    const e = new EmailApi();
     useEffect(()=>{
         setOauth([
             // <button className="border border-[#c2c7d0] h-12 w-4/5 mt-2 mb-2"><FcGoogle className="inline mr-2" size={"2rem"}/>Google</button>,
@@ -32,7 +33,9 @@ const Register = () => {
     },[])
     const handleSend = () => {
         if(!isCountDown ){
-            Auth_api.send(user.email)
+            e.SendCaptcha({
+                email:user.email
+            })
                 .then(res=>{
                     if (res.data.code === 200){
                         toast.current?.show({severity:'success',summary:t("Success"),detail:t("Send")+t('Success')})
@@ -45,7 +48,10 @@ const Register = () => {
     }
 
     const validate = (code:string) => {
-        Auth_api.verification(code)
+        e.CheckCaptcha({
+            email: user.email,
+            code: code
+        })
             .then(res=>{
                 if (res.data.code === 200){
                     setStep(2)
@@ -62,7 +68,7 @@ const Register = () => {
     }
     const handleNext = () => {
         if(user.password ===user.passwordE){
-            Auth_api.register({
+            n.Apply({
                 email:user.email,
                 password:user.password,
                 username:user.username
@@ -155,7 +161,11 @@ const Register = () => {
                         ) : null
                     }
 
-                    <button type={"button"} onClick={handleNext}
+                    <button type={"button"} onClick={()=>{
+                        if (Step === 2) {
+                            handleNext()
+                        }
+                    }}
                             className="bg-[#f34d01e6] border border-[#8790a2] h-10 w-4/5"><span
                         className="text-white">{t("Register")}</span></button>
 
@@ -177,7 +187,7 @@ const Register = () => {
                 {/*<strong className=" text-xl">GitDataAI</strong>*/}
             </div>
             <h3 className="text-center text-xs mb-2 cursor-pointer">{t("Connectivity")}</h3>
-            <h3 className="text-center text-xs cursor-pointer">{t("Protection")} <a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")}</a>{t("And")}<a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
+            <h3 className="text-center text-xs cursor-pointer">{t("Protection")} <a href="#" className="hover:text-[#f34d01e6]">{t("PrivacyPolicy")} </a>{t("And")} <a href="#" className="hover:text-[#f34d01e6]">{t("Service")}</a></h3>
         </div>
     </>
   );
