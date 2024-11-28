@@ -23,7 +23,7 @@ const TermsOfService:React.FC< Props> = ({ isOpen, onClose }) => {
                 </>
             }
         >
-            <p>Thank you for using DoltHub. Please read this Terms of Service agreement carefully before accessing or using DoltHub.</p>
+            <p>Coming soon...</p>
 
             {/* 隐私政策的详细内容 */}
 

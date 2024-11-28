@@ -9,43 +9,61 @@ import {useTranslation} from "react-i18next";
 import { Menu } from 'primereact/menu';
 import { MenuItem } from 'primereact/menuitem';
 import {Button} from "primereact/button";
+import {TabMenu} from "primereact/tabmenu";
 
 const Header: React.FC = () => {
   const [t]=useTranslation("Setting")
   const [isMenuOpen, setLeftMenuOpen] = useState(false);
   const [isRightMenuOpen, setIsRightMenuOpen] = useState(false); // 用来控制右侧菜单的显示
   const menuLeft = useRef<Menu>(null);
+  // const item = [
+  //   {
+  //     label: '文件系统',
+  //     icon: 'pi pi-home',
+  //     URL:'../Repositories'
+  //   },
+  //   {
+  //     label: '执行器',
+  //     icon: 'pi pi-list'
+  //   },
+  //   {
+  //     label: "团体",
+  //     icon: 'pi pi-inbox'
+  //   }
+  // ];
   const items: MenuItem[] = [
     {
-      label:'Options0',
+      label:'Options',
       items: [
         {
           label: 'New repository',
-          icon: 'pi pi-refresh'
+          icon: 'pi pi-file'
         },
         {
           label: 'Import repository',
-          icon: 'pi pi-upload'
+          icon: 'pi pi-file-arrow-up'
         },
         { separator: true },
         {
-          label:'New codespace',
-          icon:'pi pi-refresh'
+          label:'New code space',
+          icon:'pi pi-credit-card'
         },
         {
           label:'New gist',
-          icon:'pi pi-refresh'
+          icon:'pi pi-arrows-h'
         },
+        { separator: true },
         {
           label:'New organization',
-          icon:'pi pi-refresh'
+          icon:'pi pi-building',
+          url:'../../Create/Organization'
         },
         {
-          label:'New organization',
-          icon:'pi pi-refresh'
+          label:'New project',
+          icon:'pi pi-calendar',
+
         },
 
-        { separator: true },
       ]
     }
   ];
@@ -62,6 +80,7 @@ const Header: React.FC = () => {
           >
             <LuMenu className="text-xl" />
           </button>
+          {/*<TabMenu model={item} />*/}
           <div className="flex items-center">
             <Link
               to="/Repositories"
