@@ -20,7 +20,7 @@ const RightMenu: React.FC<RightMenuProps> = ({ isOpen, closeSidebar }) => {
       <div className="p-4">
         <ul className="mt-4 space-y-4">
           <li>
-            <a href="./Profile" className="text-md hover:text-blue-600">
+            <a href="../Profile" className="text-md hover:text-blue-600">
               {t("MyAccount")}
             </a>
           </li>

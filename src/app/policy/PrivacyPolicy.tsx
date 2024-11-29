@@ -23,9 +23,7 @@ const PrivacyPolicy:React.FC<Props> = ({ isOpen, onClose }) => {
                 </>
             }
         >
-            <p className="mb-4">Thanks for entrusting GitDataAI., the company that built DoltHub, with your data and your personal
-                information. Holding onto your private information is a serious responsibility, and we want you to know
-                how we're handling it.</p>
+            <p className="mb-4">Thanks for entrusting GitData.AI Inc., the company that built GitData.AI Website, with your data and your personal information. Holding onto your private information is a serious responsibility, and we want you to know how we’re handling it.</p>
             <div className="text-lg font-bold mb-4">What We Collect</div>
             <ul>
                 <div className="ml-4">
@@ -46,12 +44,10 @@ const PrivacyPolicy:React.FC<Props> = ({ isOpen, onClose }) => {
             </ul>
             <div className="text-lg font-bold mb-4">Database Contents</div>
             <div className="mb-4">
-                DoltHub Inc., the company that owns DoltHub, employees do not access private databases unless required
-                to for security reasons, to assist the database owner with a support matter, or to maintain the
-                integrity of the service. Our Terms of Service provides more details.
+                GitData.AI, the company that owns GitData.AI Website, employees do not access private databases unless required to for security reasons, to assist the database owner with a support matter, or to maintain the integrity of the service. Our Terms of Service provides more details.
             </div>
             <div className="mb-4">
-                If your database is public, anyone (including us and unaffiliated third parties) may view its contents.
+                If your repository is public, anyone (including us and unaffiliated third parties) may view its contents.
                 If you have included private or sensitive information in your public database, such as email addresses or passwords, that information may be indexed by search engines or used by third parties.
             </div>
             <div className="text-lg font-bold mb-4">How we use your information</div>
@@ -59,11 +55,11 @@ const PrivacyPolicy:React.FC<Props> = ({ isOpen, onClose }) => {
                 <div className="ml-4">
                     <ul className="space-y-4">
                         <li>Render the website with appropriate permissions</li>
-                        <li>Provide and permission access to Dolt databases we store</li>
+                        <li>Provide and permission access to GitData.AI repository we store</li>
                         <li>Contact you with administrative messages about your databases and teams/organizations</li>
                         <li>Market to you</li>
                         <li>Understand who is using our website and how</li>
-                        <li>Protect our website and databases from abuse or fraud</li>
+                        <li>Protect our website and repositories from abuse or fraud</li>
                     </ul>
                 </div>
             </div>
@@ -79,7 +75,7 @@ const PrivacyPolicy:React.FC<Props> = ({ isOpen, onClose }) => {
                             <ul className="space-y-4">
                                 <li>complying with applicable laws</li>
                                 <li>responding to lawful requests and legal processes</li>
-                                <li>protecting the rights and property of DoltHub, our agents, customers, and others sharing information in an emergency, such as protecting the safety of our employees and agents, our customers, or anyone else</li>
+                                <li>protecting the rights and property of GitData.AI repository , our agents, customers, and others sharing information in an emergency, such as protecting the safety of our employees and agents, our customers, or anyone else</li>
                             </ul>
                         </div>
                     </ul>
@@ -91,28 +87,18 @@ const PrivacyPolicy:React.FC<Props> = ({ isOpen, onClose }) => {
                     If we send you marketing emails, we'll be sure to let you know how to opt-out. Of course, if you do opt out, we may still send you non-marketing emails. Non-marketing emails include emails about your accounts and our business dealings with you.
                 </div>
                 <div className="mb-4">
-                    If you have any requests about your personal information, you can always send them to us at privacy@dolthub.com. You can ask to change contact choices, opt-out of how we share with others, and update your personal information.
+                    If you have any requests about your personal information, you can always send them to us at privacy@gitdata.ai. You can ask to change contact choices, opt-out of how we share with others, and update your personal information.
                 </div>
             </div>
             <div className="text-lg font-bold mb-4">Contact Information</div>
             <div className="mb-4">
                 <div className="mb-4">
-                    Please send any questions or comments about our privacy policy at privacy@dolthub.com. You may also reach us at our address:
-                </div>
-                <div className="mb-4">
-                    <ul className="space-y-4">
-                        <li>DoltHub Inc.</li>
-                        <li>1230 Georgina Ave</li>
-                        <li>Santa Monica, California 90402</li>
-                    </ul>
+                    Please send any questions or comments about our privacy policy at privacy@gitdata.ai.
                 </div>
             </div>
             <div className="text-lg font-bold mb-4">Changes to this privacy policy</div>
             <p>We may change this privacy policy every now and then. But when we do, we'll let you know one way or
                 another. You'll always be able to tell if we've issued a more recent privacy policy by checking out the Last Updated date that appears at the top of the privacy policy. And sometimes we may provide you with additional notice, like adding a statement on our site's homepage.</p>
-
-
-
             {/* 隐私政策的详细内容 */}
         </Dialog>
     );
