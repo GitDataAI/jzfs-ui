@@ -71,7 +71,7 @@ const Profile:react.FC = () => {
                                 <div className="font-medium">Name</div>
                                 <input type="text" className="border w-full rounded-md h-8 text-xs" placeholder="Name"/>
                                 <div className="font-medium">Bio</div>
-                                <InputTextarea value={value} onChange={(e) => setValue(e.target.value)} rows={5} cols={30} placeholder="Add a bio" className="w-full border text-xs"/>
+                                <InputTextarea value={value} onChange={(e) => setValue(e.target.value)} rows={5} cols={30} placeholder="Add a bio" className="w-full border text-xs" unstyled={true}/>
                                 <div className="font-medium">Pronouns</div>
                                 <input type="text" className="border w-full rounded-md text-xs h-8" placeholder="Dont specify"/>
                                 <div className="font-medium">Social accounts</div>

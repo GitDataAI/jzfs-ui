@@ -43,11 +43,8 @@ const Organization:React.FC= () => {
 
     // const handleUploadAvatar = async () => {
     //     if (avatarFile) {
-    //         // 在这里添加上传头像的逻辑，例如使用 FormData 发送到服务器
     //         const formData = new FormData();
     //         formData.append("avatar", avatarFile);
-    //         // 使用 fetch 或其他 HTTP 客户端上传文件
-    //         // ...
     //     }
     // };
     const CreateOrganization = () => {

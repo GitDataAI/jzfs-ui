@@ -41,14 +41,44 @@
   --primary-color: theme("colors.primary-dark"); /* Tailwind 中暗黑模式的主色 */
 }
 
-//.p-button:active {
-//  border-color: transparent !important;/*  去除点击时的边框颜色 */
-//  box-shadow: none !important;/*去除点击时的阴影效果 */
-//  border: none !important;
-//}
+.dropdown-focused {
+  box-shadow: none !important;
+  border-color: #f34d01e6; /* 选择一个您喜欢的颜色 */
+}
 
 .p-dialog-title {
   text-align: center;
+}
+
+.dropdown-focused .p-dropdown-item {
+  white-space: nowrap; /* 防止文本换行 */
+  overflow:unset; /* 隐藏溢出部分 */
+  text-overflow: unset; /* 显示省略号 */
+}
+
+.dropdown-focused .p-dropdown-item:hover,
+.dropdown-focused .p-dropdown-item:focus {
+  overflow: visible; /* 鼠标悬停或聚焦时显示完整文本 */
+  text-overflow: clip; /* 恢复默认行为 */
+}
+
+.dropdown-focused .p-dropdown-panel {
+  padding: 0; /* 去掉下拉面板的内边距 */
+}
+
+ .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+   color: #f34d01e6;
+   background:#FFFFF7;
+ }
+
+ .p-inputtext{
+   padding-left:0.75rem;
+   padding-top:0.25rem !important;
+   padding-right:0
+ }
+
+.p-dropdown-trigger{
+  justify-content: left;
 }
 
 /* 自动填充样式 */
